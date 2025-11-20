@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Unity学習サイト</title>
-<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -17,6 +17,7 @@
       <a href="submissions.html">提出履歴</a>
       <a href="ranking.html">ランキング</a>
       <a href="about.html">このサイトについて</a>
+      <a href="contact.html">お問い合わせ</a>
     </nav>
   </div>
 </header>
@@ -54,48 +55,13 @@
   <div class="container">
     <h2>新着ツール</h2>
     <div class="tool-grid" id="newTools">
+      <!-- ツールカード複数 -->
       <div class="tool-card" data-name="ツールC">
         <div class="thumb"></div>
         <h3>ツールC</h3>
         <button onclick="location.href='toolC.html'">使用する</button>
       </div>
-
-      <div class="tool-card" data-name="ツールD">
-        <div class="thumb"></div>
-        <h3>ツールD</h3>
-        <button onclick="location.href='toolD.html'">使用する</button>
-      </div>
-
-        <div class="tool-card" data-name="ツールE">
-        <div class="thumb"></div>
-        <h3>ツールE</h3>
-        <button onclick="location.href='toolE.html'">使用する</button>
-      </div>
-
-        <div class="tool-card" data-name="ツールF">
-        <div class="thumb"></div>
-        <h3>ツールF(本命)</h3>
-        <button onclick="location.href='toolF.html'">使用する</button>
-      </div>
-
-        <div class="tool-card" data-name="ツールG">
-        <div class="thumb"></div>
-        <h3>ツールG</h3>
-        <button onclick="location.href='toolG.html'">使用する</button>
-      </div>
-
-        <div class="tool-card" data-name="ツールH">
-        <div class="thumb"></div>
-        <h3>ツールH</h3>
-        <button onclick="location.href='toolH.html'">使用する</button>
-      </div>
-
-      <div class="tool-card" data-name="ツールI">
-        <div class="thumb"></div>
-        <h3>テスト用</h3>
-        <button onclick="location.href='toolI.html'">使用する</button>
-      </div>
-
+      <!-- 必要に応じて追加 -->
     </div>
   </div>
 </section>
@@ -144,37 +110,17 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <h2>お問い合わせ</h2>
-    <form id="contactForm">
-      <label for="name">名前:</label>
-      <input type="text" id="name" required>
-
-      <label for="email">メールアドレス:</label>
-      <input type="email" id="email" required>
-
-      <label for="message">内容:</label>
-      <textarea id="message" rows="5" required></textarea>
-
-      <button type="submit">送信</button>
-    </form>
-  </div>
-</section>
-
 <!-- フッター -->
 <footer>
   <div class="container footer-inner">
     
-    <!-- 1. 運営情報 -->
     <div class="footer-section">
       <h4>運営情報</h4>
       <p>運営者名: Unity学習プロジェクト</p>
       <p>お問い合わせ: <a href="mailto:contact@unitysite.jp">contact@unitysite.jp</a></p>
-      <p><a href="#contactForm">お問い合わせフォーム</a></p>
+      <p><a href="contact.html">お問い合わせフォーム</a></p>
     </div>
 
-    <!-- 2. 各種ポリシー -->
     <div class="footer-section">
       <h4>各種ポリシー</h4>
       <a href="terms.html">利用規約</a>
@@ -182,21 +128,19 @@
       <a href="cookies.html">クッキーポリシー</a>
     </div>
 
-    <!-- 3. サイト情報 -->
     <div class="footer-section">
       <h4>サイト情報</h4>
       <p>バージョン: 1.0.0</p>
       <a href="changelog.html">更新履歴</a>
     </div>
 
-    <!-- 4. SNS・コミュニティ -->
     <div class="footer-section">
       <h4>SNSコミュニティ</h4>
-      <a href="https://github.com/" target="_blank">GitHub</a>
-      <a href="https://discord.com/" target="_blank">Discord</a>
+      <a href="#" target="_blank">GitHub</a>
+      <a href="#" target="_blank">Discord</a>
+      <a href="#" target="_blank">X (旧Twitter)</a>
     </div>
 
-    <!-- 5. サイトマップ -->
     <div class="footer-section">
       <h4>サイトマップ</h4>
       <a href="index.html">ホーム</a>
@@ -208,12 +152,10 @@
     
   </div>
 
-  <!-- 6. コピーライト表記 -->
   <div class="footer-bottom">
     <p>© 2025 Unity学習サイト All Rights Reserved.</p>
   </div>
 </footer>
-
 
 <script src="script.js"></script>
 </body>

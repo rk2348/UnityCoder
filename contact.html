@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お問い合わせ - Unity学習サイト</title>
+<link rel="stylesheet" href="contact.css">
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="logo">Unity学習サイト</div>
+    <nav>
+      <a href="home.html">ホーム</a>
+      <a href="courses.html">コース一覧</a>
+      <a href="problems.html">問題一覧</a>
+      <a href="ranking.html">ランキング</a>
+      <a href="about.html">このサイトについて</a>
+      <a href="contact.html">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container main-content">
+  <h1>お問い合わせ</h1>
+  <p>ご質問・ご要望・バグ報告などはこちらからお問い合わせください。</p>
+
+  <form id="contactForm">
+    <label for="name">名前:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">メールアドレス:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="message">お問い合わせ内容:</label>
+    <textarea id="message" name="message" rows="6" required></textarea>
+
+    <button type="submit">送信</button>
+  </form>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-section">
+      <h4>運営情報</h4>
+      <p>運営者名: Unity学習プロジェクト</p>
+      <p>メール: <a href="mailto:contact@unitysite.jp">contact@unitysite.jp</a></p>
+    </div>
+    <div class="footer-section">
+      <h4>各種ポリシー</h4>
+      <a href="terms.html">利用規約</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="cookies.html">クッキーポリシー</a>
+    </div>
+    <div class="footer-section">
+      <h4>コピーライト</h4>
+      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="contact.js"></script>
+</body>
+</html>
