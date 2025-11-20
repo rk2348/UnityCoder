@@ -1,0 +1,154 @@
+/* 全体 */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* コンテナ */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ヘッダー */
+.site-header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #007acc;
+}
+
+/* ページタイトル */
+.page-title {
+    display: block;
+    background: #007acc;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 問題一覧 */
+.problem-container h2 {
+    margin-bottom: 15px;
+}
+
+.problem-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.problem-list li {
+    background: #fff;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.problem-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.problem-list li a {
+    text-decoration: none;
+    color: #007acc;
+    font-weight: 500;
+    display: block;
+}
+
+.problem-list li a:hover {
+    text-decoration: underline;
+}
+
+/* フッター */
+footer {
+    background: #222;
+    color: #eee;
+    padding: 40px 0 20px;
+    margin-top: 50px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-inner h3,
+.footer-inner h4 {
+    margin-bottom: 10px;
+}
+
+.footer-links a,
+.footer-contact a {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.footer-links a:hover,
+.footer-contact a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #555;
+    margin-top: 30px;
+    padding-top: 15px;
+    color: #bbb;
+    font-size: 14px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav a {
+        margin-left: 0;
+        margin-right: 15px;
+        margin-top: 8px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
