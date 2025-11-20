@@ -1,0 +1,338 @@
+/* 全体 */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #f6f6f6;
+}
+
+/* 中央寄せの基本 */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ヘッダー */
+header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #007acc;
+}
+
+/* メインビジュアル */
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    margin-bottom: 40px;
+}
+
+.hero h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.search-box {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.search-box input {
+    width: 250px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-box button {
+    padding: 10px 20px;
+    border: none;
+    background: #007acc;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-box button:hover {
+    background: #005fa3;
+}
+
+/* セクション */
+.section {
+    padding: 40px 0;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* ツール・コース一覧 */
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tool-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.thumb {
+    width: 100%;
+    height: 100px;
+    background: #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.tool-card h3 {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.tool-card button {
+    margin-top: 10px;
+    padding: 8px 15px;
+    border: none;
+    background: #007acc;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tool-card button:hover {
+    background: #005fa3;
+}
+
+/* お問い合わせフォーム */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    max-width: 500px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form button {
+    padding: 10px 20px;
+    border: none;
+    background: #007acc;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+form button:hover {
+    background: #005fa3;
+}
+
+/* 学習履歴カード */
+#last-progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.history-card {
+    background: #e6f0ff; 
+    border-left: 4px solid #007acc;
+    border-radius: 5px;
+    padding: 12px 15px;
+    min-width: 220px;
+    flex: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-size: 0.95em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.history-card h4 {
+    margin: 0 0 5px 0;
+    font-size: 1em;
+    color: #003366;
+}
+
+.history-card a {
+    color: #007acc;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.history-card a:hover {
+    text-decoration: underline;
+}
+
+.history-card p {
+    margin: 5px 0;
+    color: #003366;
+}
+
+.progress-bar-container {
+    background: #d0e4ff;
+    border-radius: 5px;
+    height: 10px;
+    margin: 8px 0;
+    width: 100%;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #007acc;
+    width: 0%;
+    border-radius: 5px;
+}
+
+.next-step-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    border: none;
+    background: #007acc;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.next-step-btn:hover {
+    background: #005fa3;
+}
+
+/* ツール・コース一覧（横スクロール版） */
+.tool-grid {
+    display: flex;
+    flex-wrap: nowrap;           
+    gap: 16px;                   
+    overflow-x: auto;            
+    padding: 10px 0;
+    scroll-behavior: smooth;     
+}
+
+.tool-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.tool-grid::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.tool-grid::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.tool-card {
+    flex: 0 0 200px;            
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tool-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+footer {
+    background: #222;
+    color: #eee;
+    padding: 40px 0 20px;
+    margin-top: 50px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-inner h3,
+.footer-inner h4 {
+    margin-bottom: 10px;
+}
+
+.footer-links a,
+.footer-contact a {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.footer-links a:hover,
+.footer-contact a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #555;
+    margin-top: 30px;
+    padding-top: 15px;
+    color: #bbb;
+    font-size: 14px;
+}

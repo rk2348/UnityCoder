@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity学習サイト</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="logo">Unity学習サイト</div>
+    <nav>
+      <a href="#">コース一覧</a>
+      <a href="problems.html">問題一覧</a>
+      <a href="#">チュートリアル</a>
+      <a href="#">お知らせ</a>
+      <a href="#">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Unity学習サイト</h1>
+    <p>ゲーム制作を学びながらツールやコースを進めましょう</p>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="ツール・コースを検索">
+      <button onclick="searchTool()">検索</button>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>人気のツール</h2>
+    <div class="tool-grid" id="popularTools">
+      <div class="tool-card" data-name="ツールA">
+        <div class="thumb"></div>
+        <h3>ツールA</h3>
+        <button onclick="location.href='toolA.html'">使用する</button>
+      </div>
+      <div class="tool-card" data-name="ツールB">
+        <div class="thumb"></div>
+        <h3>ツールB</h3>
+        <button onclick="location.href='toolB.html'">使用する</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>新着ツール</h2>
+    <div class="tool-grid" id="newTools">
+      <div class="tool-card" data-name="ツールC">
+        <div class="thumb"></div>
+        <h3>ツールC</h3>
+        <button onclick="location.href='toolC.html'">使用する</button>
+      </div>
+
+      <div class="tool-card" data-name="ツールD">
+        <div class="thumb"></div>
+        <h3>ツールD</h3>
+        <button onclick="location.href='toolD.html'">使用する</button>
+      </div>
+
+        <div class="tool-card" data-name="ツールE">
+        <div class="thumb"></div>
+        <h3>ツールE</h3>
+        <button onclick="location.href='toolE.html'">使用する</button>
+      </div>
+
+        <div class="tool-card" data-name="ツールF">
+        <div class="thumb"></div>
+        <h3>ツールF(本命)</h3>
+        <button onclick="location.href='toolF.html'">使用する</button>
+      </div>
+
+        <div class="tool-card" data-name="ツールG">
+        <div class="thumb"></div>
+        <h3>ツールG</h3>
+        <button onclick="location.href='toolG.html'">使用する</button>
+      </div>
+
+        <div class="tool-card" data-name="ツールH">
+        <div class="thumb"></div>
+        <h3>ツールH</h3>
+        <button onclick="location.href='toolH.html'">使用する</button>
+      </div>
+
+      <div class="tool-card" data-name="ツールI">
+        <div class="thumb"></div>
+        <h3>テスト用</h3>
+        <button onclick="location.href='toolI.html'">使用する</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>コース一覧</h2>
+    <div class="tool-grid" id="courseList">
+      <div class="tool-card" data-name="RPGゲーム入門">
+        <div class="thumb"></div>
+        <h3>RPGゲーム入門</h3>
+        <button onclick="startCourse('RPGゲーム入門','course_rpg.html')">開始する</button>
+      </div>
+      <div class="tool-card" data-name="ブロック崩し作成">
+        <div class="thumb"></div>
+        <h3>ブロック崩し作成</h3>
+        <button onclick="startCourse('ブロック崩し作成','course_block.html')">開始する</button>
+      </div>
+      <div class="tool-card" data-name="シューティングゲーム入門">
+        <div class="thumb"></div>
+        <h3>シューティングゲーム入門</h3>
+        <button onclick="startCourse('シューティングゲーム入門','course_shoot.html')">開始する</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>チュートリアル</h2>
+    <ul>
+      <li><a href="tutorial1.html" class="tutorial-link">Unity入門チュートリアル</a></li>
+      <li><a href="tutorial2.html" class="tutorial-link">ゲーム作成ステップガイド</a></li>
+    </ul>
+    <div id="last-progress"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>お知らせ</h2>
+    <ul>
+      <li>2025/11/16 - 新しいツール「ツールE」を追加しました。</li>
+      <li>2025/11/10 - サイトデザインを更新しました。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>お問い合わせ</h2>
+    <form id="contactForm">
+      <label for="name">名前:</label>
+      <input type="text" id="name" required>
+
+      <label for="email">メールアドレス:</label>
+      <input type="email" id="email" required>
+
+      <label for="message">内容:</label>
+      <textarea id="message" rows="5" required></textarea>
+
+      <button type="submit">送信</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <h3>Unity学習サイト</h3>
+      <p>ゲーム制作を楽しく学べる学習プラットフォーム</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>メニュー</h4>
+      <a href="#">コース一覧</a>
+      <a href="problems.html">問題一覧</a>
+      <a href="#">提出履歴</a>
+      <a href="#">ランキング</a>
+      <a href="#">このサイトについて</a>
+    </div>
+
+    <div class="footer-contact">
+      <h4>お問い合わせ</h4>
+      <p>ご質問・バグ報告はこちらから</p>
+      <a href="#contactForm">お問い合わせフォーム</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+  </div>
+</footer>
+
+
+<script src="script.js"></script>
+</body>
+</html>

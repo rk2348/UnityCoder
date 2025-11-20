@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolB - Unity Coding Contest 問題ページ</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    color: #333;
+}
+header {
+    background: #2b4eff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+h2 { color: #2b4eff; margin-bottom: 10px; }
+h3 { margin-top: 25px; color: #2b4eff; }
+pre {
+    background: #eee;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+.code-block {
+    background: #1e1e1e;
+    color: #dcdcdc;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    white-space: pre;
+}
+textarea {
+    width: 100%;
+    height: 100px;
+    font-size: 1rem;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: Consolas, monospace;
+}
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border:none;
+    border-radius:6px;
+    background:#2b4eff;
+    color:white;
+    cursor:pointer;
+    font-size:1rem;
+}
+button:hover { background:#1a2fc2; }
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+#result.correct { background: #e0ffe4; color: #008a1e; border: 1px solid #00a12b; }
+#result.wrong { background: #ffe0e0; color: #b30000; border: 1px solid #cc0000; }
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #555;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<header>ToolB - Unity Coding Contest 問題ページ</header>
+
+<div class="container">
+    <h2>Unity Coding Contest 001 – Debug.Log で文字列出力</h2>
+
+    <p>プログラミング学習の最初の一歩である「 <strong>Hello World</strong> 」の出力に挑戦しましょう。Unityのコンソールに、固定の文字列<strong>"Hello World"</strong>を表示するためのスクリプトを作成してください。</p>
+
+    <h3>条件</h3>
+    <ul>
+        <li>Unityのコンソールに出力するために <code>Debug.Log()</code> メソッドを使用すること</li>
+        <li>出力する文字列は <code>"Hello World"</code> の固定文字列とすること</li>
+        <li>その他の変数や複雑な処理は使用しないこと</li>
+    </ul>
+
+    <h3>入力例</h3>
+    <pre>この問題では、特別な入力や変数は使用しません。</pre>
+
+    <h3>出力例（Unity コンソール）</h3>
+    <pre>Hello World</pre>
+
+    <h3>解答用テンプレート（C# / Unity形式）</h3>
+    <div class="code-block">
+<code>using UnityEngine;
+
+public class BasicLogger : MonoBehaviour
+{
+    void Start()
+    {
+        </code><span style="color:#ffea00;">★ここに、コンソールに "Hello World" と出力するコードを書いてください</span><code>
+    }
+}</code>
+</div>
+
+    <h3>あなたの回答を入力</h3>
+    <textarea id="userCode" placeholder='ここに回答を入力'></textarea>
+    <button onclick="checkAnswer()">Run</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function checkAnswer() {
+    const code = document.getElementById('userCode').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    // 正解として許可する唯一のパターン
+    const correctPattern = /^Debug\.Log\s*\(\s*["'`]Hello World["'`]\s*\)\s*;?$/;
+
+    if (correctPattern.test(code)) {
+        resultDiv.textContent = '🎉 正解です！Hello World を正しく出力できます！';
+        resultDiv.className = 'correct';
+    } else {
+        resultDiv.textContent = '❌ 不正解です。もう一度解き直してください。';
+        resultDiv.className = 'wrong';
+    }
+}
+</script>
+
+<!-- ▼▼ 追加した「問題選択に戻る」 ▼▼ -->
+<div style="text-align:center; margin-top:30px;">
+    <a href="problems.html" 
+       style="display:inline-block; padding:10px 20px; background:#2b4eff; color:white; 
+              text-decoration:none; border-radius:6px; font-weight:bold;">
+        問題選択に戻る
+    </a>
+</div>
+<!-- ▲▲ ここまで ▼▼ -->
+
+<footer>© 2025 Unity Coder Platform</footer>
+</body>
+</html>

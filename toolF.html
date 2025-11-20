@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolB - Unity Coding Contest 問題ページ</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    color: #333;
+}
+header {
+    background: #2b4eff;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+h2 { color: #2b4eff; margin-bottom: 10px; }
+h3 { margin-top: 25px; color: #2b4eff; }
+pre {
+    background: #eee;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+.code-block {
+    background: #1e1e1e;
+    color: #dcdcdc;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+
+    /* 改行と空白を保持する */
+    white-space: pre;
+}
+textarea {
+    width: 100%;
+    height: 100px;
+    font-size: 1rem;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: Consolas, monospace;
+}
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border:none;
+    border-radius:6px;
+    background:#2b4eff;
+    color:white;
+    cursor:pointer;
+    font-size:1rem;
+}
+button:hover { background:#1a2fc2; }
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+#result.correct { background: #e0ffe4; color: #008a1e; border: 1px solid #00a12b; }
+#result.wrong { background: #ffe0e0; color: #b30000; border: 1px solid #cc0000; }
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #555;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<header>ToolB - Unity Coding Contest 問題ページ</header>
+
+<div class="container">
+    <h2>Unity Coding Contest 003 – Debug.Log で文字列出力</h2>
+
+    <p>Unity でプログラムを書いている。変数 <strong>name</strong> に格納されている文字列を <strong>Debug.Log</strong> でコンソールに出力するスクリプトを作成せよ。</p>
+
+    <h3>条件</h3>
+    <ul>
+        <li>出力は必ず <code>Hello, &lt;name&gt;!</code> という形式で表示すること</li>
+        <li>変数 <code>name</code> を直接文字列として書き換えてはいけない</li>
+    </ul>
+
+    <h3>入力例</h3>
+    <pre>string name = "Unity";</pre>
+
+    <h3>出力例（Unity コンソール）</h3>
+    <pre>Hello, Unity!</pre>
+
+    <h3>解答用テンプレート（C# / Unity形式）</h3>
+    <div class="code-block">
+<code>using UnityEngine;
+
+public class GreetingLogger : MonoBehaviour
+{
+    void Start()
+    {
+        string name = "Unity";
+
+        // ★ ここに Debug.Log を使って出力するコードを書いてください
+        // 例: Debug.Log("Hello, " + name + "!");
+    }
+}</code>
+    </div>
+
+    <h3>あなたの回答を入力</h3>
+    <textarea id="userCode" placeholder='例: Debug.Log("Hello, " + name + "!");'></textarea>
+    <button onclick="checkAnswer()">Run</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const testCases = [
+    {name: "Unity", answer: "Hello, Unity!"},
+    {name: "Alice", answer: "Hello, Alice!"},
+    {name: "Bob", answer: "Hello, Bob!"}
+];
+
+function checkAnswer() {
+    const code = document.getElementById('userCode').value;
+    const resultDiv = document.getElementById('result');
+
+    try {
+        let allCorrect = true;
+
+        for(const test of testCases) {
+            let output = "";
+
+            // 空白を無視して Debug.Log("..." + name + "..." ) の中身を抽出
+            const debugMatch = code.match(/Debug\.Log\s*\(\s*"([^"]*)"\s*\+\s*name\s*\+\s*"([^"]*)"\s*\)/);
+            if(debugMatch) {
+                const prefix = debugMatch[1]; // "Hello,"など
+                const suffix = debugMatch[2]; // "!"など
+                output = prefix + test.name + suffix;
+            } else {
+                // Debug.Log の形式じゃなければ不正解
+                allCorrect = false;
+                break;
+            }
+
+            if(output !== test.answer) {
+                allCorrect = false;
+                break;
+            }
+        }
+
+        if(allCorrect) {
+            resultDiv.textContent = '🎉 正解！すべてのテストケースに合格しました';
+            resultDiv.className = 'correct';
+        } else {
+            resultDiv.textContent = '❌ 不正解です。テストケースに失敗しました';
+            resultDiv.className = 'wrong';
+        }
+
+    } catch(e) {
+        resultDiv.textContent = 'エラーがあります: ' + e.message;
+        resultDiv.className = 'wrong';
+    }
+}
+
+</script>
+
+
+<footer>© 2025 ToolB Coding Platform</footer>
+</body>
+</html>
