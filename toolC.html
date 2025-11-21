@@ -3,101 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToolC - 正方形の面積計算</title>
+<title>Unity コード辞典</title>
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    color: #333;
-}
-header {
-    background: #28a745;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    font-size: 1.6rem;
-    font-weight: bold;
-}
-.container {
-    max-width: 700px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-h2 { color: #28a745; margin-bottom: 20px; }
-#problem {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-}
-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
-}
-button {
-    padding: 10px 20px;
-    border:none;
-    border-radius:6px;
-    background:#28a745;
-    color:white;
-    cursor:pointer;
-    font-size:1rem;
-}
-button:hover { background:#1e7e34; }
-#result {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 6px;
-    font-weight: bold;
-}
-#result.correct { background: #e0ffe4; color: #008a1e; border: 1px solid #00a12b; }
-#result.wrong { background: #ffe0e0; color: #b30000; border: 1px solid #cc0000; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f5f5f7;
+        color: #333;
+    }
+    header {
+        background: #2b4eff;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 22px;
+    }
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        color: #2b4eff;
+        margin-top: 30px;
+    }
+    .api-card {
+        background: #fafafa;
+        padding: 15px;
+        border-left: 5px solid #2b4eff;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    pre {
+        background: #272822;
+        color: #f8f8f2;
+        padding: 12px;
+        overflow-x: auto;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    .category {
+        padding: 10px 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: #444;
+        border-bottom: 2px solid #ddd;
+        margin-top: 40px;
+    }
 </style>
 </head>
 <body>
-
-<header>ToolC - 正方形の面積問題</header>
+<header>Unity コード辞典（サンプルテンプレート）</header>
 
 <div class="container">
-    <h2>問題：正方形の面積を求めよう</h2>
-    <div id="problem"></div>
+    <!-- カテゴリ例 -->
+    <div class="category">Transform 操作</div>
 
-    <input type="text" id="userInput" placeholder="面積を入力">
-    <button onclick="checkAnswer()">Run</button>
-    <div id="result"></div>
+    <!-- API項目カード → 追加していく形式 -->
+    <div class="api-card">
+        <h2>Transform.Translate</h2>
+        <p>オブジェクトを指定方向に移動させる関数。</p>
+
+        <h3>① 最も簡単な使い方</h3>
+        <pre><code>transform.Translate(1f, 0f, 0f);</code></pre>
+
+        <h3>② 実戦で使われる例</h3>
+        <pre><code>void Update()
+{
+    float h = Input.GetAxis("Horizontal");
+    transform.Translate(Vector3.right * h * 5f * Time.deltaTime);
+}</code></pre>
+
+        <h3>③ よくあるつまずきポイント</h3>
+        <ul>
+            <li>Rigidbodyで物理挙動をさせたい場合は非推奨</li>
+            <li>Time.deltaTime を入れ忘れると速すぎる</li>
+            <li>Local座標 / World座標の違いに注意</li>
+        </ul>
+
+        <h3>④ 応用テクニック</h3>
+        <pre><code>// ワールド座標で移動
+transform.Translate(Vector3.forward * speed * Time.deltaTime, Space.World);</code></pre>
+    </div>
+
 </div>
-
-<script>
-// ランダムで N を生成（1～100）
-let N = Math.floor(Math.random() * 100) + 1;
-document.getElementById('problem').textContent = `整数 N = ${N} が与えられます。正方形の面積を求めよ（1 ≤ N ≤ 100）`;
-
-function checkAnswer() {
-    const userValue = parseInt(document.getElementById('userInput').value);
-    const resultDiv = document.getElementById('result');
-    const correctAnswer = N * N;
-
-    if(isNaN(userValue)) {
-        resultDiv.textContent = '整数を入力してください';
-        resultDiv.className = 'wrong';
-        return;
-    }
-
-    if(userValue === correctAnswer) {
-        resultDiv.textContent = `🎉 正解！一辺 ${N} の正方形の面積は ${correctAnswer} です`;
-        resultDiv.className = 'correct';
-    } else {
-        resultDiv.textContent = `❌ 不正解です。正しい答えは ${correctAnswer} です（一辺 ${N} の正方形）`;
-        resultDiv.className = 'wrong';
-    }
-}
-</script>
 
 </body>
 </html>
