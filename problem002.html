@@ -86,34 +86,39 @@ footer {
 <header>問題1 - Unity Coding Contest 問題ページ</header>
 
 <div class="container">
-    <h2>Unity Coding Contest 001 – Debug.Log で文字列出力</h2>
+    <h2>問題002: 変数を使った計算</h2>
 
-    <p>プログラミング学習の最初の一歩である「 <strong>Hello World</strong> 」の出力に挑戦しましょう。Unityのコンソールに、固定の文字列<strong>"Hello World"</strong>を表示するためのスクリプトを作成してください。</p>
+    <p>ゲーム内で獲得した <strong>基本スコア</strong> に <strong>ボーナス</strong> を加え、最終的な合計スコアを計算し、コンソールに出力するスクリプトを作成してください。</p>
 
     <h3>条件</h3>
     <ul>
-        <li>Unityのコンソールに出力するために <code>Debug.Log()</code> メソッドを使用すること</li>
-        <li>出力する文字列は <code>"Hello World"</code> の固定文字列とすること</li>
-        <li>その他の変数や複雑な処理は使用しないこと</li>
+        <li><strong>基本スコア</strong>を格納する整数型の変数<code>baseScore</code>を宣言し、初期値として100を設定すること。</li>
+        <li><strong>ボーナス</strong>を格納する整数型の変数<code>bonus</code>を宣言し、初期値として<code>50</code>を設定すること。</li>
+        <li><code>baseScore</code>と<code>bonus</code>を合計した<strong>最終スコア</strong>を変数に格納すること。</li>
+        <li><code>Debug.Log()</code>メソッドを使用し、<strong>最終スコア</strong>のみをコンソールに出力すること。</li>
     </ul>
 
     <h3>入力例</h3>
     <pre>この問題では、特別な入力や変数は使用しません。</pre>
 
     <h3>出力例（Unity コンソール）</h3>
-    <pre>Hello World</pre>
+    <pre>150</pre>
 
     <h3>解答用テンプレート（C# / Unity形式）</h3>
     <div class="code-block">
 <code>using UnityEngine;
 
-public class BasicLogger : MonoBehaviour
+public class ScoreCalculator : MonoBehaviour
 {
     void Start()
     {
-        </code><span style="color:#ffea00;">★ここに、コンソールに "Hello World" と出力するコードを書いてください</span><code>
+        int baseScore = 100;
+        int bonus = 50;
+
+        // 
+</code><span style="color:#ffea00;">★ここに、合計スコアを計算・表示するコードを書いてください</span><code>
     }
-}</code>
+}
 </div>
 
     <h3>あなたの回答を入力</h3>
