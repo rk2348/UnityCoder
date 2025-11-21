@@ -208,3 +208,38 @@ footer {
     }
 }
 
+.thumb {
+    width: 100%;
+    height: 100px;
+    background: #ddd;              /* 画像が読み込めない場合の代替色 */
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-size: cover;         /* カードサイズに合わせて画像を拡大 */
+    background-position: center;    /* 画像の中央を表示 */
+}
+
+.news-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.news-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-left: 5px solid #007acc; /* 青いアクセント */
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.news-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.news-card p {
+    margin: 0;
+    font-size: 1em;
+    color: #333;
+}
