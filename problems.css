@@ -96,35 +96,45 @@ nav a:hover {
 footer {
     background: #222;
     color: #eee;
-    padding: 40px 0 20px;
-    margin-top: 50px;
+    padding: 40px 20px 20px;
 }
 
 .footer-inner {
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
     gap: 30px;
+    justify-content: space-between;
 }
 
-.footer-inner h3,
-.footer-inner h4 {
+.footer-section {
+    flex: 1 1 180px;
+    min-width: 180px;
+}
+
+.footer-section h4 {
     margin-bottom: 10px;
+    color: #fff;
 }
 
-.footer-links a,
-.footer-contact a {
+.footer-section a {
     display: block;
     color: #ccc;
     text-decoration: none;
     margin-bottom: 5px;
 }
 
-.footer-links a:hover,
-.footer-contact a:hover {
-    color: #fff;
+.footer-section a:hover {
+    color: #007acc;
+    text-decoration: underline;
 }
 
+.footer-section p {
+    margin: 0 0 5px 0;
+    font-size: 0.95em;
+    color: #ccc;
+}
+
+/* コピーライト */
 .footer-bottom {
     text-align: center;
     border-top: 1px solid #555;
@@ -136,17 +146,6 @@ footer {
 
 /* レスポンシブ対応 */
 @media screen and (max-width: 768px) {
-    .header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    nav a {
-        margin-left: 0;
-        margin-right: 15px;
-        margin-top: 8px;
-    }
-
     .footer-inner {
         flex-direction: column;
         gap: 20px;

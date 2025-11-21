@@ -80,7 +80,7 @@ nav a:hover {
 }
 
 
-/*フッダー*/
+/* フッター */
 footer {
     background: #222;
     color: #eee;
@@ -139,4 +139,3 @@ footer {
         gap: 20px;
     }
 }
-
