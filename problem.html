@@ -29,7 +29,7 @@
 
         <section class="problem-desc">
             <div id="probDesc"></div>
-            
+
             <div class="io-example">
                 <div class="io-box">
                     <h4>入力</h4>
@@ -44,12 +44,14 @@
 
         <section class="code-section">
             <h3>解答エリア</h3>
+
             <div class="code-editor-wrapper">
-                <div class="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+                <div class="line-numbers"></div>
                 <textarea id="userCode" spellcheck="false" placeholder="ここにコードを入力してください"></textarea>
             </div>
-            
-            <button onclick="checkAnswer()" class="btn-run">実行して判定</button>
+
+            <button id="runBtn" class="btn-run">実行して判定</button>
+
             <div id="result"></div>
         </section>
 
@@ -57,9 +59,11 @@
             <a href="index.html" class="btn-secondary">問題一覧に戻る</a>
         </div>
     </div>
-    
+
     <footer>
         <p>© 2025 Unity学習サイト</p>
     </footer>
+
+    <script src="problem.js"></script>
 </body>
 </html>
