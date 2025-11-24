@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity Coding Contest - 問題ジェネレーター</title>
+
+<style>
+body {
+    font-family: sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+}
+
+header {
+    background: #2b4eff;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+textarea, input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+    background: #2b4eff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.preview-box {
+    background: #222;
+    color: #eee;
+    padding: 10px;
+    white-space: pre-wrap;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+</style>
+</head>
+
+<body>
+<header>Unity Coding Contest 問題ジェネレーター</header>
+
+<div class="container">
+
+<h2>問題の内容を入力</h2>
+
+<label>問題タイトル</label>
+<input id="title" placeholder="例：Unity Coding Contest 001 – Debug.Log で文字列出力">
+
+<label>問題説明</label>
+<textarea id="description" rows="4" placeholder="問題文を入力"></textarea>
+
+<label>条件（箇条書き）※1行1条件</label>
+<textarea id="conditions" rows="4" placeholder="条件を1行ずつ入力"></textarea>
+
+<label>出力例</label>
+<input id="outputExample" placeholder="例：Hello World">
+
+<label>正解判定に使う正規表現（JS形式）</label>
+<input id="regex" placeholder='例：^Debug\\.Log\\("Hello World"\\);$'>
+
+<button onclick="generate()">HTML を生成する</button>
+
+<h3>生成結果（プレビュー）</h3>
+<div id="preview" class="preview-box">(ここにHTMLが生成されます)</div>
+
+<button onclick="downloadHTML()">HTML をダウンロード</button>
+
+</div>
+
+<script>
+function escapeScriptTag(str){
+    return str.replace(/<\/script>/g, '<\\/script>');
+}
+
+function generate(){
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const conditions = document.getElementById('conditions').value.split("\n").map(c => `<li>${c}</li>`).join("");
+    const outputExample = document.getElementById('outputExample').value;
+    const regex = document.getElementById('regex').value;
+
+    let html = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>${title}</title>
+<link rel="stylesheet" href="problem.css">
+</head>
+
+<body>
+<header>${title}</header>
+
+<div class="container">
+    <h2>${title}</h2>
+
+    <p>${description}</p>
+
+    <h3>条件</h3>
+    <ul>
+        ${conditions}
+    </ul>
+
+    <h3>出力例</h3>
+    <pre>${outputExample}</pre>
+
+    <h3>解答用テンプレート（C# / Unity形式）</h3>
+    <div class="code-block">
+<code>
+using UnityEngine;
+
+public class ProblemScript : MonoBehaviour {
+    void Start() {
+        // ★ここにコードを書いてください
+    }
+}
+</code>
+    </div>
+
+    <h3>あなたの回答を入力</h3>
+    <textarea id="userCode"></textarea>
+    <button onclick="checkAnswer()">Run</button>
+    <div id="result"></div>
+</div>
+
+<script${""}>
+function checkAnswer(){
+    const code = document.getElementById('userCode').value.trim();
+    const resultDiv = document.getElementById('result');
+    const pattern = new RegExp(${JSON.stringify(regex)});
+
+    if(pattern.test(code)){
+        resultDiv.textContent = "🎉 正解です！";
+        resultDiv.className = "correct";
+    } else {
+        resultDiv.textContent = "❌ 不正解です。もう一度解き直してください。";
+        resultDiv.className = "wrong";
+    }
+}
+<\/script>
+
+<footer>© 2025 Unity Coder Platform</footer>
+</body>
+</html>
+`;
+
+    document.getElementById('preview').textContent = html;
+    window.generatedHTML = html;
+}
+
+function downloadHTML(){
+    if(!window.generatedHTML){
+        alert("先に HTML を生成してください！");
+        return;
+    }
+
+    const blob = new Blob([window.generatedHTML], {type: "text/html"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "unity_problem.html";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>

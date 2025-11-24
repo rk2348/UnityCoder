@@ -1,178 +1,171 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title >Unity学習サイト</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unity学習サイト</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <header>
     <div class="container header-inner">
       <div class="logo">Unity学習サイト</div>
-        <nav>
-          <a href="courses.html">コース一覧</a>
-          <a href="problems.html">問題一覧</a>
-          <a href="submissions.html">提出履歴</a>
-          <a href="ranking.html">ランキング</a>
-          <a href="#">コミュニティ掲示板</a>
-          <a href="about.html">このサイトについて</a>
-        </nav>
+      <nav>
+        <a href="courses.html">コース一覧</a>
+        <a href="problem.html">問題一覧</a>
+        <a href="submissions.html">提出履歴</a>
+        <a href="ranking.html">ランキング</a>
+        <a href="#">掲示板</a>
+        <a href="about.html">概要</a>
+      </nav>
     </div>
   </header>
 
   <section class="hero">
     <div class="container">
-        <h1>Unity学習サイト</h1>
-          <p>ゲーム制作を学びながらツールやコースを進めましょう</p>
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="ツール・コースを検索">
-          <button onclick="searchTool()">検索</button>
+      <h1>Unity学習サイト</h1>
+      <p>ゲーム制作を学びながらツールやコースを進めましょう</p>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ツール・コースを検索">
+        <button type="button" onclick="alert('検索機能は開発中です')">検索</button>
       </div>
     </div>
   </section>
 
-<section class="section">
-  <div class="container">
-    <h2>人気の記事</h2>
-    <div class="tool-grid" id="popularTools">
-      <div class="tool-card" data-name="ツールA">
-        <div class="thumb" style="background-image: url('images/toolA.png');"></div>
-        <h3>記事A</h3>
-        <button onclick="location.href='toolA.html'">使用する</button>
-      </div>
-      <div class="tool-card" data-name="ツールB">
-        <div class="thumb" style="background-image: url('images/toolB.png');"></div>
-        <h3>記事B</h3>
-        <button onclick="location.href='toolB.html'">使用する</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container">
-    <h2>新着記事</h2>
-    <div class="tool-grid" id="newTools">
-      <!-- ツールカード複数 -->
-      <div class="tool-card" data-name="ツールC">
-        <div class="thumb"></div>
-        <h3>ツールC</h3>
-        <button onclick="location.href='toolC.html'">使用する</button>
-      </div>
-      <!-- 必要に応じて追加 -->
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <h2>コース一覧</h2>
-    <div class="tool-grid" id="courseList">
-      <div class="tool-card" data-name="RPGゲーム入門">
-        <div class="thumb"></div>
-        <h3>RPGゲーム入門</h3>
-        <button onclick="startCourse('RPGゲーム入門','course_rpg.html')">開始する</button>
-      </div>
-      <div class="tool-card" data-name="ブロック崩し作成">
-        <div class="thumb"></div>
-        <h3>ブロック崩し作成</h3>
-        <button onclick="startCourse('ブロック崩し作成','course_block.html')">開始する</button>
-      </div>
-      <div class="tool-card" data-name="シューティングゲーム入門">
-        <div class="thumb"></div>
-        <h3>シューティングゲーム入門</h3>
-        <button onclick="startCourse('シューティングゲーム入門','course_shoot.html')">開始する</button>
+  <section class="section">
+    <div class="container">
+      <h2>人気の記事</h2>
+      <div class="tool-grid" id="popularTools">
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Tool+A');"></div>
+          <h3>記事A: オブジェクトの動かし方</h3>
+          <button onclick="location.href='toolA.html'">読む</button>
+        </div>
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Tool+B');"></div>
+          <h3>記事B: UIの作り方</h3>
+          <button onclick="location.href='toolB.html'">読む</button>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="container">
-    <h2>チュートリアル</h2>
-    <div class="tool-grid" id="newTools">
-      <!-- ツールカード複数 -->
-      <div class="tool-card" data-name="ツールC">
-        <div class="thumb"></div>
-        <h3>Unity入門チュートリアル</h3>
-        <button onclick="location.href='toolC.html'">使用する</button>
-      </div>
-
-        <div class="tool-card" data-name="ツールC">
-        <div class="thumb"></div>
-        <h3>ゲーム作成ステップガイド</h3>
-        <button onclick="location.href='toolC.html'">使用する</button>
-      </div>
-      <!-- 必要に応じて追加 -->
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <h2>お知らせ</h2>
-    <div class="news-grid">
-      <div class="news-card">
-        <p><strong>2025/11/21</strong> - 新しいツール「ツールE」を追加しました。</p>
-      </div>
-      <div class="news-card">
-        <p><strong>2025/11/10</strong> - サイトデザインを更新しました。</p>
+  <section class="section bg-light">
+    <div class="container">
+      <h2>新着記事</h2>
+      <div class="tool-grid" id="newTools">
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=New+Tool');"></div>
+          <h3>シェーダー入門</h3>
+          <button onclick="location.href='toolC.html'">読む</button>
+        </div>
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Animation');"></div>
+          <h3>アニメーション設定</h3>
+          <button onclick="location.href='toolD.html'">読む</button>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
+  <section class="section">
+    <div class="container">
+      <h2>コース一覧</h2>
+      <div class="tool-grid" id="courseList">
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/orange/white?text=RPG');"></div>
+          <h3>RPGゲーム入門</h3>
+          <button onclick="location.href='course_rpg.html'">開始する</button>
+        </div>
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/blue/white?text=Block');"></div>
+          <h3>ブロック崩し作成</h3>
+          <button onclick="location.href='course_block.html'">開始する</button>
+        </div>
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/red/white?text=Shooting');"></div>
+          <h3>シューティング入門</h3>
+          <button onclick="location.href='course_shoot.html'">開始する</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!-- フッター -->
-<footer>
-  <div class="container footer-inner">
-    
-    <div class="footer-section">
-      <h4>運営情報</h4>
-      <p>運営者名: Unity学習プロジェクト</p>
-      <p>お問い合わせ: <a href="mailto:contact@unitysite.jp">contact@unitysite.jp</a></p>
-      <p><a href="contact.html">お問い合わせフォーム</a></p>
+  <section class="section bg-light">
+    <div class="container">
+      <h2>チュートリアル</h2>
+      <div class="tool-grid" id="tutorialList">
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Unity+Install');"></div>
+          <h3>Unityインストールガイド</h3>
+          <button onclick="location.href='tutorial_install.html'">学習する</button>
+        </div>
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=C%23+Basics');"></div>
+          <h3>C#スクリプト基礎</h3>
+          <button onclick="location.href='tutorial_csharp.html'">学習する</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>お知らせ</h2>
+      <div class="news-grid">
+        <div class="news-card">
+          <p><strong>2025/11/21</strong> - 新しいコース「FPS制作」を追加しました。</p>
+        </div>
+        <div class="news-card">
+          <p><strong>2025/11/10</strong> - サイトデザインをリニューアルしました。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-section">
+        <h4>運営情報</h4>
+        <p>Unity学習プロジェクト</p>
+        <p><a href="mailto:contact@unitysite.jp">contact@unitysite.jp</a></p>
+        <p><a href="contact.html">お問い合わせフォーム</a></p>
+      </div>
+
+      <div class="footer-section">
+        <h4>各種ポリシー</h4>
+        <a href="terms.html">利用規約</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="cookies.html">クッキーポリシー</a>
+      </div>
+
+      <div class="footer-section">
+        <h4>サイト情報</h4>
+        <p>バージョン: 1.0.0</p>
+        <a href="changelog.html">更新履歴</a>
+      </div>
+
+      <div class="footer-section">
+        <h4>SNSコミュニティ</h4>
+        <a href="#" target="_blank">GitHub</a>
+        <a href="#" target="_blank">Discord</a>
+        <a href="#" target="_blank">X (旧Twitter)</a>
+      </div>
+
+      <div class="footer-section">
+        <h4>サイトマップ</h4>
+        <a href="index.html">ホーム</a>
+        <a href="courses.html">コース一覧</a>
+        <a href="ranking.html">ランキング</a>
+        <a href="about.html">サイトについて</a>
+      </div>
     </div>
 
-    <div class="footer-section">
-      <h4>各種ポリシー</h4>
-      <a href="terms.html">利用規約</a>
-      <a href="privacy.html">プライバシーポリシー</a>
-      <a href="cookies.html">クッキーポリシー</a>
+    <div class="footer-bottom">
+      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
     </div>
+  </footer>
 
-    <div class="footer-section">
-      <h4>サイト情報</h4>
-      <p>バージョン: 1.0.0</p>
-      <a href="changelog.html">更新履歴</a>
-    </div>
-
-    <div class="footer-section">
-      <h4>SNSコミュニティ</h4>
-      <a href="#" target="_blank">GitHub</a>
-      <a href="https://discord.com/channels/1441272682489315460/1441272683261202534" target="_blank">Discord</a>
-      <a href="#" target="_blank">X (旧Twitter)</a>
-    </div>
-
-    <div class="footer-section">
-      <h4>サイトマップ</h4>
-      <a href="index.html">ホーム</a>
-      <a href="courses.html">コース一覧</a>
-      <a href="problems.html">問題一覧</a>
-      <a href="ranking.html">ランキング</a>
-      <a href="about.html">このサイトについて</a>
-    </div>
-    
-  </div>
-
-  <div class="footer-bottom">
-    <p>© 2025 Unity学習サイト All Rights Reserved.</p>
-  </div>
-</footer>
-
-<script src="script.js"></script>
-</body>
+  </body>
 </html>

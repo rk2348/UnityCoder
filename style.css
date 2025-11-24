@@ -1,245 +1,304 @@
-/* フォーム関連を削除、その他はそのまま利用可能 */
-
-/* 全体 */
+/* 全体設定 */
 body {
-    margin: 0;
-    font-family: sans-serif;
-    background: #f6f6f6;
+  margin: 0;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  background: #f6f6f6;
+  color: #333;
+  line-height: 1.6;
 }
 
+/* レイアウト用コンテナ */
 .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 背景色切り替え用のクラス（セクションにメリハリをつける） */
+.bg-light {
+  background-color: #fff;
 }
 
 /* ヘッダー */
 header {
-    background: #fff;
-    border-bottom: 1px solid #ddd;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  position: sticky; /* スクロールしても上部に固定する場合 */
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .header-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  flex-wrap: wrap; /* スマホでメニューが溢れたら折り返す */
 }
 
 .logo {
-    font-weight: bold;
-    font-size: 1.2em;
+  font-weight: bold;
+  font-size: 1.4em;
+  color: #222;
+}
+
+nav {
+  margin-top: 5px;
 }
 
 nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: #333;
-    transition: color 0.2s;
+  margin-left: 15px;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: color 0.2s;
+  font-size: 0.95em;
 }
 
 nav a:hover {
-    color: #007acc;
+  color: #007acc;
 }
 
 /* ヒーローセクション */
 .hero {
-    text-align: center;
-    padding: 60px 20px;
-    background: #fff;
-    margin-bottom: 40px;
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #2b2b2b 0%, #4a4a4a 100%); /* 少しUnityっぽいダークテーマに */
+  color: #fff;
+  margin-bottom: 0; /* 直後のセクションとの隙間調整 */
 }
 
 .hero h1 {
-    font-size: 2.2em;
-    margin-bottom: 10px;
+  font-size: 2.5em;
+  margin: 0 0 15px 0;
 }
 
 .hero p {
-    font-size: 1.1em;
-    color: #666;
+  font-size: 1.1em;
+  color: #ddd;
+  margin-bottom: 30px;
 }
 
+/* 検索ボックス */
 .search-box {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .search-box input {
-    width: 250px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  width: 300px;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
 }
 
 .search-box button {
-    padding: 10px 20px;
-    border: none;
-    background: #007acc;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
+  padding: 12px 25px;
+  border: none;
+  background: #007acc;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s;
 }
 
 .search-box button:hover {
-    background: #005fa3;
+  background: #005fa3;
 }
 
-/* セクション */
+/* セクション共通 */
 .section {
-    padding: 40px 0;
+  padding: 60px 0;
 }
 
 h2 {
-    margin-bottom: 20px;
-    color: #333;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 1.8em;
+  color: #333;
+  border-left: 6px solid #007acc; /* 左側の青いライン */
+  padding-left: 15px;
 }
 
-/* ツール・コースカード */
+/* ツール・コースカード (Grid System) */
 .tool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* カードの最小幅を少し広げました */
+  gap: 25px;
 }
 
 .tool-card {
-    background: #fff;
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ボタンを下に揃える */
 }
 
 .tool-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
+/* サムネイル画像設定 (CSSを統合しました) */
 .thumb {
-    width: 100%;
-    height: 100px;
-    background: #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
+  width: 100%;
+  height: 140px;
+  background-color: #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .tool-card h3 {
-    margin: 10px 0;
-    font-size: 1.1em;
-    color: #333;
+  margin: 0 0 15px 0;
+  font-size: 1.1em;
+  color: #333;
 }
 
 .tool-card button {
-    margin-top: 10px;
-    padding: 8px 15px;
-    border: none;
-    background: #007acc;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #007acc;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
 }
 
 .tool-card button:hover {
-    background: #005fa3;
+  background: #005fa3;
+}
+
+/* お知らせリスト */
+.news-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.news-card {
+  background: #fff;
+  padding: 20px;
+  border-left: 5px solid #007acc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.news-card:hover {
+  background-color: #fcfcfc;
+  transform: translateX(5px);
+}
+
+.news-card p {
+  margin: 0;
+  font-size: 1em;
+  color: #444;
+}
+
+.news-card strong {
+  color: #007acc;
+  margin-right: 10px;
 }
 
 /* フッター */
 footer {
-    background: #222;
-    color: #eee;
-    padding: 40px 20px 20px;
+  background: #222;
+  color: #eee;
+  padding: 60px 0 20px;
+  margin-top: auto;
 }
 
 .footer-inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: space-between;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: space-between;
 }
 
 .footer-section {
-    flex: 1 1 180px;
-    min-width: 180px;
+  flex: 1 1 200px; /* 幅の調整 */
 }
 
 .footer-section h4 {
-    margin-bottom: 10px;
-    color: #fff;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #fff;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
 }
 
 .footer-section a {
-    display: block;
-    color: #ccc;
-    text-decoration: none;
-    margin-bottom: 5px;
+  display: block;
+  color: #bbb;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: color 0.2s;
 }
 
 .footer-section a:hover {
-    color: #007acc;
-    text-decoration: underline;
+  color: #fff;
+  text-decoration: underline;
 }
 
 .footer-section p {
-    margin: 0 0 5px 0;
-    font-size: 0.95em;
-    color: #ccc;
+  margin: 0 0 8px 0;
+  color: #bbb;
+  font-size: 0.9em;
 }
 
-/* コピーライト */
 .footer-bottom {
-    text-align: center;
-    border-top: 1px solid #555;
-    margin-top: 30px;
-    padding-top: 15px;
-    color: #bbb;
-    font-size: 14px;
+  text-align: center;
+  border-top: 1px solid #444;
+  margin-top: 40px;
+  padding-top: 20px;
+  color: #888;
+  font-size: 0.85em;
 }
 
-/* レスポンシブ対応 */
+/* スマホ向けレスポンシブ調整 */
 @media screen and (max-width: 768px) {
-    .footer-inner {
-        flex-direction: column;
-        gap: 20px;
-    }
-}
-
-.thumb {
-    width: 100%;
-    height: 100px;
-    background: #ddd;              /* 画像が読み込めない場合の代替色 */
-    border-radius: 5px;
-    margin-bottom: 10px;
-    background-size: cover;         /* カードサイズに合わせて画像を拡大 */
-    background-position: center;    /* 画像の中央を表示 */
-}
-
-.news-grid {
-    display: flex;
+  .header-inner {
     flex-direction: column;
-    gap: 15px;
-}
+    align-items: flex-start;
+  }
+  
+  nav {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  nav a {
+    margin-left: 0;
+    margin-right: 15px;
+    font-size: 0.9em;
+  }
 
-.news-card {
-    background: #fff;
-    padding: 15px 20px;
-    border-left: 5px solid #007acc; /* 青いアクセント */
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+  .hero h1 {
+    font-size: 1.8em;
+  }
 
-.news-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.news-card p {
-    margin: 0;
-    font-size: 1em;
-    color: #333;
+  .search-box input {
+    width: 100%;
+  }
+  
+  .search-box button {
+    width: 100%;
+  }
 }

@@ -1,82 +1,100 @@
 <!DOCTYPE html>
 <html lang="ja">
-    
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="problem.css">
-<title>問題1 - Unity Coding Contest 問題ページ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題1 | Unity学習サイト</title>
+    <link rel="stylesheet" href="problem.css">
 </head>
 
 <body>
-<header>問題1 - Unity Coding Contest 問題ページ</header>
+    <header>
+        <div class="header-inner">
+            <div class="logo">Unity学習サイト</div>
+            <nav>
+                <a href="index.html">ホーム</a>
+                <a href="problems.html">問題一覧</a>
+                <a href="ranking.html">ランキング</a>
+            </nav>
+        </div>
+    </header>
 
-<div class="container">
-    <h2>Unity Coding Contest 001 – Debug.Log で文字列出力</h2>
+    <div class="container main-content">
+        <div class="breadcrumb">
+            <a href="problems.html">問題一覧</a> &gt; <span>問題001</span>
+        </div>
 
-    <p>プログラミング学習の最初の一歩である「 <strong>Hello World</strong> 」の出力に挑戦しましょう。Unityのコンソールに、固定の文字列<strong>"Hello World"</strong>を表示するためのスクリプトを作成してください。</p>
+        <section class="problem-header">
+            <span class="badge">初級</span>
+            <h2>問題001: Debug.Log で文字列出力</h2>
+        </section>
 
-    <h3>条件</h3>
-    <ul>
-        <li>Unityのコンソールに出力するために <code>Debug.Log()</code> メソッドを使用すること</li>
-        <li>出力する文字列は <code>"Hello World"</code> の固定文字列とすること</li>
-        <li>その他の変数や複雑な処理は使用しないこと</li>
-    </ul>
+        <section class="problem-desc">
+            <p>プログラミング学習の最初の一歩である「 <strong>Hello World</strong> 」の出力に挑戦しましょう。</p>
+            
+            <h3>条件</h3>
+            <ul class="check-list">
+                <li><code>Debug.Log()</code> メソッドを使用すること</li>
+                <li>文字列 <code>"Hello World"</code> を正確に出力すること</li>
+            </ul>
 
-    <h3>入力例</h3>
-    <pre>この問題では、特別な入力や変数は使用しません。</pre>
+            <div class="io-example">
+                <div class="io-box">
+                    <h4>入力</h4>
+                    <pre>なし</pre>
+                </div>
+                <div class="io-box">
+                    <h4>出力例（Console）</h4>
+                    <pre>Hello World</pre>
+                </div>
+            </div>
+        </section>
 
-    <h3>出力例（Unity コンソール）</h3>
-    <pre>Hello World</pre>
-
-    <h3>解答用テンプレート（C# / Unity形式）</h3>
-    <div class="code-block">
-<code>using UnityEngine;
+        <section class="code-section">
+            <h3>解答エリア</h3>
+            <div class="code-editor-wrapper">
+                <div class="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+                <textarea id="userCode" spellcheck="false">
+using UnityEngine;
 
 public class BasicLogger : MonoBehaviour
 {
     void Start()
     {
-        </code><span style="color:#ffea00;">★ここに、コンソールに "Hello World" と出力するコードを書いてください</span><code>
+        // ここにコードを書いてください
+        
     }
-}</code>
-</div>
+}</textarea>
+            </div>
+            
+            <button onclick="checkAnswer()" class="btn-run">実行して判定</button>
+            <div id="result"></div>
+        </section>
 
-    <h3>あなたの回答を入力</h3>
-    <textarea id="userCode" placeholder='ここに回答を入力'></textarea>
-    <button onclick="checkAnswer()">Run</button>
+        <div class="nav-links">
+            <a href="problems.html" class="btn-secondary">問題一覧に戻る</a>
+            </div>
+    </div>
 
-    <div id="result"></div>
-</div>
+    <footer>
+        <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+    </footer>
 
-<script>
-function checkAnswer() {
-    const code = document.getElementById('userCode').value.trim();
-    const resultDiv = document.getElementById('result');
+    <script>
+    function checkAnswer() {
+        const code = document.getElementById('userCode').value;
+        const resultDiv = document.getElementById('result');
 
-    // 正解として許可する唯一のパターン
-    const correctPattern = /^Debug\.Log\s*\(\s*["'`]Hello World["'`]\s*\)\s*;?$/;
+        // 改行や余分なスペースに強くするための正規表現調整
+        // Debug.Log("Hello World"); を許容
+        const correctPattern = /Debug\.Log\s*\(\s*["']Hello World["']\s*\)\s*;?/;
 
-    if (correctPattern.test(code)) {
-        resultDiv.textContent = '🎉 正解です！Hello World を正しく出力できます！';
-        resultDiv.className = 'correct';
-    } else {
-        resultDiv.textContent = '❌ 不正解です。もう一度解き直してください。';
-        resultDiv.className = 'wrong';
+        if (correctPattern.test(code)) {
+            resultDiv.innerHTML = '<div class="msg success">🎉 正解です！<br>Hello World が出力されました。</div>';
+        } else {
+            resultDiv.innerHTML = '<div class="msg error">❌ 不正解です。<br>スペルミスや記号の抜けがないか確認してください。</div>';
+        }
     }
-}
-</script>
-
-<!-- ▼▼ 追加した「問題選択に戻る」 ▼▼ -->
-<div style="text-align:center; margin-top:30px;">
-    <a href="problems.html" 
-       style="display:inline-block; padding:10px 20px; background:#2b4eff; color:white; 
-              text-decoration:none; border-radius:6px; font-weight:bold;">
-        問題選択に戻る
-    </a>
-</div>
-<!-- ▲▲ ここまで ▼▼ -->
-
-<footer>© 2025 Unity Coder Platform</footer>
+    </script>
 </body>
 </html>
