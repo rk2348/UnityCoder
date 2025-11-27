@@ -11,29 +11,46 @@
 <header>
   <div class="container header-inner">
     <div class="logo">Unity学習サイト</div>
-    <nav>
+    <nav aria-label="メインナビゲーション">
       <a href="home.html">ホーム</a>
       <a href="courses.html">コース一覧</a>
       <a href="problems.html">問題一覧</a>
       <a href="ranking.html">ランキング</a>
       <a href="about.html">このサイトについて</a>
-      <a href="contact.html">お問い合わせ</a>
+      <a href="contact.html" style="color: #007acc; font-weight: bold;">お問い合わせ</a>
     </nav>
   </div>
 </header>
 
 <main class="container main-content">
-  <h1>お問い合わせ</h1>
-  <p>ご質問・ご要望・バグ報告などはこちらからお問い合わせください。</p>
+  <h1>お問い合わせ 💌</h1>
+  <p>ご質問、ご要望、バグ報告など、お気軽にお問い合わせください。</p>
+  
+  <div id="statusMessage" class="message hidden" role="alert"></div>
 
   <form id="contactForm">
-    <label for="name">名前:</label>
-    <input type="text" id="name" name="name" required>
+    <fieldset>
+        <legend>お問い合わせフォーム</legend>
 
-    <label for="message">お問い合わせ内容:</label>
-    <textarea id="message" name="message" rows="6" required></textarea>
+        <label for="name">お名前 (必須):</label>
+        <input type="text" id="name" name="name" required aria-required="true" placeholder="例: 山田 太郎">
 
-    <button type="submit">送信</button>
+        <label for="email">メールアドレス (必須):</label>
+        <input type="email" id="email" name="email" required aria-required="true" placeholder="例: yourname@example.com">
+
+        <label for="category">お問い合わせの種類:</label>
+        <select id="category" name="category">
+            <option value="question">学習内容に関するご質問</option>
+            <option value="request">機能やコンテンツに関するご要望</option>
+            <option value="bug">バグ・不具合報告</option>
+            <option value="other">その他</option>
+        </select>
+
+        <label for="message">お問い合わせ内容 (必須):</label>
+        <textarea id="message" name="message" rows="6" required aria-required="true" placeholder="具体的な内容をご記入ください"></textarea>
+    </fieldset>
+
+    <button type="submit">送信する</button>
   </form>
 </main>
 
