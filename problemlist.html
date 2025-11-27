@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>問題一覧 | Unity学習サイト</title>
+  <link rel="stylesheet" href="style.css"> <style>
+    /* problem.html 固有のスタイル (CSSの重複を避けるため、簡易的にここに記述) */
+    .filter-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .filter-group label { font-size: 0.9rem; font-weight: bold; color: #555; }
+    .filter-group select, .filter-group input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    .problem-meta { padding: 0 15px; margin-bottom: 10px; font-size: 0.85rem; display: flex; gap: 10px; }
+    .badge { padding: 3px 8px; border-radius: 4px; color: white; font-size: 0.8rem; }
+    .badge-easy { background-color: #4CAF50; } 
+    .badge-normal { background-color: #FF9800; } 
+    .badge-hard { background-color: #F44336; }  
+    .status-solved { color: #4CAF50; font-weight: bold; }
+    .pagination { margin-top: 40px; display: flex; justify-content: center; gap: 10px; }
+    .page-btn { padding: 10px 15px; border: 1px solid #ddd; background: white; cursor: pointer; text-decoration: none; color: #333; border-radius: 4px; }
+    .page-btn.active { background-color: #333; color: white; border-color: #333; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container header-inner">
+      <div class="logo">Unity学習サイト</div>
+      <nav>
+        <a href="courses.html">コース一覧</a>
+        <a href="problems.html" style="font-weight:bold; border-bottom: 2px solid #333;">問題一覧</a>
+        <a href="submissions.html">提出履歴</a>
+        <a href="ranking.html">ランキング</a>
+        <a href="#">掲示板</a>
+        <a href="about.html">概要</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>問題一覧</h1>
+      <p>基礎から応用まで、様々な課題に挑戦してスキルを磨きましょう</p>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="問題名・キーワードで検索">
+        <button type="button" onclick="alert('検索結果をフィルタリングします')">検索</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="categorySelect">カテゴリ</label>
+          <select id="categorySelect">
+            <option value="all">すべて</option>
+            <option value="csharp">C#スクリプト</option>
+            <option value="physics">物理演算</option>
+          </select>
+        </div>
+        <div style="margin-left: auto;">
+          <button onclick="alert('条件で絞り込みます')">絞り込み</button>
+        </div>
+      </div>
+
+      <div class="tool-grid" id="problemList">
+        
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/green/white?text=C%23+Basic');"></div>
+          <h3>P-001: Hello World</h3>
+          <div class="problem-meta">
+            <span class="badge badge-easy">★ 初級</span>
+            <span>C#基礎</span>
+          </div>
+          <div class="problem-meta">
+            <span class="status-solved">✔ AC (正解)</span>
+          </div>
+          <button onclick="location.href='problem.html?id=1'">再挑戦</button>
+        </div>
+
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/orange/white?text=Variable');"></div>
+          <h3>P-002: 変数の足し算</h3>
+          <div class="problem-meta">
+            <span class="badge badge-easy">★ 初級</span>
+            <span>C#変数</span>
+          </div>
+          <div class="problem-meta">
+            <span style="color:#888;">－ 未回答</span>
+          </div>
+          <button onclick="location.href='problem.html?id=2'">挑戦する</button>
+        </div>
+
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/red/white?text=Float');"></div>
+          <h3>P-003: 浮動小数点数</h3>
+          <div class="problem-meta">
+            <span class="badge badge-easy">★ 初級</span>
+            <span>C#型</span>
+          </div>
+          <div class="problem-meta">
+            <span style="color:#888;">－ 未回答</span>
+          </div>
+          <button onclick="location.href='problem.html?id=3'">挑戦する</button>
+        </div>
+
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/blue/white?text=String');"></div>
+          <h3>P-004: 文字列連結</h3>
+          <div class="problem-meta">
+            <span class="badge badge-easy">★ 初級</span>
+            <span>C#文字列</span>
+          </div>
+          <div class="problem-meta">
+            <span style="color:#888;">－ 未回答</span>
+          </div>
+          <button onclick="location.href='problem.html?id=4'">挑戦する</button>
+        </div>
+
+        <div class="tool-card">
+          <div class="thumb" style="background-image: url('https://placehold.co/600x400/purple/white?text=If');"></div>
+          <h3>P-005: if文</h3>
+          <div class="problem-meta">
+            <span class="badge badge-normal">★★ 中級</span>
+            <span>C#条件分岐</span>
+          </div>
+          <div class="problem-meta">
+            <span style="color:#888;">－ 未回答</span>
+          </div>
+          <button onclick="location.href='problem.html?id=5'">挑戦する</button>
+        </div>
+
+        </div>
+
+      <div class="pagination">
+        <a href="#" class="page-btn active">1</a>
+        <a href="#" class="page-btn">2</a>
+        <a href="#" class="page-btn">次へ &gt;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

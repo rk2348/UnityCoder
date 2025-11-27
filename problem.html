@@ -12,14 +12,14 @@
             <div class="logo">Unity学習サイト</div>
             <nav>
                 <a href="index.html">ホーム</a>
-                <a href="index.html#problems">問題一覧</a>
+                <a href="problems.html">問題一覧</a>
             </nav>
         </div>
     </header>
 
     <div class="container main-content">
         <div class="breadcrumb">
-            <a href="index.html">ホーム</a> &gt; <span id="probIdDisplay">Loading...</span>
+            <a href="index.html">ホーム</a> &gt; <a href="problems.html">問題一覧</a> &gt; <span id="probIdDisplay">Loading...</span>
         </div>
 
         <section class="problem-header">
@@ -46,7 +46,7 @@
             <h3>解答エリア</h3>
 
             <div class="code-editor-wrapper">
-                <div class="line-numbers"></div>
+                <div class="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div> 
                 <textarea id="userCode" spellcheck="false" placeholder="ここにコードを入力してください"></textarea>
             </div>
 
@@ -56,7 +56,75 @@
         </section>
 
         <div class="nav-links">
-            <a href="index.html" class="btn-secondary">問題一覧に戻る</a>
+            <a href="problems.html" class="btn-secondary">問題一覧に戻る</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Unity学習サイト</p>
+    </footer>
+
+    <script src="problem.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題演習 | Unity学習サイト</title>
+    <link rel="stylesheet" href="problem.css">
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="logo">Unity学習サイト</div>
+            <nav>
+                <a href="index.html">ホーム</a>
+                <a href="problems.html">問題一覧</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <div class="breadcrumb">
+            <a href="index.html">ホーム</a> &gt; <a href="problems.html">問題一覧</a> &gt; <span id="probIdDisplay">Loading...</span>
+        </div>
+
+        <section class="problem-header">
+            <span class="badge" id="probDifficulty">-</span>
+            <h2 id="probTitle">読み込み中...</h2>
+        </section>
+
+        <section class="problem-desc">
+            <div id="probDesc"></div>
+
+            <div class="io-example">
+                <div class="io-box">
+                    <h4>入力</h4>
+                    <pre id="probInput">なし</pre>
+                </div>
+                <div class="io-box">
+                    <h4>出力例</h4>
+                    <pre id="probOutput"></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="code-section">
+            <h3>解答エリア</h3>
+
+            <div class="code-editor-wrapper">
+                <div class="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div> 
+                <textarea id="userCode" spellcheck="false" placeholder="ここにコードを入力してください"></textarea>
+            </div>
+
+            <button id="runBtn" class="btn-run">実行して判定</button>
+
+            <div id="result"></div>
+        </section>
+
+        <div class="nav-links">
+            <a href="problems.html" class="btn-secondary">問題一覧に戻る</a>
         </div>
     </div>
 
