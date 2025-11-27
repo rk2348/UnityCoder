@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題作成 | Unity学習サイト</title>
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* 問題作成フォーム固有のスタイル */
+        .form-section {
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Padding and border are included in the element's total width and height. */
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 200px;
+        }
+        .submit-btn {
+            padding: 12px 25px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>新しい問題を作成</h1>
+            <p>挑戦的な問題を作成して、他の学習者に共有しましょう</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="form-section">
+                <form id="problemForm">
+                    <div class="form-group">
+                        <label for="problemTitle">問題タイトル (例: P-006: 衝突判定の基本)</label>
+                        <input type="text" id="problemTitle" name="problemTitle" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty">難易度</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="easy">★ 初級 (Easy)</option>
+                            <option value="normal">★★ 中級 (Normal)</option>
+                            <option value="hard">★★★ 上級 (Hard)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">カテゴリ</label>
+                        <select id="category" name="category" required>
+                            <option value="csharp">C#スクリプト</option>
+                            <option value="physics">物理演算</option>
+                            <option value="ui">UI/Canvas</option>
+                            <option value="animation">アニメーション</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="problemDescription">問題の内容 (詳細な説明、要件など)</label>
+                        <textarea id="problemDescription" name="problemDescription" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expectedAnswer">想定される解答コード (非公開)</label>
+                        <textarea id="expectedAnswer" name="expectedAnswer"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">問題を作成して公開</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        </footer>
+
+    <script src="make_problem.js"></script>
+</body>
+</html>
