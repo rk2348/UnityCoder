@@ -1,10 +1,10 @@
-/* --- script.js (ユーザー名保存 & メールログイン対応版) --- */
+/* --- script.js (ユーザー登録 + Discord通知機能付き) --- */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-// ★ updateProfile を追加しました
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// 1. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -15,10 +15,15 @@ const firebaseConfig = {
   measurementId: "G-G9JZT2Y9MR"
 };
 
+// 2. ★ここにDiscordのWebhook URLを貼り付けてください！
+const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1445488372771455018/V8SAVsok2-uTa3Xt_g4ZJv8qXo-lKfPg_pkiEv7f144Tl9OuZqBhxQUt18a8edpQ56fr"; 
+
+// 3. アプリ起動
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+// 4. 問題データ
 const staticProblems = [
     {
         id: "prob_001",
@@ -58,11 +63,29 @@ const staticProblems = [
     }
 ];
 
+// --- Discordに通知を送る関数 ---
+async function sendDiscordNotification(username) {
+    if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("...")) return;
+
+    const message = {
+        content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
+    };
+
+    try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(message)
+        });
+    } catch (e) {
+        console.error("Discord通知エラー:", e);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     /* --- A. ログイン状態の監視 --- */
     onAuthStateChanged(auth, (user) => {
-        // ★ユーザー名を取得 (保存されたdisplayNameを使う。なければメールの頭を使う)
         const displayName = user ? (user.displayName || user.email.split('@')[0]) : "";
 
         // 1. ヘッダー
@@ -131,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const editorModel = ace.edit("editor_model");
             const modelAnswer = editorModel.getValue();
             
-            // ★投稿者名にもdisplayNameを使う
             const authorName = user.displayName || user.email.split('@')[0];
 
             if(!title || !description) {
@@ -204,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- D. 新規登録処理 (★修正: プロフィール更新) --- */
+    /* --- D. 新規登録処理 (★修正: Discord通知追加) --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -214,14 +236,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = document.getElementById('signup-password').value;
 
             try {
-                // 1. メールとパスワードでユーザー作成
+                // 1. ユーザー作成
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
 
-                // 2. ★ここで「ユーザー名」をFirebaseに登録する！
+                // 2. プロフィール更新
                 await updateProfile(user, {
                     displayName: username
                 });
+
+                // 3. ★Discordへ通知を送る！
+                await sendDiscordNotification(username);
 
                 alert("登録完了！ようこそ " + username + " さん");
                 window.location.href = "index.html";
@@ -233,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- E. ログイン処理 (メールでログイン) --- */
+    /* --- E. ログイン処理 --- */
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -264,7 +289,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     submitBtn.textContent = "AC (正解！)";
                     submitBtn.style.backgroundColor = "#5cb85c";
                     try {
-                        // ★提出者の名前として displayName を使う
                         const submitterName = user.displayName || user.email.split('@')[0];
                         await addDoc(collection(db, "submissions"), {
                             username: submitterName,
