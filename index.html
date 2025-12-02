@@ -3,170 +3,416 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unity学習サイト</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Unity Learning | Unity学習サイト</title>
+  <style>
+    /* --- 基本設定 --- */
+    :root {
+      --primary-color: #222;       /* AtCoder風の黒 */
+      --accent-color: #007acc;     /* Unity風の青 */
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --border-color: #ddd;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Microsoft YaHei", Meiryo, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    a { text-decoration: none; color: inherit; transition: 0.2s; }
+    a:hover { color: var(--accent-color); }
+    ul { list-style: none; padding: 0; margin: 0; }
+
+    /* --- レイアウト --- */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    /* --- ヘッダー --- */
+    header {
+      background: var(--primary-color);
+      color: #fff;
+      height: 50px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+    }
+    
+    .logo span { color: var(--accent-color); } /* Unityの青をアクセントに */
+
+    nav { display: flex; gap: 20px; font-size: 0.9rem; }
+    nav a { color: #ccc; }
+    nav a:hover, nav a.active { color: #fff; }
+
+    .user-actions { font-size: 0.85rem; display: flex; gap: 15px; }
+    .btn-login { border: 1px solid #555; padding: 4px 12px; border-radius: 4px; }
+    .btn-signup { background: var(--accent-color); color: #fff; padding: 4px 12px; border-radius: 4px; }
+
+    /* --- メインコンテンツ（2カラム） --- */
+    .main-wrapper {
+      display: flex;
+      gap: 30px;
+      padding: 30px 0;
+      align-items: flex-start;
+    }
+
+    .main-col { flex: 3; } /* 左側：75% */
+    .side-col { flex: 1; } /* 右側：25% */
+
+    /* --- パネル（共通スタイル） --- */
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 25px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: #f9f9f9;
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .panel-header a { font-size: 0.8rem; color: #666; font-weight: normal; }
+
+    .panel-body { padding: 15px; }
+
+    /* --- テーブルスタイル (AtCoder風) --- */
+    .table-wrapper { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th { background-color: #fff; color: #777; font-weight: normal; font-size: 0.85rem; }
+    tr:nth-child(even) { background-color: #fcfcfc; }
+    tr:hover { background-color: #f0f8ff; }
+
+    /* 難易度バッジ */
+    .diff-circle {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    .diff-gray { background: #808080; }
+    .diff-green { background: #008000; }
+    .diff-cyan { background: #00C0C0; }
+    .diff-blue { background: #0000FF; }
+
+    /* --- お知らせリスト --- */
+    .news-list li {
+      padding: 8px 0;
+      border-bottom: 1px dotted #ddd;
+      font-size: 0.9rem;
+    }
+    .news-date {
+      color: #777;
+      margin-right: 10px;
+      font-family: monospace;
+    }
+
+    /* --- カードグリッド（コース一覧用） --- */
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .course-card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+      background: #fff;
+    }
+    .course-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    
+    .course-thumb {
+      height: 100px;
+      background-size: cover;
+      background-position: center;
+      background-color: #eee;
+    }
+    .course-info { padding: 10px; }
+    .course-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; display: block;}
+    .course-meta { font-size: 0.8rem; color: #666; }
+
+    /* --- サイドバーパーツ --- */
+    .user-box { text-align: center; }
+    .user-box p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+    
+    .ranking-table td { padding: 6px; font-size: 0.85rem; }
+    .rank-num { font-weight: bold; width: 20px; text-align: center; display: inline-block; }
+    .rank-1 { color: #DAA520; } /* Gold */
+    .rank-2 { color: #C0C0C0; } /* Silver */
+    .rank-3 { color: #B87333; } /* Bronze */
+
+    /* --- フッター --- */
+    footer {
+      background: #fff;
+      border-top: 1px solid #ddd;
+      padding: 30px 0;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    
+    
+    .footer-links { margin-bottom: 15px; }
+    .footer-links a { margin: 0 10px; color: #555; }
+
+    /* --- レスポンシブ --- */
+    @media (max-width: 768px) {
+      .main-wrapper { flex-direction: column; }
+      .header-inner { padding: 0 10px; }
+      nav { display: none; } /* スマホでは簡易的に非表示（必要ならハンバーガーメニュー化） */
+    }
+  </style>
 </head>
 
 <body>
+
   <header>
     <div class="container header-inner">
-      <div class="logo">Unity学習サイト</div>
+      <div class="logo">Unity<span>Learning</span></div>
       <nav>
-        <a href="problemlist.html">問題一覧</a>
-        <a href="submissions.html">提出履歴</a>
-        <a href="courses.html">コース一覧</a>
+        <a href="#" class="active">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html">コース</a>
         <a href="ranking.html">ランキング</a>
         <a href="bbs.html">掲示板</a>
-        <a href="about.html">概要</a>
-        <a href="admin.html">テスト</a>
       </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <h1>Unity学習サイト</h1>
-      <p>ゲーム制作を学びながらツールやコースを進めましょう</p>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="ツール・コースを検索">
-        <button type="button" onclick="alert('検索機能は開発中です')">検索</button>
-      </div>
-    </div>
-  </section>
+  <div class="container main-wrapper">
+    <main class="main-col">
+      
+      <section class="panel">
+        <div class="panel-header">
+          お知らせ
+          <a href="#">一覧を見る</a>
+        </div>
+        <div class="panel-body">
+          <ul class="news-list">
+            <li><span class="news-date">2025-11-21</span><a href="#">新しいコース「FPS制作入門」を追加しました。</a></li>
+            <li><span class="news-date">2025-11-15</span><a href="#">システムメンテナンスのお知らせ</a></li>
+            <li><span class="news-date">2025-11-10</span><a href="#">サイトデザインをリニューアルしました。</a></li>
+          </ul>
+        </div>
+      </section>
 
-  <section class="section">
-    <div class="container">
-      <h2>人気の記事</h2>
-      <div class="tool-grid" id="popularTools">
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Tool+A');"></div>
-          <h3>記事A: オブジェクトの動かし方</h3>
-          <button onclick="location.href='toolA.html'">読む</button>
+      <section class="panel">
+        <div class="panel-header">
+          最近追加された問題
+          <a href="problemlist.html">すべての問題</a>
         </div>
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Tool+B');"></div>
-          <h3>記事B: UIの作り方</h3>
-          <button onclick="location.href='toolB.html'">読む</button>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px;">難易度</th>
+                <th>問題名</th>
+                <th style="width: 100px;">カテゴリ</th>
+                <th style="width: 80px;">実行時間</th>
+                <th style="width: 80px;">正解率</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="diff-circle diff-gray" title="入門"></span></td>
+                <td><a href="#">Cubeを回転させよう</a></td>
+                <td>Transform</td>
+                <td>-</td>
+                <td>85.2%</td>
+              </tr>
+              <tr>
+                <td><span class="diff-circle diff-gray" title="入門"></span></td>
+                <td><a href="#">Hello World (Debug.Log)</a></td>
+                <td>C#基礎</td>
+                <td>2 sec</td>
+                <td>92.1%</td>
+              </tr>
+              <tr>
+                <td><span class="diff-circle diff-green" title="初級"></span></td>
+                <td><a href="#">Physicsを使ったジャンプ実装</a></td>
+                <td>Rigidbody</td>
+                <td>-</td>
+                <td>64.5%</td>
+              </tr>
+              <tr>
+                <td><span class="diff-circle diff-green" title="初級"></span></td>
+                <td><a href="#">UIボタンのクリックイベント</a></td>
+                <td>uGUI</td>
+                <td>-</td>
+                <td>70.8%</td>
+              </tr>
+              <tr>
+                <td><span class="diff-circle diff-cyan" title="中級"></span></td>
+                <td><a href="#">Raycastによるオブジェクト判定</a></td>
+                <td>Physics</td>
+                <td>-</td>
+                <td>45.3%</td>
+              </tr>
+              <tr>
+                <td><span class="diff-circle diff-blue" title="上級"></span></td>
+                <td><a href="#">カスタムシェーダーによる水面描画</a></td>
+                <td>Shader</td>
+                <td>-</td>
+                <td>12.4%</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <section class="section bg-light">
-    <div class="container">
-      <h2>新着記事</h2>
-      <div class="tool-grid" id="newTools">
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=New+Tool');"></div>
-          <h3>シェーダー入門</h3>
-          <button onclick="location.href='toolC.html'">読む</button>
+      <section class="panel">
+        <div class="panel-header">
+          人気の学習コース
+          <a href="courses.html">コース一覧</a>
         </div>
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Animation');"></div>
-          <h3>アニメーション設定</h3>
-          <button onclick="location.href='toolD.html'">読む</button>
+        <div class="panel-body">
+          <div class="course-grid">
+            <div class="course-card">
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=RPG');"></div>
+              <div class="course-info">
+                <a href="#" class="course-title">RPG制作入門</a>
+                <div class="course-meta">全12回 / 難易度: 初級</div>
+              </div>
+            </div>
+            <div class="course-card">
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=Shooting');"></div>
+              <div class="course-info">
+                <a href="#" class="course-title">シューティング作成</a>
+                <div class="course-meta">全8回 / 難易度: 中級</div>
+              </div>
+            </div>
+            <div class="course-card">
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=C%23');"></div>
+              <div class="course-info">
+                <a href="#" class="course-title">C#スクリプト基礎</a>
+                <div class="course-meta">全5回 / 難易度: 入門</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <section class="section">
-    <div class="container">
-      <h2>コース一覧</h2>
-      <div class="tool-grid" id="courseList">
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/orange/white?text=RPG');"></div>
-          <h3>RPGゲーム入門</h3>
-          <button onclick="location.href='course_rpg.html'">開始する</button>
-        </div>
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/blue/white?text=Block');"></div>
-          <h3>ブロック崩し作成</h3>
-          <button onclick="location.href='course_block.html'">開始する</button>
-        </div>
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/red/white?text=Shooting');"></div>
-          <h3>シューティング入門</h3>
-          <button onclick="location.href='course_shoot.html'">開始する</button>
-        </div>
-      </div>
-    </div>
-  </section>
+    </main>
 
-  <section class="section bg-light">
-    <div class="container">
-      <h2>チュートリアル</h2>
-      <div class="tool-grid" id="tutorialList">
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=Unity+Install');"></div>
-          <h3>Unityインストールガイド</h3>
-          <button onclick="location.href='tutorial_install.html'">学習する</button>
-        </div>
-        <div class="tool-card">
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400?text=C%23+Basics');"></div>
-          <h3>C#スクリプト基礎</h3>
-          <button onclick="location.href='tutorial_csharp.html'">学習する</button>
+    <aside class="side-col">
+      
+      <div class="panel">
+        <div class="panel-header">ユーザー</div>
+        <div class="panel-body user-box">
+          <p>学習履歴を保存するには<br>ログインしてください</p>
+          <a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a>
+          <a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>
         </div>
       </div>
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="container">
-      <h2>お知らせ</h2>
-      <div class="news-grid">
-        <div class="news-card">
-          <p><strong>2025/11/21</strong> - 新しいコース「FPS制作」を追加しました。</p>
+      <div class="panel">
+        <div class="panel-header">
+          ランキング
+          <a href="ranking.html">詳細</a>
         </div>
-        <div class="news-card">
-          <p><strong>2025/11/10</strong> - サイトデザインをリニューアルしました。</p>
+        <table class="ranking-table">
+          <tbody>
+            <tr>
+              <td width="30"><span class="rank-num rank-1">1</span></td>
+              <td><a href="#">UnityMaster</a></td>
+              <td align="right">2400pt</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num rank-2">2</span></td>
+              <td><a href="#">GameDev_JP</a></td>
+              <td align="right">2150pt</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num rank-3">3</span></td>
+              <td><a href="#">IndieCr8r</a></td>
+              <td align="right">1980pt</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">4</span></td>
+              <td><a href="#">Beginner01</a></td>
+              <td align="right">1800pt</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">5</span></td>
+              <td><a href="#">CodeRunner</a></td>
+              <td align="right">1750pt</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">リンク</div>
+        <div class="panel-body">
+          <ul style="font-size:0.9rem; line-height:2;">
+            <li><a href="#">Unity 公式マニュアル</a></li>
+            <li><a href="#">Scripting API</a></li>
+            <li><a href="#">Asset Store</a></li>
+          </ul>
         </div>
       </div>
-    </div>
-  </section>
+
+    </aside>
+  </div>
 
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-section">
-        <h4>運営情報</h4>
-        <p>Unity学習プロジェクト</p>
-        <p><a href="mailto:contact@unitysite.jp">contact@unitysite.jp</a></p>
-        <p><a href="contact.html">お問い合わせフォーム</a></p>
-      </div>
-
-      <div class="footer-section">
-        <h4>各種ポリシー</h4>
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">概要</a>
         <a href="terms.html">利用規約</a>
         <a href="privacy.html">プライバシーポリシー</a>
-        <a href="cookies.html">クッキーポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
       </div>
-
-      <div class="footer-section">
-        <h4>サイト情報</h4>
-        <p>バージョン: 1.0.0</p>
-        <a href="changelog.html">更新履歴</a>
-      </div>
-
-      <div class="footer-section">
-        <h4>SNSコミュニティ</h4>
-        <a href="#" target="_blank">GitHub</a>
-        <a href="#" target="_blank">Discord</a>
-        <a href="#" target="_blank">X (旧Twitter)</a>
-      </div>
-
-      <div class="footer-section">
-        <h4>サイトマップ</h4>
-        <a href="index.html">ホーム</a>
-        <a href="courses.html">コース一覧</a>
-        <a href="ranking.html">ランキング</a>
-        <a href="about.html">サイトについて</a>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+      <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
 
-  </body>
+<script src="script.js"></script>
+</body>
 </html>

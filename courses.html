@@ -3,89 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>コース一覧 - Unity学習サイト</title>
+  <title>コース一覧 | Unity Learning</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
     <div class="container header-inner">
-      <div class="logo">Unity学習サイト</div>
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
       <nav>
-        <a href="index.html">ホーム</a>
-        <a href="courses.html" class="active">コース一覧</a>
-        <a href="bbs.html">掲示板</a>
-        <a href="login.html">ログイン</a>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
+        <a href="ranking.html">ランキング</a>
       </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
     </div>
   </header>
 
-  <section class="hero-small bg-light">
-    <div class="container">
-      <h1>コース一覧</h1>
-      <p>基礎から応用まで、実践的なゲーム制作を学びましょう</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="filter-bar">
-        <button class="filter-btn active">すべて</button>
-        <button class="filter-btn">初心者向け</button>
-        <button class="filter-btn">中級者向け</button>
-        <button class="filter-btn">3Dゲーム</button>
-        <button class="filter-btn">2Dゲーム</button>
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <h2>学習コース一覧</h2>
+      
+      <div class="filter-box filter-btn-group">
+        <button class="btn-primary" data-filter="all">すべて</button>
+        <button class="form-control" style="background:none; border:none; cursor:pointer;" data-filter="beginner">初心者向け</button>
+        <button class="form-control" style="background:none; border:none; cursor:pointer;" data-filter="shooting">シューティング</button>
+        <button class="form-control" style="background:none; border:none; cursor:pointer;" data-filter="3d">3Dゲーム</button>
       </div>
 
-      <div class="tool-grid">
-        <div class="tool-card course-card">
-          <span class="badge beginner">初級</span>
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/orange/white?text=RPG');"></div>
-          <div class="card-body">
-            <h3>RPGゲーム入門</h3>
-            <p class="description">キャラクターの移動から会話システム、戦闘まで、2D RPGの基礎を作りながら学びます。</p>
-            <div class="meta-info">
-              <span>全12レッスン</span>
-              <span>約 5時間</span>
-            </div>
+      <div class="course-grid">
+        <div class="course-card" data-category="beginner">
+          <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/orange/white?text=RPG+Basics');"></div>
+          <div class="course-info">
+            <a href="course_detail.html" class="course-title">RPG制作入門</a>
+            <p style="font-size:0.85rem; color:#666; margin: 5px 0;">キャラクターの移動から戦闘システムまで、2D RPGの基礎を作ります。</p>
+            <div class="course-meta">全12回 / <span style="color:green;">● 初級</span></div>
           </div>
-          <button onclick="location.href='course_rpg.html'">詳細を見る</button>
         </div>
 
-        <div class="tool-card course-card">
-          <span class="badge intermediate">中級</span>
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/blue/white?text=FPS');"></div>
-          <div class="card-body">
-            <h3>FPS制作実践</h3>
-            <p class="description">3D空間での移動、銃の挙動、敵AIの作成など、本格的なFPS開発に挑戦します。</p>
-            <div class="meta-info">
-              <span>全18レッスン</span>
-              <span>約 8時間</span>
-            </div>
+        <div class="course-card" data-category="shooting">
+          <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/blue/white?text=Shooting');"></div>
+          <div class="course-info">
+            <a href="course_detail.html" class="course-title">シューティングゲーム作成</a>
+            <p style="font-size:0.85rem; color:#666; margin: 5px 0;">弾幕のロジックや敵の出現パターンなど、STG特有の実装を学びます。</p>
+            <div class="course-meta">全8回 / <span style="color:#007acc;">● 中級</span></div>
           </div>
-          <button onclick="location.href='course_fps.html'">詳細を見る</button>
         </div>
 
-        <div class="tool-card course-card">
-          <span class="badge advanced">上級</span>
-          <div class="thumb" style="background-image: url('https://placehold.co/600x400/red/white?text=Network');"></div>
-          <div class="card-body">
-            <h3>オンラインマルチプレイ</h3>
-            <p class="description">PhotonやNetcodeを使用して、友達と通信対戦できるゲームの仕組みを理解します。</p>
-            <div class="meta-info">
-              <span>全10レッスン</span>
-              <span>約 10時間</span>
-            </div>
+        <div class="course-card" data-category="3d">
+          <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/red/white?text=FPS');"></div>
+          <div class="course-info">
+            <a href="course_detail.html" class="course-title">FPS制作講座 (3D)</a>
+            <p style="font-size:0.85rem; color:#666; margin: 5px 0;">3D空間での移動、カメラ制御、Raycast射撃をマスターします。</p>
+            <div class="course-meta">全15回 / <span style="color:red;">● 上級</span></div>
           </div>
-          <button onclick="location.href='#'">詳細を見る</button>
+        </div>
+
+        <div class="course-card" data-category="beginner">
+          <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/gray/white?text=C%23+Start');"></div>
+          <div class="course-info">
+            <a href="course_detail.html" class="course-title">Unity C# 基礎</a>
+            <p style="font-size:0.85rem; color:#666; margin: 5px 0;">プログラミング未経験者向け。変数、関数、クラスの基本。</p>
+            <div class="course-meta">全5回 / <span style="color:#777;">● 入門</span></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">学習状況</div>
+        <div class="panel-body">
+          <p>ログインして学習の進捗を記録しましょう。</p>
+          <a href="login.html" class="btn-primary" style="display:block; text-align:center; margin-top:10px;">ログイン</a>
+        </div>
+      </div>
+    </aside>
+  </div>
 
   <footer>
-    <div class="container footer-bottom">
-      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+    <div class="container">
+      <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
+<script src="script.js"></script>
 </body>
 </html>

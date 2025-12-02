@@ -3,98 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>掲示板 - Unity学習サイト</title>
+  <title>掲示板 | Unity Learning</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
     <div class="container header-inner">
-      <div class="logo">Unity学習サイト</div>
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
       <nav>
-        <a href="index.html">ホーム</a>
-        <a href="courses.html">コース一覧</a>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html">コース</a>
+        <a href="ranking.html">ランキング</a>
         <a href="bbs.html" class="active">掲示板</a>
       </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
     </div>
   </header>
 
-  <section class="section">
-    <div class="container">
-      <div class="bbs-header">
-        <h2>開発者コミュニティ</h2>
-        <button class="filter-btn active" style="background: #007acc; color: #fff;" onclick="document.getElementById('postModal').classList.add('active')">
-          + 新規スレッド作成
-        </button>
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>ユーザー掲示板</h2>
+        <button class="btn-primary">新規スレッド作成</button>
       </div>
 
-      <div class="thread-list">
-        
-        <div class="thread-card">
-          <div class="thread-meta">
-            <span class="category-tag cat-beginner">初心者</span>
-            <span>2025/11/20 14:30</span>
-          </div>
-          <h3 class="thread-title"><a href="#" style="text-decoration:none; color:inherit;">Rigidbody2Dをつけても重力が反映されません</a></h3>
-          <p class="thread-body">
-            2Dゲームを作っているのですが、キャラクターにRigidbody2Dコンポーネントを追加しても空中に浮いたまま落ちてきません。Gravity Scaleは1になっています。何が原因でしょうか？Body TypeはKinematicになっています。
-          </p>
-          <div class="thread-footer">
-            <span>回答数: 3</span>
-            <span>投稿者: UnityBeginner</span>
-          </div>
-        </div>
-
-        <div class="thread-card">
-          <div class="thread-meta">
-            <span class="category-tag cat-bug">バグ報告</span>
-            <span>2025/11/19 09:15</span>
-          </div>
-          <h3 class="thread-title"><a href="#" style="text-decoration:none; color:inherit;">Unity 6 でシェーダーエラーが出る件</a></h3>
-          <p class="thread-body">
-            昨日Unityをアップデートしたところ、既存のURPプロジェクトでピンク色のマテリアルエラーが発生するようになりました。同様の現象に遭われた方はいらっしゃいますか？
-          </p>
-          <div class="thread-footer">
-            <span>回答数: 12</span>
-            <span>投稿者: DevMaster</span>
-          </div>
-        </div>
-
+      <div class="filter-box">
+        <input type="text" class="form-control" placeholder="キーワードで検索" style="flex:2;">
+        <select class="form-control" style="flex:1;">
+          <option>すべてのカテゴリ</option>
+          <option>質問</option>
+          <option>雑談</option>
+          <option>バグ報告</option>
+        </select>
+        <button class="btn-primary">検索</button>
       </div>
-    </div>
-  </section>
 
-  <div class="modal-overlay" id="postModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>新規スレッド作成</h3>
-        <button class="close-modal" onclick="document.getElementById('postModal').classList.remove('active')">×</button>
+      <div class="panel">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th width="400">タイトル</th>
+                <th width="100">カテゴリ</th>
+                <th width="120">投稿者</th>
+                <th width="120">更新日時</th>
+                <th width="60">回答</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="#">Rigidbodyが動かない場合の対処法について</a></td>
+                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">質問</span></td>
+                <td><a href="#">Beginner01</a></td>
+                <td>2025-11-21 14:30</td>
+                <td align="center">3</td>
+              </tr>
+              <tr>
+                <td><a href="#">第3回コンテストの感想戦</a></td>
+                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">雑談</span></td>
+                <td><a href="#">UnityMaster</a></td>
+                <td>2025-11-20 22:15</td>
+                <td align="center">12</td>
+              </tr>
+              <tr>
+                <td><a href="#">UIのアンカー設定がわかりません</a></td>
+                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">質問</span></td>
+                <td><a href="#">UIGirl</a></td>
+                <td>2025-11-19 09:00</td>
+                <td align="center">0</td>
+              </tr>
+              <tr>
+                <td><a href="#">問題「Cubeの移動」のテストケースについて</a></td>
+                <td><span style="font-size:0.8rem; background:#ffebeb; color:red; padding:2px 6px; border-radius:4px;">バグ報告</span></td>
+                <td><a href="#">Tester</a></td>
+                <td>2025-11-18 18:45</td>
+                <td align="center">1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>タイトル</label>
-          <input type="text" placeholder="質問の要約を入力してください">
-        </div>
-        <div class="form-group">
-          <label>カテゴリ</label>
-          <select style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
-            <option>初心者</option>
-            <option>技術的な質問</option>
-            <option>バグ報告</option>
-            <option>雑談</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>内容</label>
-          <textarea rows="5" placeholder="詳細な内容を入力してください"></textarea>
-        </div>
-        <button class="btn-primary-lg">投稿する</button>
+      
+      <div class="pagination">
+        <a href="#" class="page-link active">1</a>
+        <a href="#" class="page-link">2</a>
+        <a href="#" class="page-link">&raquo;</a>
       </div>
-    </div>
+
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">注意事項</div>
+        <div class="panel-body">
+          <ul style="font-size:0.85rem; padding-left:20px; list-style:disc;">
+            <li>誹謗中傷は禁止です。</li>
+            <li>コードを貼る際はコードブロックを使用してください。</li>
+            <li>質問する前に過去ログを検索しましょう。</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <footer>
-    <div class="container footer-bottom">
-      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
+    <div class="container">
+      <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
 </body>
