@@ -1,11 +1,11 @@
-/* --- script.js (完全版: 問題表示 + ログイン + ランキング) --- */
+/* --- script.js (完全版: ログイン・サイドバー・問題表示・ランキング・提出) --- */
 
 // 1. Firebaseの機能を読み込む
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 2. Firebase設定
+// 2. Firebase設定 (あなたのプロジェクト用)
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -21,7 +21,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* --- ★ここが復活！ 問題データの定義 (problems_data.jsが読み込めない場合用) --- */
+// 4. 問題データ (詳細ページ表示用)
 const staticProblems = [
     {
         id: "prob_001",
@@ -63,8 +63,9 @@ const staticProblems = [
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    /* --- A. ログイン状態の監視 --- */
+    /* --- A. ログイン状態の監視 (ヘッダーとサイドバー両方を更新) --- */
     onAuthStateChanged(auth, (user) => {
+        // 1. ヘッダーの更新
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
@@ -85,34 +86,56 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `;
             }
         }
+
+        // 2. サイドバーの更新
+        const userBox = document.querySelector('.user-box');
+        if (userBox) {
+            if (user) {
+                const shortName = user.email.split('@')[0];
+                // ログイン時の表示
+                userBox.innerHTML = `
+                    <p>ようこそ<br><strong style="font-size:1.1rem;">${shortName}</strong> さん</p>
+                    <div style="font-size:0.9rem; color:#666; margin:10px 0;">
+                        今日も学習を頑張りましょう！
+                    </div>
+                    <button id="sidebarLogoutBtn" class="btn-primary" style="width:100%; font-size:0.85rem; background:#666;">ログアウト</button>
+                `;
+                // サイドバーのログアウトボタン処理
+                document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if(confirm("ログアウトしますか？")) signOut(auth).then(() => location.reload());
+                });
+            } else {
+                // ログアウト時の表示
+                userBox.innerHTML = `
+                    <p>学習履歴を保存するには<br>ログインしてください</p>
+                    <a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a>
+                    <a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>
+                `;
+            }
+        }
     });
 
-    /* --- ★ここが復活！ 問題詳細ページの表示処理 --- */
+    /* --- B. 問題詳細ページの表示処理 --- */
     const problemTitleElement = document.getElementById('p_title');
     if (problemTitleElement) {
-        // URLから ?id=prob_xxx を取得
         const urlParams = new URLSearchParams(window.location.search);
         const problemId = urlParams.get('id');
-
         if (problemId) {
-            // 定義したデータから検索
             const problem = staticProblems.find(p => p.id === problemId);
-            
             if (problem) {
-                // 画面に表示
                 document.title = `${problem.title} | Unity Learning`;
                 document.getElementById('p_title').textContent = problem.title;
                 document.getElementById('p_time').textContent = problem.timeLimit;
                 document.getElementById('p_memory').textContent = problem.memoryLimit;
                 document.getElementById('p_score').textContent = problem.score;
-                document.getElementById('p_display_id').textContent = problem.id;
-
+                if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = problem.id;
+                
                 document.getElementById('p_description').innerHTML = problem.description;
                 document.getElementById('p_constraints').innerHTML = problem.constraints;
                 document.getElementById('p_input').textContent = problem.inputExample;
                 document.getElementById('p_output').textContent = problem.outputExample;
 
-                // エディタに初期コードをセット
                 if (document.getElementById('editor')) {
                     const editor = ace.edit("editor");
                     editor.setTheme("ace/theme/monokai");
@@ -126,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- B. 新規登録処理 --- */
+    /* --- C. 新規登録処理 --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', (e) => {
@@ -139,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- C. ログイン処理 --- */
+    /* --- D. ログイン処理 --- */
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -152,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- D. 提出ボタン --- */
+    /* --- E. 提出ボタン処理 --- */
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
@@ -162,12 +185,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.location.href = "login.html";
                 return;
             }
-
             submitBtn.disabled = true;
             submitBtn.textContent = "ジャッジ中...";
             
             setTimeout(async () => {
-                const isCorrect = Math.random() > 0.3;
+                const isCorrect = Math.random() > 0.3; // 70%の確率で正解
                 if (isCorrect) {
                     submitBtn.textContent = "AC (正解！)";
                     submitBtn.style.backgroundColor = "#5cb85c";
@@ -197,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- E. ランキング表示 --- */
+    /* --- F. ランキング表示 --- */
     const rankingTableBody = document.querySelector('.ranking-table tbody');
     if (rankingTableBody) {
         rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み中...</td></tr>';
