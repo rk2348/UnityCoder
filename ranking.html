@@ -31,7 +31,7 @@
 
       <div class="panel">
         <div class="table-wrapper">
-          <table>
+          <table class="ranking-table">
             <thead>
               <tr>
                 <th width="60">順位</th>
@@ -42,55 +42,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td align="center"><strong style="color:#DAA520;">1</strong></td>
-                <td><a href="#">UnityMaster</a> <span class="diff-circle diff-blue" style="margin-left:5px;"></span></td>
-                <td>2450</td>
-                <td>152</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center"><strong style="color:#C0C0C0;">2</strong></td>
-                <td><a href="#">GameDev_JP</a> <span class="diff-circle diff-blue" style="margin-left:5px;"></span></td>
-                <td>2150</td>
-                <td>140</td>
-                <td>2025-11-20</td>
-              </tr>
-              <tr>
-                <td align="center"><strong style="color:#B87333;">3</strong></td>
-                <td><a href="#">IndieCreator</a> <span class="diff-circle diff-cyan" style="margin-left:5px;"></span></td>
-                <td>1980</td>
-                <td>110</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center">4</td>
-                <td><a href="#">Algorithm_Fan</a> <span class="diff-circle diff-cyan" style="margin-left:5px;"></span></td>
-                <td>1800</td>
-                <td>95</td>
-                <td>2025-11-18</td>
-              </tr>
-              <tr>
-                <td align="center">5</td>
-                <td><a href="#">NewbieNo1</a> <span class="diff-circle diff-green" style="margin-left:5px;"></span></td>
-                <td>1200</td>
-                <td>42</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center">6</td>
-                <td><a href="#">UnityStudent</a> <span class="diff-circle diff-green" style="margin-left:5px;"></span></td>
-                <td>950</td>
-                <td>30</td>
-                <td>2025-11-15</td>
-              </tr>
-              <tr>
-                <td align="center">7</td>
-                <td><a href="#">GuestUser</a> <span class="diff-circle diff-gray" style="margin-left:5px;"></span></td>
-                <td>400</td>
-                <td>12</td>
-                <td>2025-11-10</td>
-              </tr>
+              <tr><td colspan="5">読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
@@ -108,7 +60,7 @@
     <aside class="side-col">
       <div class="panel">
         <div class="panel-header">自分の順位</div>
-        <div class="panel-body">
+        <div class="panel-body" id="my-rank-area">
           <p>ランキングに参加するにはログインしてください。</p>
         </div>
       </div>
@@ -120,6 +72,6 @@
       <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
-<script type="module" src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

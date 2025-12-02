@@ -1,9 +1,10 @@
-/* --- script.js (完全版: 回答済みマーク機能追加) --- */
+/* --- script.js (完全版: Discord通知 + ユーザー名登録 + 全機能統合) --- */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// 1. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -14,13 +15,15 @@ const firebaseConfig = {
   measurementId: "G-G9JZT2Y9MR"
 };
 
-// ★Discord Webhook URL (前回設定したものがあればここに入れてください)
-const DISCORD_WEBHOOK_URL = ""; 
+// 2. ★Discord Webhook URL (設定済み)
+const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1445488372771455018/V8SAVsok2-uTa3Xt_g4ZJv8qXo-lKfPg_pkiEv7f144Tl9OuZqBhxQUt18a8edpQ56fr"; 
 
+// 3. アプリ起動
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+// 4. 問題データ
 const staticProblems = [
     {
         id: "prob_001",
@@ -60,29 +63,36 @@ const staticProblems = [
     }
 ];
 
-// Discord通知関数
+// --- Discordに通知を送る関数 ---
 async function sendDiscordNotification(username) {
-    if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("...")) return;
+    if (!DISCORD_WEBHOOK_URL) return;
+
+    const message = {
+        content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
+    };
+
     try {
         await fetch(DISCORD_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
-            })
+            body: JSON.stringify(message)
         });
-    } catch (e) { console.error("Discord通知エラー:", e); }
+    } catch (e) {
+        console.error("Discord通知エラー:", e);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    /* --- A. ログイン状態監視 & ★回答済みマーク表示 --- */
+    /* --- A. ログイン状態の監視 --- */
     onAuthStateChanged(auth, async (user) => {
+        // ユーザー名の取得
+        const displayName = user ? (user.displayName || user.email.split('@')[0]) : "";
+
         // 1. ヘッダー更新
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
-                const displayName = user.displayName || user.email.split('@')[0];
                 userActions.innerHTML = `
                     <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${displayName}</strong></span>
                     <a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>
@@ -104,7 +114,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const userBox = document.querySelector('.user-box');
         if (userBox) {
             if (user) {
-                const displayName = user.displayName || user.email.split('@')[0];
                 userBox.innerHTML = `
                     <p>ようこそ<br><strong style="font-size:1.1rem;">${displayName}</strong> さん</p>
                     <div style="font-size:0.9rem; color:#666; margin:10px 0;">
@@ -125,13 +134,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 3. ★ここが新機能！ 回答済みマークをつける処理
+        // 3. 回答済みマーク (問題一覧ページ)
         if (user) {
-            // 問題一覧ページにいる場合のみ実行
             const problemTable = document.getElementById('problemTable');
             if (problemTable) {
                 try {
-                    // 自分の提出履歴から「AC」のものだけを取得
                     const q = query(
                         collection(db, "submissions"),
                         where("uid", "==", user.uid),
@@ -139,28 +146,63 @@ document.addEventListener('DOMContentLoaded', async () => {
                     );
                     const querySnapshot = await getDocs(q);
                     
-                    // ACした問題IDのリストを作る
                     const solvedProblemIds = new Set();
                     querySnapshot.forEach((doc) => {
                         solvedProblemIds.add(doc.data().problemId);
                     });
 
-                    // 画面上のリンクを探してマークをつける
                     const links = problemTable.querySelectorAll('a');
                     links.forEach(link => {
                         const href = link.getAttribute('href');
                         if (href && href.includes('id=')) {
                             const pId = href.split('id=')[1];
                             if (solvedProblemIds.has(pId)) {
-                                // 正解していれば ✅ マークと色をつける
                                 link.innerHTML = `<span style="color:#5cb85c; margin-right:5px;">✅</span> ${link.innerHTML}`;
-                                link.parentElement.parentElement.style.backgroundColor = "#f0fff4"; // 行の色も薄緑に
+                                link.parentElement.parentElement.style.backgroundColor = "#f0fff4"; 
                             }
                         }
                     });
                 } catch (e) {
                     console.error("回答状況の取得に失敗:", e);
                 }
+            }
+        }
+
+        // 4. 自分の順位表示 (ランキングページ)
+        const myRankArea = document.getElementById('my-rank-area');
+        if (myRankArea) {
+            if (user) {
+                // ここで改めてランキングデータを取得して順位を計算する簡易実装
+                // (本来は前もって計算しておくのが良いですが、今回は表示時に計算します)
+                const q = query(collection(db, "submissions"), orderBy("submittedAt", "desc"), limit(100)); // 最新100件から探す簡易版
+                getDocs(q).then((snapshot) => {
+                    let rank = 1;
+                    let myRank = null;
+                    let myScore = 0;
+                    // ※注: これは「提出順」のランキングロジックのままです。本格的な「合計スコア順」にするには集計が必要です。
+                    // 今回は「提出履歴リスト」の中での自分の位置を表示します。
+                    snapshot.forEach((doc) => {
+                        if (doc.data().uid === user.uid && myRank === null) {
+                            myRank = rank;
+                            myScore = doc.data().score;
+                        }
+                        rank++;
+                    });
+
+                    if (myRank) {
+                        myRankArea.innerHTML = `
+                            <div style="text-align:center; padding:10px;">
+                                <div style="font-size:0.9rem; color:#666;">最新の提出順位</div>
+                                <div style="font-size:2rem; font-weight:bold; color:#007acc;">${myRank} <span style="font-size:1rem;">位</span></div>
+                                <div style="font-size:0.9rem; margin-top:5px;">スコア: ${myScore}pt</div>
+                            </div>
+                        `;
+                    } else {
+                        myRankArea.innerHTML = `<p>まだ提出データがありません。<br>問題を解いてランキングに参加しましょう！</p>`;
+                    }
+                });
+            } else {
+                myRankArea.innerHTML = `<p>ランキングに参加するにはログインしてください。</p>`;
             }
         }
     });
@@ -196,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             saveProblemBtn.textContent = "保存中...";
 
             try {
-                const docRef = await addDoc(collection(db, "problems"), {
+                await addDoc(collection(db, "problems"), {
                     title: title,
                     difficulty: difficulty,
                     category: category,
@@ -257,7 +299,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- D. 新規登録処理 --- */
+    /* --- D. 新規登録処理 (ユーザー名+Discord通知) --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -267,9 +309,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = document.getElementById('signup-password').value;
 
             try {
+                // 1. ユーザー作成
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
-                await updateProfile(user, { displayName: username });
+
+                // 2. プロフィール更新 (ユーザー名を保存)
+                await updateProfile(user, {
+                    displayName: username
+                });
+
+                // 3. Discordへ通知
                 await sendDiscordNotification(username);
 
                 alert("登録完了！ようこそ " + username + " さん");
@@ -282,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- E. ログイン処理 --- */
+    /* --- E. ログイン処理 (メアドでログイン) --- */
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
