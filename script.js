@@ -499,6 +499,59 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch (e) { console.error(e); rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み失敗</td></tr>'; }
         });
     }
+
+    /* =================================================================
+       H. 問題一覧の検索・フィルタリング機能
+       ================================================================= */
+    const searchInput = document.getElementById('problemSearch');
+    const difficultySelect = document.getElementById('difficultyFilter');
+    const categorySelect = document.getElementById('categoryFilter');
+    const searchBtn = document.querySelector('.filter-box button'); // 検索ボタン
+    const problemRows = document.querySelectorAll('#problemTable tbody tr');
+
+    function filterProblems() {
+        const keyword = searchInput.value.toLowerCase();
+        const difficulty = difficultySelect.value;
+        const category = categorySelect.value;
+
+        problemRows.forEach(row => {
+            // 各列のテキストを取得
+            // 0: 難易度(span), 1: 問題名, 2: カテゴリ
+            const diffSpan = row.cells[0].querySelector('span');
+            const titleText = row.cells[1].textContent.toLowerCase();
+            const categoryText = row.cells[2].textContent;
+
+            // 難易度判定
+            let rowDiff = "all";
+            if (diffSpan.classList.contains('diff-gray')) rowDiff = "gray";
+            else if (diffSpan.classList.contains('diff-green')) rowDiff = "green";
+            else if (diffSpan.classList.contains('diff-cyan')) rowDiff = "cyan";
+            else if (diffSpan.classList.contains('diff-blue')) rowDiff = "blue";
+
+            // フィルタリング条件
+            const matchKeyword = titleText.includes(keyword);
+            const matchDiff = (difficulty === "all") || (difficulty === rowDiff);
+            const matchCat = (category === "all") || (category === categoryText) || (category === "C#" && categoryText.includes("C#")); // "C#"の場合の部分一致対応
+
+            // 表示・非表示切り替え
+            if (matchKeyword && matchDiff && matchCat) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    // イベントリスナー設定
+    if (searchInput && difficultySelect && categorySelect) {
+        // 入力時に即座に検索したい場合は 'input' イベント
+        searchInput.addEventListener('input', filterProblems);
+        // プルダウン変更時
+        difficultySelect.addEventListener('change', filterProblems);
+        categorySelect.addEventListener('change', filterProblems);
+        // 検索ボタンクリック時（念のため）
+        if(searchBtn) searchBtn.addEventListener('click', filterProblems);
+    }
     
     // コースフィルタ
     const filterBtns = document.querySelectorAll('.filter-btn-group button');
