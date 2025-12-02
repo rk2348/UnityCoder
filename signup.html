@@ -2,123 +2,38 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ランキング | Unity Learning</title>
+  <title>新規登録 | Unity Learning</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header>
     <div class="container header-inner">
       <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
-      <nav>
-        <a href="index.html">トップ</a>
-        <a href="problemlist.html">問題</a>
-        <a href="courses.html">コース</a>
-        <a href="ranking.html" class="active">ランキング</a>
-      </nav>
-      <div class="user-actions">
-        <a href="login.html" class="btn-login">ログイン</a>
-        <a href="signup.html" class="btn-signup">新規登録</a>
-      </div>
+      <nav><a href="index.html">トップ</a></nav>
     </div>
   </header>
 
-  <div class="container main-wrapper">
-    <main class="main-col">
-      <h2>ユーザーランキング</h2>
-      <p style="margin-bottom: 20px; font-size:0.9rem;">学習ポイントや問題解決数に基づいたランキングです。</p>
-
-      <div class="panel">
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th width="60">順位</th>
-                <th>ユーザー名</th>
-                <th width="100">レート</th>
-                <th width="100">解いた数</th>
-                <th width="150">最終活動日</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td align="center"><strong style="color:#DAA520;">1</strong></td>
-                <td><a href="#">UnityMaster</a> <span class="diff-circle diff-blue" style="margin-left:5px;"></span></td>
-                <td>2450</td>
-                <td>152</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center"><strong style="color:#C0C0C0;">2</strong></td>
-                <td><a href="#">GameDev_JP</a> <span class="diff-circle diff-blue" style="margin-left:5px;"></span></td>
-                <td>2150</td>
-                <td>140</td>
-                <td>2025-11-20</td>
-              </tr>
-              <tr>
-                <td align="center"><strong style="color:#B87333;">3</strong></td>
-                <td><a href="#">IndieCreator</a> <span class="diff-circle diff-cyan" style="margin-left:5px;"></span></td>
-                <td>1980</td>
-                <td>110</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center">4</td>
-                <td><a href="#">Algorithm_Fan</a> <span class="diff-circle diff-cyan" style="margin-left:5px;"></span></td>
-                <td>1800</td>
-                <td>95</td>
-                <td>2025-11-18</td>
-              </tr>
-              <tr>
-                <td align="center">5</td>
-                <td><a href="#">NewbieNo1</a> <span class="diff-circle diff-green" style="margin-left:5px;"></span></td>
-                <td>1200</td>
-                <td>42</td>
-                <td>2025-11-21</td>
-              </tr>
-              <tr>
-                <td align="center">6</td>
-                <td><a href="#">UnityStudent</a> <span class="diff-circle diff-green" style="margin-left:5px;"></span></td>
-                <td>950</td>
-                <td>30</td>
-                <td>2025-11-15</td>
-              </tr>
-              <tr>
-                <td align="center">7</td>
-                <td><a href="#">GuestUser</a> <span class="diff-circle diff-gray" style="margin-left:5px;"></span></td>
-                <td>400</td>
-                <td>12</td>
-                <td>2025-11-10</td>
-              </tr>
-            </tbody>
-          </table>
+  <div class="container">
+    <div class="login-container panel">
+      <div class="panel-header">アカウント作成</div>
+      <div class="panel-body login-form">
+        <form id="signupForm"> 
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" id="signup-email" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>パスワード (6文字以上)</label>
+            <input type="password" id="signup-password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">登録する</button>
+        </form>
+        <div style="margin-top: 15px; text-align: center;">
+          <a href="login.html">すでにアカウントをお持ちの方</a>
         </div>
       </div>
-      
-      <div class="pagination">
-        <a href="#" class="page-link active">1</a>
-        <a href="#" class="page-link">2</a>
-        <a href="#" class="page-link">3</a>
-        <a href="#" class="page-link">&raquo;</a>
-      </div>
-
-    </main>
-
-    <aside class="side-col">
-      <div class="panel">
-        <div class="panel-header">自分の順位</div>
-        <div class="panel-body">
-          <p>ランキングに参加するにはログインしてください。</p>
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  <footer>
-    <div class="container">
-      <p>© 2025 Unity Learning Project.</p>
     </div>
-  </footer>
+  </div>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
