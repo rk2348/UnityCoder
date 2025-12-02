@@ -14,7 +14,7 @@
       <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
       <nav>
         <a href="index.html">トップ</a>
-        <a href="problemlist.html">問題</a>
+        <a href="problemlist.html" class="active">問題</a>
         <a href="courses.html">コース</a>
         <a href="ranking.html">ランキング</a>
       </nav>
@@ -62,6 +62,10 @@
         </div>
       </div>
 
+      <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+        <a href="problemlist.html" style="color: #666; text-decoration: underline; font-size: 0.9rem;">&laquo; 問題一覧へ戻る</a>
+      </div>
+
     </main>
 
     <aside class="side-col">
@@ -69,8 +73,8 @@
         <div class="panel-header">問題情報</div>
         <table style="font-size:0.85rem;">
           <tr><td>ID</td><td id="p_display_id">-</td></tr>
-          <tr><td>正解者数</td><td>- 人</td></tr>
-          <tr><td>正解率</td><td>- %</td></tr>
+          <tr><td>正解者数</td><td id="p_solvers">- 人</td></tr>
+          <tr><td>正解率</td><td id="p_accuracy">- %</td></tr>
         </table>
       </div>
     </aside>
