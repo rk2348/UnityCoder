@@ -1,11 +1,9 @@
-/* --- script.js (完全版: ログイン・サイドバー・問題表示・ランキング・提出) --- */
+/* --- script.js (完全版: 模範解答保存対応) --- */
 
-// 1. Firebaseの機能を読み込む
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 2. Firebase設定 (あなたのプロジェクト用)
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -16,12 +14,10 @@ const firebaseConfig = {
   measurementId: "G-G9JZT2Y9MR"
 };
 
-// 3. アプリ起動
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 4. 問題データ (詳細ページ表示用)
 const staticProblems = [
     {
         id: "prob_001",
@@ -63,9 +59,9 @@ const staticProblems = [
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    /* --- A. ログイン状態の監視 (ヘッダーとサイドバー両方を更新) --- */
+    /* --- A. ログイン状態の監視 --- */
     onAuthStateChanged(auth, (user) => {
-        // 1. ヘッダーの更新
+        // 1. ヘッダー
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
@@ -87,12 +83,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 2. サイドバーの更新
+        // 2. サイドバー
         const userBox = document.querySelector('.user-box');
         if (userBox) {
             if (user) {
                 const shortName = user.email.split('@')[0];
-                // ログイン時の表示
                 userBox.innerHTML = `
                     <p>ようこそ<br><strong style="font-size:1.1rem;">${shortName}</strong> さん</p>
                     <div style="font-size:0.9rem; color:#666; margin:10px 0;">
@@ -100,13 +95,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <button id="sidebarLogoutBtn" class="btn-primary" style="width:100%; font-size:0.85rem; background:#666;">ログアウト</button>
                 `;
-                // サイドバーのログアウトボタン処理
                 document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
                     e.preventDefault();
                     if(confirm("ログアウトしますか？")) signOut(auth).then(() => location.reload());
                 });
             } else {
-                // ログアウト時の表示
                 userBox.innerHTML = `
                     <p>学習履歴を保存するには<br>ログインしてください</p>
                     <a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a>
@@ -116,7 +109,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    /* --- B. 問題詳細ページの表示処理 --- */
+    /* --- B. 問題作成ページ: 模範解答も保存 (★修正ポイント) --- */
+    const saveProblemBtn = document.getElementById('saveProblemBtn');
+    if (saveProblemBtn) {
+        saveProblemBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("問題を投稿するにはログインが必要です");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const title = document.getElementById('new_title').value;
+            const difficulty = document.getElementById('new_difficulty').value;
+            const category = document.getElementById('new_category').value;
+            const description = document.getElementById('new_description').value;
+
+            // 初期コードの取得
+            const editorCreate = ace.edit("editor_create");
+            const initialCode = editorCreate.getValue();
+            
+            // ★模範解答の取得
+            const editorModel = ace.edit("editor_model");
+            const modelAnswer = editorModel.getValue();
+
+            if(!title || !description) {
+                alert("タイトルと問題文は必須です");
+                return;
+            }
+
+            saveProblemBtn.disabled = true;
+            saveProblemBtn.textContent = "保存中...";
+
+            try {
+                // Firebaseに保存（modelAnswerを追加）
+                const docRef = await addDoc(collection(db, "problems"), {
+                    title: title,
+                    difficulty: difficulty,
+                    category: category,
+                    description: description,
+                    initialCode: initialCode,
+                    modelAnswer: modelAnswer, // ★ここに追加しました
+                    score: 100,
+                    timeLimit: "2 sec",
+                    memoryLimit: "1024 MB",
+                    constraints: "<ul><li>ユーザー投稿問題</li></ul>",
+                    inputExample: "-",
+                    outputExample: "-",
+                    author: user.email.split('@')[0],
+                    uid: user.uid,
+                    createdAt: new Date()
+                });
+
+                alert("問題を公開しました！");
+                window.location.href = "problemlist.html";
+            } catch (e) {
+                console.error(e);
+                alert("保存失敗: " + e.message);
+                saveProblemBtn.disabled = false;
+                saveProblemBtn.textContent = "この内容で公開する";
+            }
+        });
+    }
+
+    /* --- C. 問題詳細ページ --- */
     const problemTitleElement = document.getElementById('p_title');
     if (problemTitleElement) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -130,7 +186,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('p_memory').textContent = problem.memoryLimit;
                 document.getElementById('p_score').textContent = problem.score;
                 if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = problem.id;
-                
                 document.getElementById('p_description').innerHTML = problem.description;
                 document.getElementById('p_constraints').innerHTML = problem.constraints;
                 document.getElementById('p_input').textContent = problem.inputExample;
@@ -149,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- C. 新規登録処理 --- */
+    /* --- D. 新規登録 & ログイン --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', (e) => {
@@ -161,8 +216,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .catch((err) => alert("エラー: " + err.message));
         });
     }
-
-    /* --- D. ログイン処理 --- */
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -171,11 +224,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = document.getElementById('login-password').value;
             signInWithEmailAndPassword(auth, email, pass)
                 .then(() => { alert("ログイン成功！"); window.location.href = "index.html"; })
-                .catch(() => alert("ログイン失敗: メールかパスワードが違います"));
+                .catch(() => alert("ログイン失敗"));
         });
     }
 
-    /* --- E. 提出ボタン処理 --- */
+    /* --- E. 提出ボタン --- */
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
@@ -187,9 +240,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             submitBtn.disabled = true;
             submitBtn.textContent = "ジャッジ中...";
-            
             setTimeout(async () => {
-                const isCorrect = Math.random() > 0.3; // 70%の確率で正解
+                const isCorrect = Math.random() > 0.3;
                 if (isCorrect) {
                     submitBtn.textContent = "AC (正解！)";
                     submitBtn.style.backgroundColor = "#5cb85c";

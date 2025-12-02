@@ -16,7 +16,7 @@
       font-size: 0.95rem;
     }
     .form-group {
-      margin-bottom: 25px; /* 余白を広めに */
+      margin-bottom: 25px;
     }
     .input-row {
       display: flex;
@@ -25,14 +25,12 @@
     .input-col {
       flex: 1;
     }
-    /* HTML記述用のテキストエリアを見やすく */
     textarea.code-font {
       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
       font-size: 14px;
       background-color: #fafafa;
       line-height: 1.6;
     }
-    /* エディタの枠デザイン */
     .editor-wrapper {
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -44,6 +42,7 @@
       font-size: 0.85rem;
       color: #666;
       border-bottom: 1px solid #ddd;
+      font-weight: bold;
     }
     .hint-box {
       background-color: #f0f9ff;
@@ -110,15 +109,14 @@
 
           <div class="form-group">
             <label class="form-label">問題文 (HTML形式) <span style="color:red; font-size:0.8em;">*</span></label>
-            <textarea id="new_description" class="form-control code-font" rows="8" placeholder="<p>ここに問題文を記述します。</p>&#13;&#10;<p>Startメソッドを使って...</p>"></textarea>
-            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">※ &lt;p&gt;, &lt;code&gt;, &lt;ul&gt; などのタグが使用可能です。</p>
+            <textarea id="new_description" class="form-control code-font" rows="8" placeholder="<p>ここに問題文を記述します。</p>"></textarea>
           </div>
 
           <div class="form-group">
             <label class="form-label">初期コード (ユーザーに渡すテンプレート)</label>
             <div class="editor-wrapper">
-              <div class="editor-header">C# Script</div>
-              <div id="editor_create" style="height: 300px;">using UnityEngine;
+              <div class="editor-header">Initial Code (User's Template)</div>
+              <div id="editor_create" style="height: 200px;">using UnityEngine;
 
 public class NewScript : MonoBehaviour
 {
@@ -128,6 +126,24 @@ public class NewScript : MonoBehaviour
     }
 }</div>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">模範解答 (正解コード)</label>
+            <div class="editor-wrapper">
+              <div class="editor-header" style="background:#e6fffa; color:#006d5b;">Model Answer (Solution)</div>
+              <div id="editor_model" style="height: 200px;">using UnityEngine;
+
+public class NewScript : MonoBehaviour
+{
+    void Start()
+    {
+        // 正解の処理
+        Debug.Log("Hello World");
+    }
+}</div>
+            </div>
+            <p style="font-size:0.8rem; color:#888; margin-top:5px;">※このコードはユーザーには公開されませんが、判定や解説に使われます。</p>
           </div>
 
           <button id="saveProblemBtn" class="btn-primary" style="width:100%; padding: 12px; font-size: 1rem; margin-top:10px;">
@@ -147,11 +163,7 @@ public class NewScript : MonoBehaviour
               <li><code>&lt;p&gt;</code> : 段落</li>
               <li><code>&lt;code&gt;</code> : コード（短い）</li>
               <li><code>&lt;pre&gt;</code> : コードブロック</li>
-              <li><code>&lt;ul&gt;&lt;li&gt;</code> : 箇条書きリスト</li>
             </ul>
-          </div>
-          <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
-            <p>※「公開する」を押すと、あなたのブラウザ経由でFirebaseに保存され、問題一覧に即座に反映されます。</p>
           </div>
         </div>
       </div>
@@ -165,11 +177,17 @@ public class NewScript : MonoBehaviour
   </footer>
 
   <script>
-    // Ace Editorの初期化 (見た目用)
+    // 1. 初期コード用エディタ
     var editorCreate = ace.edit("editor_create");
     editorCreate.setTheme("ace/theme/monokai");
     editorCreate.session.setMode("ace/mode/csharp");
     editorCreate.setFontSize(14);
+
+    // 2. ★追加：模範解答用エディタ
+    var editorModel = ace.edit("editor_model");
+    editorModel.setTheme("ace/theme/monokai");
+    editorModel.session.setMode("ace/mode/csharp");
+    editorModel.setFontSize(14);
   </script>
 
   <script type="module" src="script.js"></script>
