@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ | Unity Learning</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html">コース</a>
+        <a href="ranking.html">ランキング</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <h2>お問い合わせ</h2>
+      <p style="margin-bottom: 20px;">
+        サイトに関するご意見・ご要望・バグ報告などはこちらからお送りください。<br>
+        管理者のDiscordサーバーに直接通知されます。
+      </p>
+      
+      <div class="panel">
+        <div class="panel-body">
+          <form id="contactForm">
+            
+            <div class="form-group">
+              <label style="font-weight:bold; display:block; margin-bottom:5px;">お名前 (必須)</label>
+              <input type="text" id="contact-name" class="form-control" placeholder="UnityMaster" required>
+            </div>
+
+            <div class="form-group" style="margin-top:15px;">
+              <label style="font-weight:bold; display:block; margin-bottom:5px;">メールアドレス (任意)</label>
+              <input type="email" id="contact-email" class="form-control" placeholder="返信が必要な場合は入力してください">
+            </div>
+
+            <div class="form-group" style="margin-top:15px;">
+              <label style="font-weight:bold; display:block; margin-bottom:5px;">件名 (必須)</label>
+              <select id="contact-subject" class="form-control">
+                <option value="ご意見・ご要望">ご意見・ご要望</option>
+                <option value="バグ報告">バグ報告</option>
+                <option value="問題に関する質問">問題に関する質問</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-top:15px;">
+              <label style="font-weight:bold; display:block; margin-bottom:5px;">お問い合わせ内容 (必須)</label>
+              <textarea id="contact-message" class="form-control" rows="6" placeholder="具体的な内容をご記入ください..." required></textarea>
+            </div>
+
+            <button type="submit" id="sendContactBtn" class="btn-primary" style="width:100%; margin-top:20px; padding:12px;">送信する</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">インフォメーション</div>
+        <div class="panel-body">
+          <ul style="line-height: 2; font-size: 0.9rem;">
+            <li><a href="about.html">サイト概要</a></li>
+            <li><a href="terms.html">利用規約</a></li>
+            <li><a href="privacy.html">プライバシーポリシー</a></li>
+            <li><a href="contact.html" style="font-weight:bold; color:#007acc;">お問い合わせ</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <div class="panel-header">ステータス</div>
+        <div class="panel-body user-box">
+          <p>ログインしていません</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">概要</a>
+        <a href="terms.html">利用規約</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
+      </div>
+      <p>© 2025 Unity Learning Project.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

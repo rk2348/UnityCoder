@@ -268,3 +268,76 @@ footer {
   border-radius: 4px;
   border: 1px solid #ddd;
 }
+
+/* --- お問い合わせフォーム専用スタイル --- */
+
+/* フォーム全体のコンテナ */
+#contactForm {
+  max-width: 600px;
+  margin: 0 auto; /* 中央寄せ */
+}
+
+/* 入力欄のデザイン調整 */
+#contactForm .form-control {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #eee; /* 薄い枠線 */
+  border-radius: 6px;
+  background-color: #fafafa;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* パディングを含めた幅にする */
+}
+
+/* 入力欄をクリックしたとき（フォーカス時） */
+#contactForm .form-control:focus {
+  border-color: #007acc; /* Unityブルー */
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.1);
+}
+
+/* テキストエリア（内容）の調整 */
+textarea#contact-message {
+  resize: vertical; /* 縦方向のみリサイズ許可 */
+  min-height: 150px;
+  line-height: 1.6;
+}
+
+/* 必須項目のラベル */
+#contactForm label::after {
+  content: " *";
+  color: #e74c3c; /* 赤色 */
+  font-weight: bold;
+}
+/* 任意の項目は赤くしない */
+#contactForm label[for="contact-email"]::after {
+  content: ""; 
+}
+
+/* 送信ボタン */
+#sendContactBtn {
+  background-color: #007acc;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#sendContactBtn:hover {
+  background-color: #005fa3; /* ホバー時に少し暗く */
+}
+
+#sendContactBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* スマホ表示時の調整 */
+@media (max-width: 768px) {
+  #contactForm {
+    padding: 0 10px;
+  }
+}
