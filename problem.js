@@ -174,13 +174,19 @@ function checkAnswer() {
 
     // ユーザーのコード内に、期待されるコードスニペットが含まれているかを確認
     if (cleanUser.includes(cleanExpected)) {
-         elResult.innerHTML = `
+        
+        // ★★★ 追加部分: 正解したらローカルストレージに保存 ★★★
+        saveSolvedStatus(currentId);
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        elResult.innerHTML = `
             <div class="msg success">
                 <strong>🎉 正解です！</strong><br>
-                素晴らしい！この調子で次の問題も解いてみましょう。
+                素晴らしい！この調子で次の問題も解いてみましょう。<br>
+                <a href="problems.html" style="color:#155724; text-decoration:underline; margin-top:5px; display:inline-block;">問題一覧に戻る</a>
             </div>`;
     } else {
-         elResult.innerHTML = `
+        elResult.innerHTML = `
             <div class="msg error">
                 <strong>❌ 不正解です...</strong><br>
                 ロジックが正しいか、スペルミスがないか確認してください。<br>
@@ -188,6 +194,19 @@ function checkAnswer() {
                     ヒント: 期待される記述が含まれていません。
                 </div>
             </div>`;
+    }
+}
+
+// ★★★ 追加部分: 保存用関数 ★★★
+function saveSolvedStatus(id) {
+    // 現在の保存データを取得 (なければ空配列)
+    let solvedList = JSON.parse(localStorage.getItem('unity_solved_problems')) || [];
+    
+    // まだIDが含まれていなければ追加
+    if (!solvedList.includes(id)) {
+        solvedList.push(id);
+        // 保存
+        localStorage.setItem('unity_solved_problems', JSON.stringify(solvedList));
     }
 }
 

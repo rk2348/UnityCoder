@@ -3,104 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>掲示板 | Unity学習サイト</title>
+  <title>掲示板 - Unity学習サイト</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header>
     <div class="container header-inner">
-      <div class="logo"><a href="index.html" style="text-decoration:none; color:inherit;">Unity学習サイト</a></div>
+      <div class="logo">Unity学習サイト</div>
       <nav>
+        <a href="index.html">ホーム</a>
         <a href="courses.html">コース一覧</a>
-        <a href="problemlist.html">問題一覧</a>
-        <a href="submissions.html">提出履歴</a>
-        <a href="ranking.html">ランキング</a>
-        <a href="bbs.html" class="active">掲示板</a> <a href="about.html">概要</a>
-        <a href="login.html" id="authLink">ログイン</a>
+        <a href="bbs.html" class="active">掲示板</a>
       </nav>
     </div>
   </header>
 
-  <section class="hero hero-small" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);">
+  <section class="section">
     <div class="container">
-      <h1>開発者コミュニティ</h1>
-      <p>学習の悩みやバグの相談、成果物の共有など自由に交流しましょう</p>
+      <div class="bbs-header">
+        <h2>開発者コミュニティ</h2>
+        <button class="filter-btn active" style="background: #007acc; color: #fff;" onclick="document.getElementById('postModal').classList.add('active')">
+          + 新規スレッド作成
+        </button>
+      </div>
+
+      <div class="thread-list">
+        
+        <div class="thread-card">
+          <div class="thread-meta">
+            <span class="category-tag cat-beginner">初心者</span>
+            <span>2025/11/20 14:30</span>
+          </div>
+          <h3 class="thread-title"><a href="#" style="text-decoration:none; color:inherit;">Rigidbody2Dをつけても重力が反映されません</a></h3>
+          <p class="thread-body">
+            2Dゲームを作っているのですが、キャラクターにRigidbody2Dコンポーネントを追加しても空中に浮いたまま落ちてきません。Gravity Scaleは1になっています。何が原因でしょうか？Body TypeはKinematicになっています。
+          </p>
+          <div class="thread-footer">
+            <span>回答数: 3</span>
+            <span>投稿者: UnityBeginner</span>
+          </div>
+        </div>
+
+        <div class="thread-card">
+          <div class="thread-meta">
+            <span class="category-tag cat-bug">バグ報告</span>
+            <span>2025/11/19 09:15</span>
+          </div>
+          <h3 class="thread-title"><a href="#" style="text-decoration:none; color:inherit;">Unity 6 でシェーダーエラーが出る件</a></h3>
+          <p class="thread-body">
+            昨日Unityをアップデートしたところ、既存のURPプロジェクトでピンク色のマテリアルエラーが発生するようになりました。同様の現象に遭われた方はいらっしゃいますか？
+          </p>
+          <div class="thread-footer">
+            <span>回答数: 12</span>
+            <span>投稿者: DevMaster</span>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <div class="container layout-course">
-    <aside class="course-sidebar">
-      <div class="section-clean">
-        <button id="openPostModalBtn" class="btn-primary-lg" style="margin-bottom: 20px;">新規スレッド作成</button>
-        
-        <h3>カテゴリ</h3>
-        <ul class="lesson-list">
-          <li class="active"><a href="#">すべて</a></li>
-          <li><a href="#">🔰 初心者質問</a></li>
-          <li><a href="#">🔧 技術的な相談</a></li>
-          <li><a href="#">🐛 バグ報告</a></li>
-          <li><a href="#">☕ 雑談・交流</a></li>
-        </ul>
-      </div>
-    </aside>
-
-    <main class="course-main">
-      <div class="bbs-header">
-        <h2>スレッド一覧</h2>
-        <div class="sort-options">
-          <select>
-            <option>新着順</option>
-            <option>人気順</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="threadList" class="thread-list">
-        </div>
-    </main>
-  </div>
-
-  <div id="postModal" class="modal-overlay">
+  <div class="modal-overlay" id="postModal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>新規スレッド作成</h3>
-        <button class="close-modal" id="closeModalBtn">&times;</button>
+        <button class="close-modal" onclick="document.getElementById('postModal').classList.remove('active')">×</button>
       </div>
       <div class="modal-body">
-        <form id="postForm">
-          <div class="form-group">
-            <label>タイトル</label>
-            <input type="text" id="postTitle" placeholder="例: オブジェクトが動かなくて困っています" required>
-          </div>
-          <div class="form-group">
-            <label>カテゴリ</label>
-            <select id="postCategory">
-              <option value="beginner">🔰 初心者質問</option>
-              <option value="tech">🔧 技術的な相談</option>
-              <option value="bug">🐛 バグ報告</option>
-              <option value="chat">☕ 雑談・交流</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>内容</label>
-            <textarea id="postBody" rows="5" placeholder="詳細を記入してください..." required></textarea>
-          </div>
-          <button type="submit" class="btn-primary-lg">投稿する</button>
-        </form>
+        <div class="form-group">
+          <label>タイトル</label>
+          <input type="text" placeholder="質問の要約を入力してください">
+        </div>
+        <div class="form-group">
+          <label>カテゴリ</label>
+          <select style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+            <option>初心者</option>
+            <option>技術的な質問</option>
+            <option>バグ報告</option>
+            <option>雑談</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>内容</label>
+          <textarea rows="5" placeholder="詳細な内容を入力してください"></textarea>
+        </div>
+        <button class="btn-primary-lg">投稿する</button>
       </div>
     </div>
   </div>
 
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-bottom">
-        <p>© 2025 Unity学習サイト</p>
-        <button onclick="clearBBS()" style="font-size:0.8em; background:none; border:none; color:#555; cursor:pointer;">(デバッグ用: 掲示板リセット)</button>
-      </div>
+    <div class="container footer-bottom">
+      <p>© 2025 Unity学習サイト All Rights Reserved.</p>
     </div>
   </footer>
-
-  <script src="auth.js"></script>
-  <script src="bbs.js"></script> </body>
+</body>
 </html>

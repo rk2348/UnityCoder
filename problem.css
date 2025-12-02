@@ -1,85 +1,212 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   ベーススタイル (共通)
+   ========================================================================== */
 body {
     margin: 0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
     background: #f6f6f6;
     color: #333;
+    line-height: 1.6;
 }
 
-/* ヘッダー */
-header { background: #fff; border-bottom: 1px solid #ddd; padding: 15px 0; }
-.header-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-.logo { font-weight: bold; font-size: 1.2em; }
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s, background 0.2s;
+}
 
-/* Navigation */
-nav a { margin-left: 20px; text-decoration: none; color: #555; }
-nav a:hover { color: #007acc; }
+/* ==========================================================================
+   ヘッダー (共通)
+   ========================================================================== */
+header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
 
-/* Layout */
-.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+.header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.4em;
+    color: #222;
+}
+
+nav a {
+    margin-left: 20px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95em;
+}
+
+nav a:hover {
+    color: #007acc;
+}
+
+/* ==========================================================================
+   メインレイアウト
+   ========================================================================== */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
 .main-content {
-    margin-top: 40px; margin-bottom: 60px;
-    background: #fff; padding: 40px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+    background: #fff;
+    padding: 40px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-/* Breadcrumb */
-.breadcrumb { margin-bottom: 20px; color: #777; font-size: 0.9em; }
-.breadcrumb a { text-decoration: none; color: #007acc; }
+h2 {
+    margin-top: 0;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    color: #333;
+}
 
-/* Title */
+/* ==========================================================================
+   問題一覧リスト (List Page Styles)
+   ========================================================================== */
+.problem-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+.problem-item {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer; /* カード全体をクリック可能に見せる */
+    position: relative;
+}
+
+/* カード全体のリンク化（UX向上）のための擬似要素テクニックを使う場合 */
+.problem-item a::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+}
+
+.problem-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-color: #007acc;
+}
+
+/* 左側の情報エリア */
+.prob-info {
+    flex: 1; /* 余白を埋める */
+}
+
+.prob-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.15em;
+}
+
+.prob-info h3 a {
+    color: #333;
+    font-weight: bold;
+}
+
+.prob-info h3 a:hover {
+    color: #007acc;
+}
+
+.prob-meta {
+    font-size: 0.85em;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ==========================================================================
+   バッジ & アイコン
+   ========================================================================== */
 .badge {
-    background: #4caf50; color: white;
-    padding: 3px 8px; border-radius: 4px;
-    font-size: 0.8em;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    color: #fff;
+    font-weight: normal;
+    background: #999; /* デフォルト色 */
     vertical-align: middle;
+    margin-left: 10px;
 }
 
-h2 { margin-top: 10px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-
-/* 入出力例 */
-pre {
-    background: #2d2d2d; color: #fff; padding: 15px; border-radius: 5px;
-    overflow-x: auto; font-family: Consolas, monospace;
-}
-.io-example { display: flex; gap: 20px; margin-top: 15px; }
-.io-box { flex: 1; }
-
-/* Code editor */
-.code-editor-wrapper {
-    display: flex; background: #1e1e1e;
-    border-radius: 6px; overflow: hidden; border: 1px solid #444;
-}
-.line-numbers {
-    background: #252526; color: #858585;
-    padding: 15px 10px; text-align: right; user-select: none;
-    font-family: Consolas, monospace; font-size: 16px; line-height: 1.5;
-}
-textarea {
-    flex: 1; height: 300px;
-    background: #1e1e1e; color: #d4d4d4;
-    border: none; padding: 15px;
-    font-family: Consolas, monospace;
-    font-size: 16px; line-height: 1.5; resize: vertical;
+.status-icon {
+    font-size: 1.5em;
+    color: #e0e0e0;
+    margin-left: 20px;
+    width: 30px;
+    text-align: center;
 }
 
-/* Buttons */
-.btn-run {
-    margin-top: 15px; padding: 12px 30px;
-    background: #007acc; color: white;
-    border: none; border-radius: 5px;
-    cursor: pointer; font-size: 1em; font-weight: bold;
+.status-icon.solved {
+    color: #4caf50; /* 正解時の緑色 */
+    text-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
 }
-.btn-run:hover { background: #005fa3; }
 
-/* Judge result */
-.msg { margin-top: 20px; padding: 15px; border-radius: 5px; font-weight: bold; }
-.msg.success { background: #d4edda; color: #155724; }
-.msg.error { background: #f8d7da; color: #721c24; }
+/* ==========================================================================
+   フッター
+   ========================================================================== */
+footer {
+    text-align: center;
+    margin-top: auto;
+    padding: 40px 0;
+    color: #999;
+    font-size: 0.9em;
+    border-top: 1px solid #eee;
+}
 
-/* Footer & links */
-.nav-links { margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
-.btn-secondary { display: inline-block; padding: 10px 20px; text-decoration: none; border: 1px solid #ccc; color: #666; }
-.btn-secondary:hover { background: #f0f0f0; }
+/* ==========================================================================
+   レスポンシブ対応 (スマホ向け)
+   ========================================================================== */
+@media screen and (max-width: 600px) {
+    .main-content {
+        padding: 20px;
+        margin-top: 20px;
+    }
 
-footer { text-align: center; margin-top: 40px; color: #999; }
+    .problem-item {
+        flex-direction: column; /* 縦並びにする */
+        align-items: flex-start;
+    }
+
+    .status-icon {
+        align-self: flex-end; /* 右下に配置 */
+        margin-top: -20px; /* 位置調整 */
+    }
+    
+    .badge {
+        display: inline-block;
+        margin-top: 5px;
+        margin-left: 0;
+    }
+}
