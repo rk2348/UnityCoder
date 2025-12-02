@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>掲示板 | Unity Learning</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* 簡易モーダルスタイル */
+    #threadModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+    }
+  </style>
 </head>
 <body>
 
@@ -29,75 +48,50 @@
     <main class="main-col">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2>ユーザー掲示板</h2>
-        <button class="btn-primary">新規スレッド作成</button>
+        <button id="newThreadBtn" class="btn-primary">新規スレッド作成</button>
       </div>
 
       <div class="filter-box">
-        <input type="text" class="form-control" placeholder="キーワードで検索" style="flex:2;">
-        <select class="form-control" style="flex:1;">
-          <option>すべてのカテゴリ</option>
-          <option>質問</option>
-          <option>雑談</option>
-          <option>バグ報告</option>
+        <input type="text" id="bbsSearchInput" class="form-control" placeholder="キーワードで検索" style="flex:2;">
+        <select id="bbsCategoryFilter" class="form-control" style="flex:1;">
+          <option value="all">すべてのカテゴリ</option>
+          <option value="question">質問</option>
+          <option value="chat">雑談</option>
+          <option value="bug">バグ報告</option>
         </select>
-        <button class="btn-primary">検索</button>
+        <button id="bbsSearchBtn" class="btn-primary">検索</button>
       </div>
 
       <div class="panel">
         <div class="table-wrapper">
-          <table>
-            <thead>
+          <table id="bbsTable"> <thead>
               <tr>
                 <th width="400">タイトル</th>
                 <th width="100">カテゴリ</th>
                 <th width="120">投稿者</th>
-                <th width="120">更新日時</th>
-                <th width="60">回答</th>
-              </tr>
+                <th width="150">投稿日時</th> </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><a href="#">Rigidbodyが動かない場合の対処法について</a></td>
-                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">質問</span></td>
-                <td><a href="#">Beginner01</a></td>
-                <td>2025-11-21 14:30</td>
-                <td align="center">3</td>
-              </tr>
-              <tr>
-                <td><a href="#">第3回コンテストの感想戦</a></td>
-                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">雑談</span></td>
-                <td><a href="#">UnityMaster</a></td>
-                <td>2025-11-20 22:15</td>
-                <td align="center">12</td>
-              </tr>
-              <tr>
-                <td><a href="#">UIのアンカー設定がわかりません</a></td>
-                <td><span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">質問</span></td>
-                <td><a href="#">UIGirl</a></td>
-                <td>2025-11-19 09:00</td>
-                <td align="center">0</td>
-              </tr>
-              <tr>
-                <td><a href="#">問題「Cubeの移動」のテストケースについて</a></td>
-                <td><span style="font-size:0.8rem; background:#ffebeb; color:red; padding:2px 6px; border-radius:4px;">バグ報告</span></td>
-                <td><a href="#">Tester</a></td>
-                <td>2025-11-18 18:45</td>
-                <td align="center">1</td>
-              </tr>
+              <tr><td colspan="4">読み込み中...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
       
       <div class="pagination">
-        <a href="#" class="page-link active">1</a>
-        <a href="#" class="page-link">2</a>
-        <a href="#" class="page-link">&raquo;</a>
+        <span style="color:#888; font-size:0.9rem;">※最新20件を表示中</span>
       </div>
 
     </main>
 
     <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">ステータス</div>
+        <div class="panel-body user-box">
+          <p>ログインしていません</p>
+        </div>
+      </div>
+      
       <div class="panel">
         <div class="panel-header">注意事項</div>
         <div class="panel-body">
@@ -116,5 +110,33 @@
       <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
+
+  <div id="threadModal">
+    <div class="modal-content">
+      <h3 style="margin-top:0;">新規スレッド作成</h3>
+      <div class="form-group" style="margin-bottom:15px;">
+        <label style="font-weight:bold; display:block; margin-bottom:5px;">タイトル</label>
+        <input type="text" id="threadTitle" class="form-control" style="width:100%; box-sizing:border-box;" placeholder="例: Rigidbodyが動かない">
+      </div>
+      <div class="form-group" style="margin-bottom:15px;">
+        <label style="font-weight:bold; display:block; margin-bottom:5px;">カテゴリ</label>
+        <select id="threadCategory" class="form-control" style="width:100%;">
+          <option value="question">質問</option>
+          <option value="chat">雑談</option>
+          <option value="bug">バグ報告</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label style="font-weight:bold; display:block; margin-bottom:5px;">内容</label>
+        <textarea id="threadContent" class="form-control" rows="5" style="width:100%; box-sizing:border-box;" placeholder="詳細を記入してください..."></textarea>
+      </div>
+      <div style="text-align:right;">
+        <button id="cancelThreadBtn" class="form-control" style="cursor:pointer; background:#eee; border:none; padding:8px 16px; border-radius:4px; margin-right:10px;">キャンセル</button>
+        <button id="submitThreadBtn" class="btn-primary">投稿する</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
 </body>
 </html>
