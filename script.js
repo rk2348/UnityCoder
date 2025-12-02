@@ -1,10 +1,9 @@
-/* --- script.js (ユーザー登録 + Discord通知機能付き) --- */
+/* --- script.js (完全版: 回答済みマーク機能追加) --- */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 1. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -15,15 +14,13 @@ const firebaseConfig = {
   measurementId: "G-G9JZT2Y9MR"
 };
 
-// 2. ★ここにDiscordのWebhook URLを貼り付けてください！
-const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1445488372771455018/V8SAVsok2-uTa3Xt_g4ZJv8qXo-lKfPg_pkiEv7f144Tl9OuZqBhxQUt18a8edpQ56fr"; 
+// ★Discord Webhook URL (前回設定したものがあればここに入れてください)
+const DISCORD_WEBHOOK_URL = ""; 
 
-// 3. アプリ起動
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 4. 問題データ
 const staticProblems = [
     {
         id: "prob_001",
@@ -63,35 +60,29 @@ const staticProblems = [
     }
 ];
 
-// --- Discordに通知を送る関数 ---
+// Discord通知関数
 async function sendDiscordNotification(username) {
     if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("...")) return;
-
-    const message = {
-        content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
-    };
-
     try {
         await fetch(DISCORD_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(message)
+            body: JSON.stringify({
+                content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
+            })
         });
-    } catch (e) {
-        console.error("Discord通知エラー:", e);
-    }
+    } catch (e) { console.error("Discord通知エラー:", e); }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    /* --- A. ログイン状態の監視 --- */
-    onAuthStateChanged(auth, (user) => {
-        const displayName = user ? (user.displayName || user.email.split('@')[0]) : "";
-
-        // 1. ヘッダー
+    /* --- A. ログイン状態監視 & ★回答済みマーク表示 --- */
+    onAuthStateChanged(auth, async (user) => {
+        // 1. ヘッダー更新
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
+                const displayName = user.displayName || user.email.split('@')[0];
                 userActions.innerHTML = `
                     <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${displayName}</strong></span>
                     <a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>
@@ -109,10 +100,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 2. サイドバー
+        // 2. サイドバー更新
         const userBox = document.querySelector('.user-box');
         if (userBox) {
             if (user) {
+                const displayName = user.displayName || user.email.split('@')[0];
                 userBox.innerHTML = `
                     <p>ようこそ<br><strong style="font-size:1.1rem;">${displayName}</strong> さん</p>
                     <div style="font-size:0.9rem; color:#666; margin:10px 0;">
@@ -130,6 +122,45 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a>
                     <a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>
                 `;
+            }
+        }
+
+        // 3. ★ここが新機能！ 回答済みマークをつける処理
+        if (user) {
+            // 問題一覧ページにいる場合のみ実行
+            const problemTable = document.getElementById('problemTable');
+            if (problemTable) {
+                try {
+                    // 自分の提出履歴から「AC」のものだけを取得
+                    const q = query(
+                        collection(db, "submissions"),
+                        where("uid", "==", user.uid),
+                        where("result", "==", "AC")
+                    );
+                    const querySnapshot = await getDocs(q);
+                    
+                    // ACした問題IDのリストを作る
+                    const solvedProblemIds = new Set();
+                    querySnapshot.forEach((doc) => {
+                        solvedProblemIds.add(doc.data().problemId);
+                    });
+
+                    // 画面上のリンクを探してマークをつける
+                    const links = problemTable.querySelectorAll('a');
+                    links.forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href && href.includes('id=')) {
+                            const pId = href.split('id=')[1];
+                            if (solvedProblemIds.has(pId)) {
+                                // 正解していれば ✅ マークと色をつける
+                                link.innerHTML = `<span style="color:#5cb85c; margin-right:5px;">✅</span> ${link.innerHTML}`;
+                                link.parentElement.parentElement.style.backgroundColor = "#f0fff4"; // 行の色も薄緑に
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error("回答状況の取得に失敗:", e);
+                }
             }
         }
     });
@@ -226,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- D. 新規登録処理 (★修正: Discord通知追加) --- */
+    /* --- D. 新規登録処理 --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -236,16 +267,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = document.getElementById('signup-password').value;
 
             try {
-                // 1. ユーザー作成
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
-
-                // 2. プロフィール更新
-                await updateProfile(user, {
-                    displayName: username
-                });
-
-                // 3. ★Discordへ通知を送る！
+                await updateProfile(user, { displayName: username });
                 await sendDiscordNotification(username);
 
                 alert("登録完了！ようこそ " + username + " さん");
