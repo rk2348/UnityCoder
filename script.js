@@ -1,11 +1,11 @@
-/* --- script.js (ログイン機能＆ランキング保存 完成版) --- */
+/* --- script.js (完全版: 問題表示 + ログイン + ランキング) --- */
 
 // 1. Firebaseの機能を読み込む
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// 2. あなたのFirebase設定
+// 2. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
   authDomain: "unitycoder.firebaseapp.com",
@@ -19,7 +19,47 @@ const firebaseConfig = {
 // 3. アプリ起動
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app); // ログイン機能の起動
+const auth = getAuth(app);
+
+/* --- ★ここが復活！ 問題データの定義 (problems_data.jsが読み込めない場合用) --- */
+const staticProblems = [
+    {
+        id: "prob_001",
+        title: "Hello Unity World",
+        timeLimit: "2 sec",
+        memoryLimit: "1024 MB",
+        score: 100,
+        description: `<p>Unityのコンソールに「Hello World」と表示するスクリプトを作成してください。</p><p><code>Start</code> メソッド内で <code>Debug.Log</code> を使用してください。</p>`,
+        constraints: `<ul><li>表示する文字列は正確に "Hello World" であること。</li></ul>`,
+        inputExample: "なし",
+        outputExample: "Hello World",
+        initialCode: `using UnityEngine;\n\npublic class HelloWorld : MonoBehaviour\n{\n    void Start()\n    {\n        // ここにコードを書いてください\n        \n    }\n}`
+    },
+    {
+        id: "prob_002",
+        title: "Cubeの移動",
+        timeLimit: "2 sec",
+        memoryLimit: "1024 MB",
+        score: 100,
+        description: `<p><code>Update</code> メソッドを使用して、CubeをX軸方向に移動させてください。</p><p>毎フレーム <code>0.1f</code> ずつ移動させること。</p>`,
+        constraints: `<ul><li>Transform.Translate または position を直接操作すること。</li></ul>`,
+        inputExample: "なし",
+        outputExample: "Cubeのx座標が増加する",
+        initialCode: `using UnityEngine;\n\npublic class MoveCube : MonoBehaviour\n{\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
+    },
+    {
+        id: "prob_003",
+        title: "Rigidbody ジャンプ",
+        timeLimit: "2 sec",
+        memoryLimit: "1024 MB",
+        score: 200,
+        description: `<p>Rigidbodyを使ってオブジェクトをジャンプさせてください。</p><p>スペースキーが押された瞬間に上方向へ力を加えます。</p>`,
+        constraints: `<ul><li>ジャンプ力は 5.0f</li><li>ForceMode.Impulseを使用</li></ul>`,
+        inputExample: "Space Key",
+        outputExample: "Velocity Y > 0",
+        initialCode: `using UnityEngine;\n\npublic class PlayerJump : MonoBehaviour\n{\n    public float jumpForce = 5.0f;\n    private Rigidbody rb;\n\n    void Start()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
+    }
+];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -28,7 +68,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
-                // ログイン中
                 const shortName = user.email.split('@')[0];
                 userActions.innerHTML = `
                     <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${shortName}</strong></span>
@@ -40,7 +79,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if(confirm("ログアウトしますか？")) signOut(auth).then(() => location.reload());
                 });
             } else {
-                // ログアウト中
                 userActions.innerHTML = `
                     <a href="login.html" class="btn-login">ログイン</a>
                     <a href="signup.html" class="btn-signup">新規登録</a>
@@ -48,6 +86,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
+
+    /* --- ★ここが復活！ 問題詳細ページの表示処理 --- */
+    const problemTitleElement = document.getElementById('p_title');
+    if (problemTitleElement) {
+        // URLから ?id=prob_xxx を取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const problemId = urlParams.get('id');
+
+        if (problemId) {
+            // 定義したデータから検索
+            const problem = staticProblems.find(p => p.id === problemId);
+            
+            if (problem) {
+                // 画面に表示
+                document.title = `${problem.title} | Unity Learning`;
+                document.getElementById('p_title').textContent = problem.title;
+                document.getElementById('p_time').textContent = problem.timeLimit;
+                document.getElementById('p_memory').textContent = problem.memoryLimit;
+                document.getElementById('p_score').textContent = problem.score;
+                document.getElementById('p_display_id').textContent = problem.id;
+
+                document.getElementById('p_description').innerHTML = problem.description;
+                document.getElementById('p_constraints').innerHTML = problem.constraints;
+                document.getElementById('p_input').textContent = problem.inputExample;
+                document.getElementById('p_output').textContent = problem.outputExample;
+
+                // エディタに初期コードをセット
+                if (document.getElementById('editor')) {
+                    const editor = ace.edit("editor");
+                    editor.setTheme("ace/theme/monokai");
+                    editor.session.setMode("ace/mode/csharp");
+                    editor.setFontSize(14);
+                    editor.setValue(problem.initialCode || "", -1);
+                }
+            } else {
+                problemTitleElement.textContent = "問題が見つかりません";
+            }
+        }
+    }
 
     /* --- B. 新規登録処理 --- */
     const signupForm = document.getElementById('signupForm');
@@ -77,17 +154,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* --- D. 提出ボタン --- */
     const submitBtn = document.getElementById('submitBtn');
-    let editor;
-    if (document.getElementById('editor')) {
-        editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/csharp");
-        editor.setFontSize(14);
-    }
-
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
-            const user = auth.currentUser; // 現在のユーザーを取得
+            const user = auth.currentUser; 
             if (!user) {
                 alert("ログインしてください！");
                 window.location.href = "login.html";
@@ -148,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (e) { rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み失敗</td></tr>'; }
     }
     
-    // コースフィルタ（変更なし）
+    // コースフィルタ
     const filterBtns = document.querySelectorAll('.filter-btn-group button');
     const courseCards = document.querySelectorAll('.course-card');
     if (filterBtns.length > 0) {
