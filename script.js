@@ -1,29 +1,9 @@
-/* --- script.js (Firebase対応版) --- */
-
-// 1. Firebaseの機能をインポート
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-// 2. Firebaseの設定 (★必ず自分の設定値に書き換えてください★)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-// 3. 初期化
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app); // データベースを使う準備完了
-
+/* --- script.js (データベースなし / エラー修正版) --- */
 
 document.addEventListener('DOMContentLoaded', async () => {
 
     /* =================================================================
-       0. 共通: ログイン状態 (今回は簡易的にlocalStorageのままにします)
-       ※ 本格的にやるなら Firebase Authentication を使いますが、まずはDBから。
+       0. 共通: ログイン状態 (localStorageを使用)
        ================================================================= */
     const userActions = document.querySelector('.user-actions');
     const savedUser = localStorage.getItem('unityLearningUser');
@@ -49,96 +29,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* =================================================================
-       1. 問題作成ページ: Firebaseに保存 (addDoc)
+       1. 問題作成ページ (サーバーへの保存機能は削除し、アラートのみに変更)
        ================================================================= */
     const saveProblemBtn = document.getElementById('saveProblemBtn');
     
     if (saveProblemBtn) {
-        saveProblemBtn.addEventListener('click', async () => {
+        saveProblemBtn.addEventListener('click', () => {
             const title = document.getElementById('new_title').value;
-            const difficulty = document.getElementById('new_difficulty').value;
-            const category = document.getElementById('new_category').value;
             const description = document.getElementById('new_description').value;
-            
-            // Ace Editorから取得 (create_problem.html内で定義されている前提)
-            const editorCreate = ace.edit("editor_create");
-            const initialCode = editorCreate.getValue();
 
             if(!title || !description) {
                 alert("タイトルと問題文は必須です");
                 return;
             }
 
-            saveProblemBtn.disabled = true;
-            saveProblemBtn.textContent = "保存中...";
-
-            try {
-                // ★ここが変更点: Firebaseの 'problems' コレクションに追加
-                const docRef = await addDoc(collection(db, "problems"), {
-                    title: title,
-                    difficulty: difficulty,
-                    category: category,
-                    description: description,
-                    initialCode: initialCode,
-                    score: 100,
-                    timeLimit: "2 sec",
-                    memoryLimit: "1024 MB",
-                    constraints: "<ul><li>ユーザー投稿問題</li></ul>",
-                    inputExample: "-",
-                    outputExample: "-",
-                    author: savedUser || "名無し",
-                    createdAt: new Date() // 作成日時
-                });
-
-                alert("問題をサーバーに保存しました！ID: " + docRef.id);
-                window.location.href = "problemlist.html";
-
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                alert("保存に失敗しました: " + e.message);
-                saveProblemBtn.disabled = false;
-                saveProblemBtn.textContent = "公開する（保存）";
-            }
+            // データベース保存の代わりにアラートを表示
+            alert("デモ版のため、サーバーには保存されません。\n(タイトル: " + title + ")");
+            // 一覧ページへ戻る
+            window.location.href = "problemlist.html";
         });
     }
 
     /* =================================================================
-       2. 問題一覧ページ: Firebaseから読み込み (getDocs)
+       2. 問題一覧ページ (静的HTMLのフィルタリングのみ動作)
        ================================================================= */
     const problemTableBody = document.querySelector('#problemTable tbody');
     
-    // 一覧ページの場合のみ実行
     if (problemTableBody) {
-        // ★ここが変更点: Firebaseからデータを取得
-        // 'problems' コレクションを取得
-        const q = query(collection(db, "problems"), orderBy("createdAt", "desc")); // 新しい順
-        
-        try {
-            const querySnapshot = await getDocs(q);
-            
-            // 取得したデータをテーブルに追加
-            querySnapshot.forEach((doc) => {
-                const p = doc.data();
-                const pId = doc.id; // Firebaseが作ったID
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="diff-circle diff-${p.difficulty}"></span></td>
-                    <td><a href="problem_detail.html?id=${pId}">${p.title}</a> <span style="font-size:0.7em; color:#007acc; border:1px solid #007acc; border-radius:3px; padding:0 2px;">投稿</span></td>
-                    <td>${p.category}</td>
-                    <td>${p.score}</td>
-                    <td>-</td>
-                `;
-                // 既存のリスト（HTMLに書かれたもの）の後ろに追加するなら appendChild
-                // 先頭に追加するなら prepend ですが、今回はHTMLに静的な行があるので appendChild します
-                problemTableBody.appendChild(tr);
-            });
-        } catch (e) {
-            console.error("Error getting documents: ", e);
-            // エラー時は何もしないか、コンソールに出す
-        }
-
-        // 検索フィルタ機能 (既存コード流用)
+        // 検索フィルタ機能
         const searchInput = document.getElementById('problemSearch');
         const difficultySelect = document.getElementById('difficultyFilter');
         const categorySelect = document.getElementById('categoryFilter');
@@ -180,9 +98,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-
     /* =================================================================
-       3. 問題詳細ページ: Firebaseから個別データ取得 (getDoc)
+       3. 問題詳細ページ (problems_data.js からデータを取得)
        ================================================================= */
     const problemTitleElement = document.getElementById('p_title');
     const submitBtn = document.getElementById('submitBtn');
@@ -196,32 +113,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (problemTitleElement) {
         const problemId = getParam('id');
 
-        // ★IDのパターンで取得先を分岐
-        // prob_xxx は problems_data.js (静的ファイル)
-        // それ以外（FirebaseのIDはランダムな英数字）は Firebase
-        
-        if (problemId && problemId.startsWith('prob_')) {
-            // --- 既存の静的データ ---
-            if (typeof problemsData !== 'undefined') {
-                const problem = problemsData.find(p => p.id === problemId);
+        // problemsData が存在する場合のみ実行 (Firebaseへの問い合わせコードは削除)
+        if (typeof problemsData !== 'undefined' && problemId) {
+            const problem = problemsData.find(p => p.id === problemId);
+            
+            if (problem) {
                 displayProblem(problem);
-            }
-        } else if (problemId) {
-            // --- ★Firebaseから取得 ---
-            try {
-                const docRef = doc(db, "problems", problemId);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const problem = docSnap.data();
-                    problem.id = docSnap.id; // IDを結合
-                    displayProblem(problem);
-                } else {
-                    document.getElementById('p_title').textContent = "問題が見つかりません";
-                    document.getElementById('p_description').innerHTML = "<p>削除された可能性があります。</p>";
-                }
-            } catch(e) {
-                console.error(e);
+            } else {
+                document.getElementById('p_title').textContent = "問題が見つかりません";
+                document.getElementById('p_description').innerHTML = "<p>IDが間違っているか、データが存在しません。</p>";
             }
         }
     }
@@ -243,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const editorDiv = document.getElementById('editor');
         if (editorDiv) {
+            // Ace Editorの設定
             editor = ace.edit("editor");
             editor.setTheme("ace/theme/monokai");
             editor.session.setMode("ace/mode/csharp");
@@ -251,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- 提出ボタン (シミュレーションのまま) ---
+    // --- 提出ボタン (シミュレーション) ---
     if (submitBtn) {
         submitBtn.addEventListener('click', () => {
             if (!localStorage.getItem('unityLearningUser')) {
@@ -273,6 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitBtn.style.border = "none";
 
             setTimeout(() => {
+                // ランダム判定 (確率でACかWAを出す)
                 const rand = Math.floor(Math.random() * 10);
                 if (rand >= 4) {
                     submitBtn.textContent = "AC (正解！)";
