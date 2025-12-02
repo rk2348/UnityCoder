@@ -1,8 +1,9 @@
-/* --- script.js (完全版: 模範解答保存対応) --- */
+/* --- script.js (ユーザー名保存 & メールログイン対応版) --- */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// ★ updateProfile を追加しました
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
@@ -61,13 +62,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* --- A. ログイン状態の監視 --- */
     onAuthStateChanged(auth, (user) => {
+        // ★ユーザー名を取得 (保存されたdisplayNameを使う。なければメールの頭を使う)
+        const displayName = user ? (user.displayName || user.email.split('@')[0]) : "";
+
         // 1. ヘッダー
         const userActions = document.querySelector('.user-actions');
         if (userActions) {
             if (user) {
-                const shortName = user.email.split('@')[0];
                 userActions.innerHTML = `
-                    <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${shortName}</strong></span>
+                    <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${displayName}</strong></span>
                     <a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>
                     <a href="#" id="logoutBtn" style="font-size:0.85rem; color:#888;">ログアウト</a>
                 `;
@@ -87,9 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const userBox = document.querySelector('.user-box');
         if (userBox) {
             if (user) {
-                const shortName = user.email.split('@')[0];
                 userBox.innerHTML = `
-                    <p>ようこそ<br><strong style="font-size:1.1rem;">${shortName}</strong> さん</p>
+                    <p>ようこそ<br><strong style="font-size:1.1rem;">${displayName}</strong> さん</p>
                     <div style="font-size:0.9rem; color:#666; margin:10px 0;">
                         今日も学習を頑張りましょう！
                     </div>
@@ -109,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    /* --- B. 問題作成ページ: 模範解答も保存 (★修正ポイント) --- */
+    /* --- B. 問題作成ページ --- */
     const saveProblemBtn = document.getElementById('saveProblemBtn');
     if (saveProblemBtn) {
         saveProblemBtn.addEventListener('click', async () => {
@@ -124,14 +126,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const difficulty = document.getElementById('new_difficulty').value;
             const category = document.getElementById('new_category').value;
             const description = document.getElementById('new_description').value;
-
-            // 初期コードの取得
             const editorCreate = ace.edit("editor_create");
             const initialCode = editorCreate.getValue();
-            
-            // ★模範解答の取得
             const editorModel = ace.edit("editor_model");
             const modelAnswer = editorModel.getValue();
+            
+            // ★投稿者名にもdisplayNameを使う
+            const authorName = user.displayName || user.email.split('@')[0];
 
             if(!title || !description) {
                 alert("タイトルと問題文は必須です");
@@ -142,21 +143,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             saveProblemBtn.textContent = "保存中...";
 
             try {
-                // Firebaseに保存（modelAnswerを追加）
                 const docRef = await addDoc(collection(db, "problems"), {
                     title: title,
                     difficulty: difficulty,
                     category: category,
                     description: description,
                     initialCode: initialCode,
-                    modelAnswer: modelAnswer, // ★ここに追加しました
+                    modelAnswer: modelAnswer,
                     score: 100,
                     timeLimit: "2 sec",
                     memoryLimit: "1024 MB",
                     constraints: "<ul><li>ユーザー投稿問題</li></ul>",
                     inputExample: "-",
                     outputExample: "-",
-                    author: user.email.split('@')[0],
+                    author: authorName, 
                     uid: user.uid,
                     createdAt: new Date()
                 });
@@ -204,18 +204,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /* --- D. 新規登録 & ログイン --- */
+    /* --- D. 新規登録処理 (★修正: プロフィール更新) --- */
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
-        signupForm.addEventListener('submit', (e) => {
+        signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const username = document.getElementById('signup-username').value;
             const email = document.getElementById('signup-email').value;
             const pass = document.getElementById('signup-password').value;
-            createUserWithEmailAndPassword(auth, email, pass)
-                .then(() => { alert("登録完了！"); window.location.href = "index.html"; })
-                .catch((err) => alert("エラー: " + err.message));
+
+            try {
+                // 1. メールとパスワードでユーザー作成
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // 2. ★ここで「ユーザー名」をFirebaseに登録する！
+                await updateProfile(user, {
+                    displayName: username
+                });
+
+                alert("登録完了！ようこそ " + username + " さん");
+                window.location.href = "index.html";
+
+            } catch (err) {
+                console.error(err);
+                alert("登録エラー: " + err.message);
+            }
         });
     }
+
+    /* --- E. ログイン処理 (メールでログイン) --- */
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -224,11 +242,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = document.getElementById('login-password').value;
             signInWithEmailAndPassword(auth, email, pass)
                 .then(() => { alert("ログイン成功！"); window.location.href = "index.html"; })
-                .catch(() => alert("ログイン失敗"));
+                .catch(() => alert("ログイン失敗: メールかパスワードが違います"));
         });
     }
 
-    /* --- E. 提出ボタン --- */
+    /* --- F. 提出ボタン --- */
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
@@ -246,9 +264,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     submitBtn.textContent = "AC (正解！)";
                     submitBtn.style.backgroundColor = "#5cb85c";
                     try {
-                        const shortName = user.email.split('@')[0];
+                        // ★提出者の名前として displayName を使う
+                        const submitterName = user.displayName || user.email.split('@')[0];
                         await addDoc(collection(db, "submissions"), {
-                            username: shortName,
+                            username: submitterName,
                             uid: user.uid,
                             problemId: new URLSearchParams(window.location.search).get('id') || "unknown",
                             result: "AC",
@@ -271,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    /* --- F. ランキング表示 --- */
+    /* --- G. ランキング表示 --- */
     const rankingTableBody = document.querySelector('.ranking-table tbody');
     if (rankingTableBody) {
         rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み中...</td></tr>';
