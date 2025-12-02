@@ -4,206 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unity Learning | Unity学習サイト</title>
-  <style>
-    /* --- 基本設定 --- */
-    :root {
-      --primary-color: #222;       /* AtCoder風の黒 */
-      --accent-color: #007acc;     /* Unity風の青 */
-      --bg-color: #f5f5f5;
-      --text-color: #333;
-      --border-color: #ddd;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Microsoft YaHei", Meiryo, sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.5;
-    }
-
-    a { text-decoration: none; color: inherit; transition: 0.2s; }
-    a:hover { color: var(--accent-color); }
-    ul { list-style: none; padding: 0; margin: 0; }
-
-    /* --- レイアウト --- */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 15px;
-    }
-
-    /* --- ヘッダー --- */
-    header {
-      background: var(--primary-color);
-      color: #fff;
-      height: 50px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .header-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 100%;
-    }
-
-    .logo {
-      font-weight: bold;
-      font-size: 1.2rem;
-      letter-spacing: 0.5px;
-    }
-    
-    .logo span { color: var(--accent-color); } /* Unityの青をアクセントに */
-
-    nav { display: flex; gap: 20px; font-size: 0.9rem; }
-    nav a { color: #ccc; }
-    nav a:hover, nav a.active { color: #fff; }
-
-    .user-actions { font-size: 0.85rem; display: flex; gap: 15px; }
-    .btn-login { border: 1px solid #555; padding: 4px 12px; border-radius: 4px; }
-    .btn-signup { background: var(--accent-color); color: #fff; padding: 4px 12px; border-radius: 4px; }
-
-    /* --- メインコンテンツ（2カラム） --- */
-    .main-wrapper {
-      display: flex;
-      gap: 30px;
-      padding: 30px 0;
-      align-items: flex-start;
-    }
-
-    .main-col { flex: 3; } /* 左側：75% */
-    .side-col { flex: 1; } /* 右側：25% */
-
-    /* --- パネル（共通スタイル） --- */
-    .panel {
-      background: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      margin-bottom: 25px;
-      overflow: hidden;
-    }
-
-    .panel-header {
-      background: #f9f9f9;
-      padding: 10px 15px;
-      border-bottom: 1px solid var(--border-color);
-      font-weight: bold;
-      font-size: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .panel-header a { font-size: 0.8rem; color: #666; font-weight: normal; }
-
-    .panel-body { padding: 15px; }
-
-    /* --- テーブルスタイル (AtCoder風) --- */
-    .table-wrapper { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-
-    th, td {
-      padding: 8px 12px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    th { background-color: #fff; color: #777; font-weight: normal; font-size: 0.85rem; }
-    tr:nth-child(even) { background-color: #fcfcfc; }
-    tr:hover { background-color: #f0f8ff; }
-
-    /* 難易度バッジ */
-    .diff-circle {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 5px;
-    }
-    .diff-gray { background: #808080; }
-    .diff-green { background: #008000; }
-    .diff-cyan { background: #00C0C0; }
-    .diff-blue { background: #0000FF; }
-
-    /* --- お知らせリスト --- */
-    .news-list li {
-      padding: 8px 0;
-      border-bottom: 1px dotted #ddd;
-      font-size: 0.9rem;
-    }
-    .news-date {
-      color: #777;
-      margin-right: 10px;
-      font-family: monospace;
-    }
-
-    /* --- カードグリッド（コース一覧用） --- */
-    .course-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-    }
-    
-    .course-card {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-      transition: box-shadow 0.2s;
-      background: #fff;
-    }
-    .course-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    
-    .course-thumb {
-      height: 100px;
-      background-size: cover;
-      background-position: center;
-      background-color: #eee;
-    }
-    .course-info { padding: 10px; }
-    .course-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; display: block;}
-    .course-meta { font-size: 0.8rem; color: #666; }
-
-    /* --- サイドバーパーツ --- */
-    .user-box { text-align: center; }
-    .user-box p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
-    
-    .ranking-table td { padding: 6px; font-size: 0.85rem; }
-    .rank-num { font-weight: bold; width: 20px; text-align: center; display: inline-block; }
-    .rank-1 { color: #DAA520; } /* Gold */
-    .rank-2 { color: #C0C0C0; } /* Silver */
-    .rank-3 { color: #B87333; } /* Bronze */
-
-    /* --- フッター --- */
-    footer {
-      background: #fff;
-      border-top: 1px solid #ddd;
-      padding: 30px 0;
-      margin-top: 40px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    
-    
-    .footer-links { margin-bottom: 15px; }
-    .footer-links a { margin: 0 10px; color: #555; }
-
-    /* --- レスポンシブ --- */
-    @media (max-width: 768px) {
-      .main-wrapper { flex-direction: column; }
-      .header-inner { padding: 0 10px; }
-      nav { display: none; } /* スマホでは簡易的に非表示（必要ならハンバーガーメニュー化） */
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -212,7 +13,7 @@
     <div class="container header-inner">
       <div class="logo">Unity<span>Learning</span></div>
       <nav>
-        <a href="#" class="active">トップ</a>
+        <a href="index.html" class="active">トップ</a>
         <a href="problemlist.html">問題</a>
         <a href="courses.html">コース</a>
         <a href="ranking.html">ランキング</a>
@@ -261,42 +62,43 @@
             <tbody>
               <tr>
                 <td><span class="diff-circle diff-gray" title="入門"></span></td>
-                <td><a href="#">Cubeを回転させよう</a></td>
-                <td>Transform</td>
-                <td>-</td>
-                <td>85.2%</td>
-              </tr>
-              <tr>
-                <td><span class="diff-circle diff-gray" title="入門"></span></td>
-                <td><a href="#">Hello World (Debug.Log)</a></td>
-                <td>C#基礎</td>
+                <td><a href="problem_detail.html?id=prob_001">Hello Unity World</a></td>
+                <td>C# 基礎</td>
                 <td>2 sec</td>
                 <td>92.1%</td>
               </tr>
               <tr>
-                <td><span class="diff-circle diff-green" title="初級"></span></td>
-                <td><a href="#">Physicsを使ったジャンプ実装</a></td>
-                <td>Rigidbody</td>
-                <td>-</td>
-                <td>64.5%</td>
+                <td><span class="diff-circle diff-gray" title="入門"></span></td>
+                <td><a href="problem_detail.html?id=prob_002">Cubeの移動</a></td>
+                <td>Transform</td>
+                <td>2 sec</td>
+                <td>85.2%</td>
               </tr>
               <tr>
                 <td><span class="diff-circle diff-green" title="初級"></span></td>
-                <td><a href="#">UIボタンのクリックイベント</a></td>
+                <td><a href="problem_detail.html?id=prob_003">Rigidbody ジャンプ</a></td>
+                <td>Physics</td>
+                <td>2 sec</td>
+                <td>64.5%</td>
+              </tr>
+              
+              <tr>
+                <td><span class="diff-circle diff-green" title="初級"></span></td>
+                <td><a href="#">UIボタンのクリックイベント (準備中)</a></td>
                 <td>uGUI</td>
                 <td>-</td>
                 <td>70.8%</td>
               </tr>
               <tr>
                 <td><span class="diff-circle diff-cyan" title="中級"></span></td>
-                <td><a href="#">Raycastによるオブジェクト判定</a></td>
+                <td><a href="#">Raycastによるオブジェクト判定 (準備中)</a></td>
                 <td>Physics</td>
                 <td>-</td>
                 <td>45.3%</td>
               </tr>
               <tr>
                 <td><span class="diff-circle diff-blue" title="上級"></span></td>
-                <td><a href="#">カスタムシェーダーによる水面描画</a></td>
+                <td><a href="#">カスタムシェーダーによる水面描画 (準備中)</a></td>
                 <td>Shader</td>
                 <td>-</td>
                 <td>12.4%</td>
@@ -314,23 +116,23 @@
         <div class="panel-body">
           <div class="course-grid">
             <div class="course-card">
-              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=RPG');"></div>
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/orange/white?text=RPG');"></div>
               <div class="course-info">
-                <a href="#" class="course-title">RPG制作入門</a>
+                <a href="course_detail.html" class="course-title">RPG制作入門</a>
                 <div class="course-meta">全12回 / 難易度: 初級</div>
               </div>
             </div>
             <div class="course-card">
-              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=Shooting');"></div>
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/blue/white?text=Shooting');"></div>
               <div class="course-info">
-                <a href="#" class="course-title">シューティング作成</a>
+                <a href="course_detail.html" class="course-title">シューティング作成</a>
                 <div class="course-meta">全8回 / 難易度: 中級</div>
               </div>
             </div>
             <div class="course-card">
-              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200?text=C%23');"></div>
+              <div class="course-thumb" style="background-image: url('https://placehold.co/400x200/gray/white?text=C%23');"></div>
               <div class="course-info">
-                <a href="#" class="course-title">C#スクリプト基礎</a>
+                <a href="course_detail.html" class="course-title">C#スクリプト基礎</a>
                 <div class="course-meta">全5回 / 難易度: 入門</div>
               </div>
             </div>
@@ -413,6 +215,8 @@
     </div>
   </footer>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>

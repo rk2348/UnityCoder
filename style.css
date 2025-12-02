@@ -1,8 +1,9 @@
-/* --- style.css --- */
+/* --- style.css (最新版) --- */
 
+/* --- 基本設定 --- */
 :root {
-  --primary-color: #222;
-  --accent-color: #007acc;
+  --primary-color: #222;       /* AtCoder風の黒 */
+  --accent-color: #007acc;     /* Unity風の青 */
   --bg-color: #f5f5f5;
   --text-color: #333;
   --border-color: #ddd;
@@ -10,10 +11,10 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Microsoft YaHei", Meiryo, sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 a { text-decoration: none; color: inherit; transition: 0.2s; }
@@ -21,14 +22,14 @@ a:hover { color: var(--accent-color); }
 ul { list-style: none; padding: 0; margin: 0; }
 h1, h2, h3 { margin-top: 0; }
 
-/* レイアウト */
+/* --- レイアウト --- */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* ヘッダー */
+/* --- ヘッダー --- */
 header {
   background: var(--primary-color);
   color: #fff;
@@ -46,29 +47,35 @@ header {
   height: 100%;
 }
 
-.logo { font-weight: bold; font-size: 1.2rem; }
+.logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
 .logo span { color: var(--accent-color); }
 
 nav { display: flex; gap: 20px; font-size: 0.9rem; }
 nav a { color: #ccc; }
 nav a:hover, nav a.active { color: #fff; }
 
-.user-actions { display: flex; gap: 10px; font-size: 0.85rem; }
+.user-actions { font-size: 0.85rem; display: flex; gap: 15px; align-items: center; }
 .btn-login { border: 1px solid #777; padding: 4px 12px; border-radius: 4px; color: #fff; }
-.btn-signup { background: var(--accent-color); padding: 4px 12px; border-radius: 4px; color: #fff; }
+.btn-signup { background: var(--accent-color); color: #fff; padding: 4px 12px; border-radius: 4px; }
 
-/* 2カラムレイアウト */
+/* --- メインコンテンツ（2カラム） --- */
 .main-wrapper {
   display: flex;
   gap: 30px;
   padding: 30px 0;
   align-items: flex-start;
-  min-height: 80vh; /* フッターを下に押しやる */
+  min-height: 80vh;
 }
-.main-col { flex: 3; width: 100%; }
-.side-col { flex: 1; min-width: 250px; }
 
-/* パネル（共通） */
+.main-col { flex: 3; width: 100%; } /* 左側 */
+.side-col { flex: 1; min-width: 250px; } /* 右側 */
+
+/* --- パネル（共通スタイル） --- */
 .panel {
   background: #fff;
   border: 1px solid var(--border-color);
@@ -76,32 +83,102 @@ nav a:hover, nav a.active { color: #fff; }
   margin-bottom: 25px;
   overflow: hidden;
 }
+
 .panel-header {
   background: #f9f9f9;
   padding: 10px 15px;
   border-bottom: 1px solid var(--border-color);
   font-weight: bold;
+  font-size: 1rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
+
+.panel-header a { font-size: 0.8rem; color: #666; font-weight: normal; }
+
 .panel-body { padding: 15px; }
 
-/* テーブル */
+/* --- テーブルスタイル (AtCoder風) --- */
 .table-wrapper { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
-th { background: #fff; color: #777; font-weight: normal; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th { background-color: #fff; color: #777; font-weight: normal; font-size: 0.85rem; }
 tr:nth-child(even) { background-color: #fcfcfc; }
 tr:hover { background-color: #f0f8ff; }
 
-/* 難易度・バッジ */
-.diff-circle { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; }
+/* 難易度バッジ */
+.diff-circle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
 .diff-gray { background: #808080; }
 .diff-green { background: #008000; }
 .diff-cyan { background: #00C0C0; }
 .diff-blue { background: #0000FF; }
 
-/* フォーム・フィルター */
+/* --- お知らせリスト --- */
+.news-list li {
+  padding: 8px 0;
+  border-bottom: 1px dotted #ddd;
+  font-size: 0.9rem;
+}
+.news-date {
+  color: #777;
+  margin-right: 10px;
+  font-family: monospace;
+}
+
+/* --- カードグリッド（コース一覧用） --- */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.course-card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  background: #fff;
+}
+.course-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+.course-thumb {
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  background-color: #eee;
+}
+.course-info { padding: 10px; }
+.course-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; display: block;}
+.course-meta { font-size: 0.8rem; color: #666; }
+
+/* --- サイドバーパーツ --- */
+.user-box { text-align: center; }
+.user-box p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+
+.ranking-table td { padding: 6px; font-size: 0.85rem; }
+.rank-num { font-weight: bold; width: 20px; text-align: center; display: inline-block; }
+.rank-1 { color: #DAA520; } /* Gold */
+.rank-2 { color: #C0C0C0; } /* Silver */
+.rank-3 { color: #B87333; } /* Bronze */
+
+/* --- フォーム・フィルター（機能用追加CSS） --- */
 .filter-box {
   background: #fff;
   padding: 15px;
@@ -112,11 +189,14 @@ tr:hover { background-color: #f0f8ff; }
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .form-control {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 }
+
 .btn-primary {
   background: var(--accent-color);
   color: #fff;
@@ -156,21 +236,35 @@ h3 { font-size: 1.1rem; border-left: 4px solid var(--accent-color); padding-left
 .login-form label { display: block; margin-bottom: 5px; font-weight: bold; }
 .login-form input { width: 100%; box-sizing: border-box; margin-bottom: 15px; }
 
-/* フッター */
+/* --- フッター --- */
 footer {
   background: #fff;
   border-top: 1px solid #ddd;
   padding: 30px 0;
+  margin-top: 40px;
   text-align: center;
   font-size: 0.85rem;
   color: #666;
 }
-.footer-links a { margin: 0 10px; }
 
-/* レスポンシブ */
+.footer-links { margin-bottom: 15px; }
+.footer-links a { margin: 0 10px; color: #555; }
+
+/* --- レスポンシブ --- */
 @media (max-width: 768px) {
   .main-wrapper { flex-direction: column; }
-  nav { display: none; }
+  .header-inner { padding: 0 10px; }
+  nav { display: none; } /* スマホでは簡易的に非表示 */
   .filter-box { flex-direction: column; }
-  .form-control { width: 100%; box-sizing: border-box; }
+  .form-control { width: 100%; }
+}
+
+/* Ace Editor用の設定 */
+#editor {
+  height: 400px; /* エディタの高さ */
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 4px;
+  border: 1px solid #ddd;
 }

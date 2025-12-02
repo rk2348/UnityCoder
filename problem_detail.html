@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rigidbody ジャンプ | Unity Learning</title>
-  <link rel="stylesheet" href="style.css">
+  <title>問題詳細 | Unity Learning</title> <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 </head>
 <body>
 
@@ -28,28 +28,24 @@
     <main class="main-col">
       <div class="panel">
         <div class="panel-body">
-          <h1 style="margin-bottom: 5px;">Rigidbody ジャンプ</h1>
+          <h1 id="p_title" style="margin-bottom: 5px;">読み込み中...</h1>
           <div class="problem-meta">
-            実行時間制限: 2 sec / メモリ制限: 1024 MB / 配点: 200点
+            実行時間制限: <span id="p_time"></span> / 
+            メモリ制限: <span id="p_memory"></span> / 
+            配点: <span id="p_score"></span>点
           </div>
           
           <h3>問題文</h3>
-          <p>Unityの <code>Rigidbody</code> コンポーネントを使用して、オブジェクトをジャンプさせるスクリプトを作成してください。</p>
-          <p>シーン上には <code>Player</code> というタグが付いた Cube が存在します。<br>
-          スペースキーが押された瞬間に、Y軸方向（上方向）に力 <code>AddForce</code> を加えてください。</p>
+          <div id="p_description"></div>
 
           <h3>制約</h3>
-          <ul>
-            <li>ジャンプ力は <code>5.0f</code> とすること。</li>
-            <li>ForceMode は <code>Impulse</code> を使用すること。</li>
-          </ul>
+          <div id="p_constraints"></div>
 
           <h3>入力例 1</h3>
-          <pre class="code-block">Input.GetKeyDown(KeyCode.Space) == true</pre>
+          <pre class="code-block" id="p_input"></pre>
 
           <h3>出力例 1</h3>
-          <pre class="code-block">Rigidbody.velocity.y > 0</pre>
-          <p>スペースキーを押すと、Cubeが上方向に加速します。</p>
+          <pre class="code-block" id="p_output"></pre>
         </div>
       </div>
     </main>
@@ -58,18 +54,20 @@
       <div class="panel">
         <div class="panel-header">提出</div>
         <div class="panel-body">
-          <p style="font-size:0.9rem; margin-bottom:10px;">解答コード（C#）を貼り付けてください</p>
-          <textarea id="codeArea" class="form-control" rows="10" style="width:100%; font-family:monospace; margin-bottom:10px;" placeholder="using UnityEngine;..."></textarea>
-          <button id="submitBtn" class="btn-primary" style="width:100%;">提出する</button>
+          <p style="font-size:0.9rem; margin-bottom:10px;">解答コード（C#）を入力してください</p>
+          
+          <div id="editor"></div>
+          
+          <button id="submitBtn" class="btn-primary" style="width:100%; margin-top: 15px;">提出する</button>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">問題情報</div>
         <table style="font-size:0.85rem;">
-          <tr><td>ID</td><td>prob_003</td></tr>
-          <tr><td>正解者数</td><td>1,240人</td></tr>
-          <tr><td>正解率</td><td>65.4%</td></tr>
+          <tr><td>ID</td><td id="p_display_id">-</td></tr>
+          <tr><td>正解者数</td><td>- 人</td></tr>
+          <tr><td>正解率</td><td>- %</td></tr>
         </table>
       </div>
     </aside>
@@ -80,6 +78,6 @@
       <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
-<script src="script.js"></script>
-</body>
+
+  <script src="problems_data.js"></script> <script src="script.js"></script>       </body>
 </html>
