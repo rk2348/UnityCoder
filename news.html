@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お知らせ一覧 | Unity Learning</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* お知らせページ専用スタイル */
+    .news-detail-list {
+      list-style: none;
+      padding: 0;
+    }
+    .news-item {
+      border-bottom: 1px solid #eee;
+      padding: 20px 0;
+    }
+    .news-item:last-child {
+      border-bottom: none;
+    }
+    .news-item h3 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .news-item .date {
+      font-size: 0.85rem;
+      color: #888;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .news-label {
+      background-color: #007acc;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+    .news-label.maintenance { background-color: #e67e22; }
+    .news-label.update { background-color: #27ae60; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html">コース</a>
+        <a href="ranking.html">ランキング</a>
+        <a href="bbs.html">掲示板</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <h2>お知らせ一覧</h2>
+      
+      <div class="panel">
+        <div class="panel-body">
+          <ul class="news-detail-list">
+            
+            <li class="news-item">
+              <span class="news-date">2025.11.21</span>
+              <span class="news-label update">コンテンツ</span>
+              <h3>新しいコース「FPS制作入門」を追加しました</h3>
+              <p>3Dゲーム制作の基礎を学べる新コースを公開しました。プレイヤーの移動、カメラ操作、Raycastを使った射撃判定などを学べます。</p>
+            </li>
+
+            <li class="news-item">
+              <span class="news-date">2025.11.15</span>
+              <span class="news-label maintenance">メンテナンス</span>
+              <h3>システムメンテナンスのお知らせ</h3>
+              <p>2025年11月18日 AM2:00〜AM4:00 の間、サーバーメンテナンスのためサイトにアクセスできなくなります。ご不便をおかけしますがよろしくお願いします。</p>
+            </li>
+
+            <li class="news-item">
+              <span class="news-date">2025.11.10</span>
+              <span class="news-label update">アップデート</span>
+              <h3>サイトデザインをリニューアルしました</h3>
+              <p>より使いやすく、学習に集中できるデザインに一新しました。スマートフォンからの閲覧にも対応しています。</p>
+            </li>
+
+            <li class="news-item">
+              <span class="news-date">2025.10.01</span>
+              <span class="news-label">その他</span>
+              <h3>Unity Learning ベータ版公開</h3>
+              <p>Unity学習サイト「Unity Learning」のベータ版を公開しました。問題の投稿やランキング機能をお楽しみください。</p>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">ステータス</div>
+        <div class="panel-body user-box">
+          <p>ログインしていません</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">リンク</div>
+        <div class="panel-body">
+          <ul style="font-size:0.9rem; line-height:2;">
+            <li><a href="https://docs.unity3d.com/ja/2022.3/Manual/UnityManual.html">Unity 公式マニュアル</a></li>
+            <li><a href="https://docs.unity3d.com/6000.2/Documentation/ScriptReference/index.html">Scripting API</a></li>
+            <li><a href="https://assetstore.unity.com/">Asset Store</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="about.html">概要</a>
+        <a href="terms.html">利用規約</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
+      </div>
+      <p>© 2025 Unity Learning Project.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
