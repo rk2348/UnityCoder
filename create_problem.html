@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
   <style>
-    /* 問題作成ページ専用スタイル (バランス調整版) */
+    /* 問題作成ページ専用スタイル (2カラムレイアウト) */
     .create-grid {
       display: grid;
       grid-template-columns: 1fr 2fr; /* 左1 : 右2 の比率 */
@@ -46,7 +46,7 @@
       font-weight: bold;
     }
 
-    /* レスポンシブ対応 (スマホでは1カラム) */
+    /* レスポンシブ対応 */
     @media (max-width: 900px) {
       .create-grid {
         grid-template-columns: 1fr;
@@ -72,7 +72,9 @@
     </div>
   </header>
 
-  <div class="container main-wrapper" style="display:block;"> <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <div class="container main-wrapper" style="display:block;"> 
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h2>新しい問題を作成</h2>
       <button id="saveProblemBtn" class="btn-primary" style="padding: 10px 20px; font-size: 1rem;">
         この内容で公開する
