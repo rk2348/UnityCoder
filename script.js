@@ -252,45 +252,62 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* =================================================================
        C. 問題作成ページ
        ================================================================= */
+    /* --- script.js の「問題作成ページ」の部分 --- */
+
     const saveProblemBtn = document.getElementById('saveProblemBtn');
     if (saveProblemBtn) {
         saveProblemBtn.addEventListener('click', async () => {
             const user = auth.currentUser;
-            if (!user) { alert("ログインが必要です"); window.location.href = "login.html"; return; }
+            if (!user) {
+                alert("問題を投稿するにはログインが必要です");
+                window.location.href = "login.html";
+                return;
+            }
 
+            // 各入力欄の値を取得
             const title = document.getElementById('new_title').value;
             const difficulty = document.getElementById('new_difficulty').value;
             const category = document.getElementById('new_category').value;
             const description = document.getElementById('new_description').value;
+
+            // 初期コードエディタの値を取得
             const editorCreate = ace.edit("editor_create");
             const initialCode = editorCreate.getValue();
-            const editorModel = ace.edit("editor_model");
+            
+            // ★ここが重要！ 模範解答エディタの値を取得
+            // HTML側で id="editor_model" としているので、ここも合わせる必要があります
+            const editorModel = ace.edit("editor_model"); 
             const modelAnswer = editorModel.getValue();
-            const authorName = user.displayName || user.email.split('@')[0];
 
-            if(!title || !description) { alert("タイトルと問題文は必須です"); return; }
+            // 必須項目のチェック
+            if(!title || !description) {
+                alert("タイトルと問題文は必須です");
+                return;
+            }
 
             saveProblemBtn.disabled = true;
             saveProblemBtn.textContent = "保存中...";
 
             try {
+                // Firebaseに保存
                 await addDoc(collection(db, "problems"), {
                     title: title,
                     difficulty: difficulty,
                     category: category,
                     description: description,
                     initialCode: initialCode,
-                    modelAnswer: modelAnswer,
+                    modelAnswer: modelAnswer, // ★ここに追加
                     score: 100,
                     timeLimit: "2 sec",
                     memoryLimit: "1024 MB",
                     constraints: "<ul><li>ユーザー投稿問題</li></ul>",
                     inputExample: "-",
                     outputExample: "-",
-                    author: authorName, 
+                    author: user.displayName || user.email.split('@')[0],
                     uid: user.uid,
                     createdAt: new Date()
                 });
+
                 alert("問題を公開しました！");
                 window.location.href = "problemlist.html";
             } catch (e) {
