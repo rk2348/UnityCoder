@@ -1,11 +1,14 @@
-/* --- script.js (完全版: 設定修正済み + 最新バージョン) --- */
+/* --- script.js (最適化版: 重複削除 + 外部ファイル連携) --- */
 
-// 1. Firebase v12.6.0 のインポート
+// 1. Firebase & 外部データのインポート
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit, where, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// 2. あなたのFirebase設定 (更新済み)
+// ★外部ファイルから問題データを読み込む（これでscript.jsがスッキリします）
+import { problemsData } from "./problems_data.js";
+
+// 2. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAUsbrJkcXRE9N5V5R4Ze3cwnrXJJPN92Q",
   authDomain: "unitycoder-65ff6.firebaseapp.com",
@@ -16,7 +19,7 @@ const firebaseConfig = {
   measurementId: "G-FM0BEDSBH8"
 };
 
-// 3. Discord Webhook URL (そのまま維持)
+// 3. Discord Webhook URL
 const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1445488372771455018/V8SAVsok2-uTa3Xt_g4ZJv8qXo-lKfPg_pkiEv7f144Tl9OuZqBhxQUt18a8edpQ56fr"; 
 
 // 4. アプリ起動
@@ -24,66 +27,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 5. 問題データ (フォールバック用)
-const staticProblems = [
-    {
-        id: "prob_001",
-        title: "Hello Unity World",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 100,
-        description: `<p>Unityのコンソールに「Hello World」と表示するスクリプトを作成してください。</p><p><code>Start</code> メソッド内で <code>Debug.Log</code> を使用してください。</p>`,
-        constraints: `<ul><li>表示する文字列は正確に "Hello World" であること。</li></ul>`,
-        inputExample: "なし",
-        outputExample: "Hello World",
-        initialCode: `using UnityEngine;\n\npublic class HelloWorld : MonoBehaviour\n{\n    void Start()\n    {\n        // ここにコードを書いてください\n        \n    }\n}`
-    },
-    {
-        id: "prob_002",
-        title: "Cubeの移動",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 100,
-        description: `<p><code>Update</code> メソッドを使用して、CubeをX軸方向に移動させてください。</p><p>毎フレーム <code>0.1f</code> ずつ移動させること。</p>`,
-        constraints: `<ul><li>Transform.Translate または position を直接操作すること。</li></ul>`,
-        inputExample: "なし",
-        outputExample: "Cubeのx座標が増加する",
-        initialCode: `using UnityEngine;\n\npublic class MoveCube : MonoBehaviour\n{\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
-    },
-    {
-        id: "prob_003",
-        title: "Rigidbody ジャンプ",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 200,
-        description: `<p>Rigidbodyを使ってオブジェクトをジャンプさせてください。</p><p>スペースキーが押された瞬間に上方向へ力を加えます。</p>`,
-        constraints: `<ul><li>ジャンプ力は 5.0f</li><li>ForceMode.Impulseを使用</li></ul>`,
-        inputExample: "Space Key",
-        outputExample: "Velocity Y > 0",
-        initialCode: `using UnityEngine;\n\npublic class PlayerJump : MonoBehaviour\n{\n    public float jumpForce = 5.0f;\n    private Rigidbody rb;\n\n    void Start()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
-    }
-];
-
-// Discord通知機能
-async function sendDiscordNotification(username) {
-    if (!DISCORD_WEBHOOK_URL) return;
-    const message = {
-        content: `🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**\n素晴らしいUnity学習の旅が始まります！`
-    };
-    try {
-        await fetch(DISCORD_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(message)
-        });
-    } catch (e) { console.error("Discord通知エラー:", e); }
-}
-
-// Discordお問い合わせ送信機能
+// --- 共通関数: Discord通知 (これ1つでOK) ---
 async function sendDiscordMessage(content, embed = null) {
     if (!DISCORD_WEBHOOK_URL) return;
-    const body = { content: content };
+    const body = {};
+    if (content) body.content = content;
     if (embed) body.embeds = [embed];
+
     try {
         await fetch(DISCORD_WEBHOOK_URL, {
             method: "POST",
@@ -93,10 +43,11 @@ async function sendDiscordMessage(content, embed = null) {
     } catch (e) { console.error("Discord通知エラー:", e); }
 }
 
+// --- メイン処理 ---
 document.addEventListener('DOMContentLoaded', async () => {
 
     /* =================================================================
-       A. ログイン状態の監視 & 共通UI (ヘッダー/サイドバー/正解マーク)
+       A. ログイン状態の監視 & 共通UI更新
        ================================================================= */
     onAuthStateChanged(auth, async (user) => {
         const userActions = document.querySelector('.user-actions');
@@ -105,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (user) {
             const displayName = user.displayName || user.email.split('@')[0];
             
-            // 1. ヘッダー更新
+            // ヘッダー
             if(userActions) {
                 userActions.innerHTML = `
                     <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${displayName}</strong></span>
@@ -118,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-            // 2. サイドバー更新
+            // サイドバー
             if(userBox) {
                 userBox.innerHTML = `
                     <p>ようこそ<br><strong style="font-size:1.1rem;">${displayName}</strong> さん</p>
@@ -131,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-            // 3. 問題一覧の回答済みマーク
+            // 問題一覧の回答済みマーク
             const problemTable = document.getElementById('problemTable');
             if (problemTable) {
                 try {
@@ -148,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             if (solvedProblemIds.has(pId)) {
                                 if (!link.innerHTML.includes('✅')) { 
                                     link.innerHTML = `<span style="color:#5cb85c; margin-right:5px;">✅</span> ${link.innerHTML}`;
-                                    link.parentElement.parentElement.style.backgroundColor = "#f0fff4"; 
+                                    link.closest('tr').style.backgroundColor = "#f0fff4"; 
                                 }
                             }
                         }
@@ -158,12 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } else {
             // ログアウト時
-            if(userActions) {
-                userActions.innerHTML = `<a href="login.html" class="btn-login">ログイン</a> <a href="signup.html" class="btn-signup">新規登録</a>`;
-            }
-            if(userBox) {
-                userBox.innerHTML = `<p>学習履歴を保存するには<br>ログインしてください</p><a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a><a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>`;
-            }
+            if(userActions) userActions.innerHTML = `<a href="login.html" class="btn-login">ログイン</a> <a href="signup.html" class="btn-signup">新規登録</a>`;
+            if(userBox) userBox.innerHTML = `<p>学習履歴を保存するには<br>ログインしてください</p><a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a><a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>`;
         }
     });
 
@@ -172,51 +119,83 @@ document.addEventListener('DOMContentLoaded', async () => {
        ================================================================= */
     const bbsTable = document.querySelector('#bbsTable tbody');
     if (bbsTable) {
-        bbsTable.innerHTML = '<tr><td colspan="4">読み込み中...</td></tr>';
-        try {
-            const q = query(collection(db, "threads"), orderBy("createdAt", "desc"), limit(20));
-            const querySnapshot = await getDocs(q);
-            
-            bbsTable.innerHTML = ''; 
-            
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "-";
+        // スレッド一覧の読み込み
+        const loadThreads = async () => {
+            bbsTable.innerHTML = '<tr><td colspan="4">読み込み中...</td></tr>';
+            try {
+                const q = query(collection(db, "threads"), orderBy("createdAt", "desc"), limit(20));
+                const querySnapshot = await getDocs(q);
                 
-                let catBadge = `<span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">その他</span>`;
-                if(data.category === "question") catBadge = `<span style="font-size:0.8rem; background:#e3f2fd; color:#0d47a1; padding:2px 6px; border-radius:4px;">質問</span>`;
-                if(data.category === "chat") catBadge = `<span style="font-size:0.8rem; background:#f3e5f5; color:#4a148c; padding:2px 6px; border-radius:4px;">雑談</span>`;
-                if(data.category === "bug") catBadge = `<span style="font-size:0.8rem; background:#ffebee; color:#b71c1c; padding:2px 6px; border-radius:4px;">バグ報告</span>`;
+                bbsTable.innerHTML = ''; 
+                if(querySnapshot.empty) {
+                    bbsTable.innerHTML = '<tr><td colspan="4">まだ投稿がありません。</td></tr>';
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "-";
+                    
+                    let catBadge = `<span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">その他</span>`;
+                    if(data.category === "question") catBadge = `<span style="font-size:0.8rem; background:#e3f2fd; color:#0d47a1; padding:2px 6px; border-radius:4px;">質問</span>`;
+                    if(data.category === "chat") catBadge = `<span style="font-size:0.8rem; background:#f3e5f5; color:#4a148c; padding:2px 6px; border-radius:4px;">雑談</span>`;
+                    if(data.category === "bug") catBadge = `<span style="font-size:0.8rem; background:#ffebee; color:#b71c1c; padding:2px 6px; border-radius:4px;">バグ報告</span>`;
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><a href="#" style="font-weight:bold;">${data.title}</a><div style="font-size:0.85rem; color:#666; margin-top:4px;">${data.content.substring(0, 30)}...</div></td>
-                    <td>${catBadge}</td>
-                    <td>${data.authorName}</td>
-                    <td><span style="font-size:0.85rem; color:#666;">${date}</span></td>
-                `;
-                bbsTable.appendChild(tr);
-            });
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><a href="#" class="thread-link" style="font-weight:bold; color:#007acc;">${data.title}</a><div style="font-size:0.85rem; color:#666; margin-top:4px;">${data.content.substring(0, 30)}...</div></td>
+                        <td>${catBadge}</td>
+                        <td>${data.authorName}</td>
+                        <td><span style="font-size:0.85rem; color:#666;">${date}</span></td>
+                    `;
+                    
+                    // 詳細表示クリック
+                    const link = tr.querySelector('.thread-link');
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openViewThreadModal(data, date);
+                    });
 
-            if (querySnapshot.empty) {
-                bbsTable.innerHTML = '<tr><td colspan="4">スレッドがありません。最初の投稿者になりましょう！</td></tr>';
+                    bbsTable.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                bbsTable.innerHTML = '<tr><td colspan="4">読み込みエラー</td></tr>';
             }
-        } catch(e) {
-            console.error(e);
-            bbsTable.innerHTML = '<tr><td colspan="4">読み込みに失敗しました。</td></tr>';
-        }
+        };
+        loadThreads();
 
-        const modal = document.getElementById('threadModal');
+        // モーダル制御
+        const createModal = document.getElementById('threadModal');
+        const viewModal = document.getElementById('viewThreadModal');
         const newThreadBtn = document.getElementById('newThreadBtn');
         const cancelBtn = document.getElementById('cancelThreadBtn');
         const submitThreadBtn = document.getElementById('submitThreadBtn');
         
-        if (newThreadBtn && modal) {
+        // 詳細モーダル関数
+        function openViewThreadModal(data, dateStr) {
+            if(!viewModal) return;
+            document.getElementById('viewThreadTitle').textContent = data.title;
+            document.getElementById('viewThreadAuthor').textContent = data.authorName;
+            document.getElementById('viewThreadDate').textContent = dateStr;
+            document.getElementById('viewThreadBody').textContent = data.content;
+            const catLabel = document.getElementById('viewThreadCategory');
+            catLabel.textContent = data.category;
+            viewModal.style.display = "flex";
+        }
+
+        if (newThreadBtn && createModal) {
             newThreadBtn.addEventListener('click', () => {
                 if(!auth.currentUser) { alert("投稿するにはログインしてください"); window.location.href="login.html"; return; }
-                modal.style.display = "flex";
+                createModal.style.display = "flex";
             });
-            cancelBtn.addEventListener('click', () => modal.style.display = "none");
+            cancelBtn.addEventListener('click', () => createModal.style.display = "none");
+            document.getElementById('closeCreateModalX')?.addEventListener('click', () => createModal.style.display = "none");
+        }
+
+        if (viewModal) {
+            document.getElementById('closeViewBtnMain')?.addEventListener('click', () => viewModal.style.display = "none");
+            document.getElementById('closeViewModalX')?.addEventListener('click', () => viewModal.style.display = "none");
         }
 
         if (submitThreadBtn) {
@@ -226,10 +205,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const title = document.getElementById('threadTitle').value;
                 const category = document.getElementById('threadCategory').value;
                 const content = document.getElementById('threadContent').value;
-                if (!title || !content) { alert("入力を確認してください"); return; }
 
+                if (!title || !content) { alert("入力を確認してください"); return; }
                 submitThreadBtn.disabled = true;
                 submitThreadBtn.textContent = "投稿中...";
+
                 try {
                     await addDoc(collection(db, "threads"), {
                         title: title, category: category, content: content,
@@ -238,7 +218,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                     alert("作成しました！");
                     location.reload(); 
-                } catch(e) { alert("投稿失敗"); submitThreadBtn.disabled = false; submitThreadBtn.textContent = "投稿する"; }
+                } catch(e) {
+                    alert("投稿失敗: " + e.message);
+                    submitThreadBtn.disabled = false;
+                    submitThreadBtn.textContent = "投稿する";
+                }
             });
         }
     }
@@ -258,19 +242,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const category = document.getElementById('new_category').value;
                 const description = document.getElementById('new_description').value;
 
+                // エディタの値取得 (windowオブジェクト or DOM)
                 let initialCode = "";
-                if (window.editorCreate) {
-                    initialCode = window.editorCreate.getValue();
-                } else if (typeof ace !== 'undefined' && document.getElementById('editor_create')) {
-                    initialCode = ace.edit("editor_create").getValue();
-                }
+                if (window.editorCreate) { initialCode = window.editorCreate.getValue(); }
+                else if (typeof ace !== 'undefined' && document.getElementById('editor_create')) { initialCode = ace.edit("editor_create").getValue(); }
 
                 let modelAnswer = "";
-                if (window.editorModel) {
-                    modelAnswer = window.editorModel.getValue();
-                } else if (typeof ace !== 'undefined' && document.getElementById('editor_model')) {
-                    modelAnswer = ace.edit("editor_model").getValue();
-                }
+                if (window.editorModel) { modelAnswer = window.editorModel.getValue(); }
+                else if (typeof ace !== 'undefined' && document.getElementById('editor_model')) { modelAnswer = ace.edit("editor_model").getValue(); }
 
                 if(!title || !description) { alert("タイトルと問題文は必須です"); return; }
 
@@ -287,7 +266,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
                 alert("問題を公開しました！");
                 window.location.href = "problemlist.html";
-
             } catch (e) {
                 console.error("保存エラー:", e);
                 alert("保存失敗: " + e.message);
@@ -298,58 +276,138 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* =================================================================
-       D. 問題詳細ページ
+       D. 問題詳細 & 提出
        ================================================================= */
     const problemTitleElement = document.getElementById('p_title');
     if (problemTitleElement) {
         const urlParams = new URLSearchParams(window.location.search);
         const problemId = urlParams.get('id');
+        
         if (problemId) {
-            const problem = staticProblems.find(p => p.id === problemId);
+            // 1. problemsData から検索 (外部ファイル)
+            const problem = problemsData.find(p => p.id === problemId);
+            
             if (problem) {
-                document.title = `${problem.title} | Unity Learning`;
-                document.getElementById('p_title').textContent = problem.title;
-                document.getElementById('p_time').textContent = problem.timeLimit;
-                document.getElementById('p_memory').textContent = problem.memoryLimit;
-                document.getElementById('p_score').textContent = problem.score;
-                if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = problem.id;
-                document.getElementById('p_description').innerHTML = problem.description;
-                document.getElementById('p_constraints').innerHTML = problem.constraints;
-                document.getElementById('p_input').textContent = problem.inputExample;
-                document.getElementById('p_output').textContent = problem.outputExample;
-                if (document.getElementById('editor')) {
-                    const editor = ace.edit("editor");
-                    editor.setTheme("ace/theme/monokai");
-                    editor.session.setMode("ace/mode/csharp");
-                    editor.setFontSize(14);
-                    editor.setValue(problem.initialCode || "", -1);
-                }
+                renderProblem(problem, problemId);
             } else {
+                // 2. Firebaseから検索 (ユーザー投稿問題)
                 const problemRef = doc(db, "problems", problemId);
                 getDoc(problemRef).then(docSnap => {
                     if (docSnap.exists()) {
-                        const p = docSnap.data();
-                        document.title = `${p.title} | Unity Learning`;
-                        document.getElementById('p_title').textContent = p.title;
-                        document.getElementById('p_description').innerHTML = p.description;
-                        if(document.getElementById('editor')) {
-                            const editor = ace.edit("editor");
-                            editor.setTheme("ace/theme/monokai");
-                            editor.session.setMode("ace/mode/csharp");
-                            editor.setFontSize(14);
-                            editor.setValue(p.initialCode || "", -1);
-                        }
-                        const solvers = p.solvedCount || 0;
-                        const attempts = p.attemptCount || 0;
-                        const accuracy = attempts > 0 ? ((solvers / attempts) * 100).toFixed(1) : 0;
-                        if(document.getElementById('p_solvers')) document.getElementById('p_solvers').textContent = `${solvers} 人`;
-                        if(document.getElementById('p_accuracy')) document.getElementById('p_accuracy').textContent = `${accuracy} %`;
+                        renderProblem(docSnap.data(), docSnap.id);
                     } else {
                         problemTitleElement.textContent = "問題が見つかりません";
                     }
                 });
             }
         }
+    }
+
+    function renderProblem(p, id) {
+        document.title = `${p.title} | Unity Learning`;
+        document.getElementById('p_title').textContent = p.title;
+        if(document.getElementById('p_time')) document.getElementById('p_time').textContent = p.timeLimit;
+        if(document.getElementById('p_memory')) document.getElementById('p_memory').textContent = p.memoryLimit;
+        if(document.getElementById('p_score')) document.getElementById('p_score').textContent = p.score;
+        if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = id;
+        document.getElementById('p_description').innerHTML = p.description;
+        if(document.getElementById('p_constraints')) document.getElementById('p_constraints').innerHTML = p.constraints || "-";
+        if(document.getElementById('p_input')) document.getElementById('p_input').textContent = p.inputExample || "-";
+        if(document.getElementById('p_output')) document.getElementById('p_output').textContent = p.outputExample || "-";
+        
+        if (document.getElementById('editor')) {
+            const editor = ace.edit("editor");
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/csharp");
+            editor.setFontSize(14);
+            editor.setValue(p.initialCode || "", -1);
+        }
+        
+        const solvers = p.solvedCount || 0;
+        const attempts = p.attemptCount || 0;
+        const accuracy = attempts > 0 ? ((solvers / attempts) * 100).toFixed(1) : 0;
+        if(document.getElementById('p_solvers')) document.getElementById('p_solvers').textContent = `${solvers} 人`;
+        if(document.getElementById('p_accuracy')) document.getElementById('p_accuracy').textContent = `${accuracy} %`;
+    }
+
+    // 提出ボタン
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if(!user) return alert("ログインしてください");
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const problemId = urlParams.get('id');
+            
+            // 正解データ取得
+            let modelAnswer = "";
+            let problem = problemsData.find(p => p.id === problemId);
+            
+            if (problem) {
+                modelAnswer = problem.modelAnswer || ""; 
+            } else {
+                const docSnap = await getDoc(doc(db, "problems", problemId));
+                if(docSnap.exists()) {
+                    modelAnswer = docSnap.data().modelAnswer || "";
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "ジャッジ中...";
+
+            setTimeout(async () => {
+                const editor = ace.edit("editor");
+                const userCode = editor.getValue().replace(/\s/g, "");
+                const cleanModel = modelAnswer.replace(/\s/g, "");
+
+                // 判定 (模範解答があれば一致確認、なければ確率30%)
+                let isCorrect = false;
+                if (cleanModel) {
+                    isCorrect = (userCode === cleanModel);
+                } else {
+                    isCorrect = Math.random() > 0.3; 
+                }
+
+                // 重複チェック
+                let hasSolved = false;
+                try {
+                    const q = query(collection(db, "submissions"), where("uid", "==", user.uid), where("problemId", "==", problemId), where("result", "==", "AC"));
+                    const snap = await getDocs(q);
+                    if (!snap.empty) hasSolved = true;
+                } catch(e){}
+
+                if (isCorrect) {
+                    submitBtn.textContent = "AC (正解！)";
+                    submitBtn.style.backgroundColor = "#5cb85c";
+                    try {
+                        await addDoc(collection(db, "submissions"), {
+                            username: user.displayName || "名無し", uid: user.uid,
+                            problemId: problemId, result: "AC", score: 100, submittedAt: new Date()
+                        });
+                        if (!problemId.startsWith("prob_")) {
+                            const pRef = doc(db, "problems", problemId);
+                            const upData = { attemptCount: increment(1) };
+                            if(!hasSolved) upData.solvedCount = increment(1);
+                            await updateDoc(pRef, upData);
+                        }
+                        alert("正解！記録を保存しました。");
+                    } catch(e) { console.error(e); }
+                } else {
+                    submitBtn.textContent = "WA (不正解)";
+                    submitBtn.style.backgroundColor = "#f0ad4e";
+                    if (!problemId.startsWith("prob_")) {
+                        try { await updateDoc(doc(db, "problems", problemId), { attemptCount: increment(1) }); } catch(e){}
+                    }
+                    alert("不正解です...模範解答と一致しません。");
+                }
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "提出する";
+                    submitBtn.style.backgroundColor = "";
+                }, 3000);
+            }, 1000);
+        });
     }
 
     /* =================================================================
@@ -365,7 +423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const credential = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(credential.user, { displayName: username });
-                await sendDiscordNotification(username);
+                await sendDiscordMessage(`🎉 **新しいユーザーが登録しました！**\nユーザー名: **${username}**`);
                 alert("登録完了！"); window.location.href = "index.html";
             } catch (err) { alert("登録エラー: " + err.message); }
         });
@@ -383,99 +441,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* =================================================================
-       F. 提出ボタン
-       ================================================================= */
-    const submitBtn = document.getElementById('submitBtn');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', async () => {
-            const user = auth.currentUser; 
-            if (!user) { alert("ログインしてください"); window.location.href = "login.html"; return; }
-            submitBtn.disabled = true; submitBtn.textContent = "ジャッジ中...";
-            
-            setTimeout(async () => {
-                const isCorrect = Math.random() > 0.3;
-                const urlParams = new URLSearchParams(window.location.search);
-                const problemId = urlParams.get('id');
-                let hasSolved = false;
-                try {
-                    const q = query(collection(db, "submissions"), where("uid", "==", user.uid), where("problemId", "==", problemId), where("result", "==", "AC"));
-                    const snap = await getDocs(q);
-                    if (!snap.empty) hasSolved = true;
-                } catch(e){}
-
-                if (isCorrect) {
-                    submitBtn.textContent = "AC (正解！)";
-                    submitBtn.style.backgroundColor = "#5cb85c";
-                    try {
-                        const name = user.displayName || user.email.split('@')[0];
-                        await addDoc(collection(db, "submissions"), {
-                            username: name, uid: user.uid, problemId: problemId, result: "AC", score: 100, submittedAt: new Date()
-                        });
-                        if (problemId && !problemId.startsWith("prob_")) {
-                            const pRef = doc(db, "problems", problemId);
-                            const upData = { attemptCount: increment(1) };
-                            if(!hasSolved) upData.solvedCount = increment(1);
-                            await updateDoc(pRef, upData);
-                        }
-                        alert("正解！");
-                    } catch (e) {}
-                } else {
-                    submitBtn.textContent = "WA (不正解)";
-                    submitBtn.style.backgroundColor = "#f0ad4e";
-                    if (problemId && !problemId.startsWith("prob_")) {
-                        try { await updateDoc(doc(db, "problems", problemId), { attemptCount: increment(1) }); } catch(e){}
-                    }
-                    alert("不正解です...");
-                }
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "提出する";
-                    submitBtn.style.backgroundColor = "";
-                }, 3000);
-            }, 1500);
-        });
-    }
-
-    /* =================================================================
-       G. ランキング表示
+       F. ランキング表示
        ================================================================= */
     const rankingTableBody = document.querySelector('.ranking-table tbody');
     if (rankingTableBody) {
         rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み中...</td></tr>';
         onAuthStateChanged(auth, async (user) => {
             try {
-                const q = query(collection(db, "submissions"), orderBy("submittedAt", "desc"), limit(20));
-                const querySnapshot = await getDocs(q);
+                const q = query(collection(db, "submissions"), orderBy("submittedAt", "desc"), limit(50));
+                const snap = await getDocs(q);
                 rankingTableBody.innerHTML = '';
-                let rank = 1;
-                let myRank = null;
-                let myScore = 0;
-                querySnapshot.forEach((doc) => {
+                let rank = 1, myRank = null, myScore = 0;
+                snap.forEach(doc => {
                     const d = doc.data();
-                    const date = d.submittedAt ? new Date(d.submittedAt.seconds * 1000).toLocaleDateString() : "-";
+                    const date = d.submittedAt ? new Date(d.submittedAt.seconds*1000).toLocaleDateString() : "-";
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td align="center"><strong>${rank}</strong></td><td>${d.username}</td><td>${d.score}</td><td>${d.problemId}</td><td>${date}</td>`;
                     rankingTableBody.appendChild(tr);
                     if(user && d.uid === user.uid) { myRank = rank; myScore = d.score; }
                     rank++;
                 });
-                if(querySnapshot.empty) rankingTableBody.innerHTML = '<tr><td colspan="5">データなし</td></tr>';
-                const myRankArea = document.getElementById('my-rank-area');
-                if(myRankArea && user) {
-                    myRankArea.innerHTML = myRank ? `<div style="text-align:center; padding:10px;"><div style="font-size:0.9rem; color:#666;">最新の提出順位</div><div style="font-size:2rem; font-weight:bold; color:#007acc;">${myRank} <span style="font-size:1rem;">位</span></div><div style="font-size:0.9rem; margin-top:5px;">スコア: ${myScore}pt</div></div>` : `<p>まだ提出データがありません。</p>`;
+                if(snap.empty) rankingTableBody.innerHTML = '<tr><td colspan="5">データなし</td></tr>';
+                if(document.getElementById('my-rank-area')) {
+                     document.getElementById('my-rank-area').innerHTML = myRank ? 
+                     `<div style="text-align:center;"><div style="font-size:0.9rem; color:#666;">最新提出順位</div><div style="font-size:2rem; font-weight:bold; color:#007acc;">${myRank} <span style="font-size:1rem;">位</span></div></div>` : 
+                     `<p>まだ提出データがありません。</p>`;
                 }
-            } catch (e) { rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み失敗</td></tr>'; }
+            } catch(e) { rankingTableBody.innerHTML = '<tr><td colspan="5">読み込み失敗</td></tr>'; }
         });
     }
 
     /* =================================================================
-       H. お問い合わせ送信
+       G. お問い合わせ送信
        ================================================================= */
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const sendBtn = document.getElementById('sendContactBtn');
+            sendBtn.disabled = true; sendBtn.textContent = "送信中...";
             const name = document.getElementById('contact-name').value;
             const email = document.getElementById('contact-email').value || "なし";
             const subject = document.getElementById('contact-subject').value;
@@ -484,7 +488,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             sendBtn.disabled = true;
             sendBtn.textContent = "送信中...";
             const embed = {
-                title: `📩 新しいお問い合わせ: ${subject}`,
+                title: `📩 お問い合わせ: ${subject}`,
                 color: 3447003,
                 fields: [
                     { name: "お名前", value: name, inline: true },
@@ -501,7 +505,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* =================================================================
-       I. 問題一覧の検索フィルタ
+       H. 問題一覧の検索フィルタ
        ================================================================= */
     const searchInput = document.getElementById('problemSearch');
     const problemRows = document.querySelectorAll('#problemTable tbody tr');
@@ -534,6 +538,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInput.addEventListener('input', filterProblems);
         document.getElementById('difficultyFilter').addEventListener('change', filterProblems);
         document.getElementById('categoryFilter').addEventListener('change', filterProblems);
+        document.querySelector('.filter-box button').addEventListener('click', filterProblems);
     }
     
     // コースフィルタ
