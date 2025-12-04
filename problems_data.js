@@ -13,6 +13,9 @@ export const problemsData = [
         constraints: `<ul><li>表示する文字列は正確に "Hello World" であること。</li></ul>`,
         inputExample: "なし",
         outputExample: "Hello World",
+        // ▼▼▼ ここに modelAnswer を追加 ▼▼▼
+        modelAnswer: `using UnityEngine;\n\npublic class HelloWorld : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log("Hello World");\n    }\n}`,
+        // ▲▲▲ 追加終わり ▲▲▲
         initialCode: `using UnityEngine;\n\npublic class HelloWorld : MonoBehaviour\n{\n    void Start()\n    {\n        // ここにコードを書いてください\n        \n    }\n}`
     },
     {
