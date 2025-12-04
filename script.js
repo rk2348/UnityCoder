@@ -383,11 +383,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const problemId = urlParams.get('id');
 
+            // ★追加: 現在の問題データを取得
+            const problem = problemsData.find(p => p.id === problemId);
+            if (!problem) { alert("問題データが見つかりません"); return; }
+
             submitBtn.disabled = true;
             submitBtn.textContent = "ジャッジ中...";
             
             setTimeout(async () => {
-                const isCorrect = Math.random() > 0.3; // 70%正解
+                // ▼▼▼ 修正箇所ここから ▼▼▼
+
+                // 1. ユーザーのコードを取得
+                const editor = ace.edit("editor");
+                const userCode = editor.getValue();
+
+                // 2. 模範解答を取得 (problems_data.js の modelAnswer)
+                // ※ modelAnswer が未定義の場合は空文字にする
+                const modelAnswer = problem.modelAnswer || "";
+
+                // 3. 判定ロジック: 空白・改行・タブを全て削除して比較する
+                // (こうすることで、スペースの有無による誤判定を防げます)
+                const cleanUserCode = userCode.replace(/\s/g, "");
+                const cleanModelCode = modelAnswer.replace(/\s/g, "");
+
+                // 一致していれば正解 (isCorrect = true)
+                const isCorrect = (cleanUserCode === cleanModelCode);
+
+                // ▲▲▲ 修正箇所ここまで ▲▲▲
                 
                 // 重複チェック
                 let hasSolvedBefore = false;
@@ -398,6 +420,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } catch(e) {}
 
                 if (isCorrect) {
+                    // 正解時の処理 (変更なし)
                     submitBtn.textContent = "AC (正解！)";
                     submitBtn.style.backgroundColor = "#5cb85c";
                     try {
@@ -406,7 +429,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             username: submitterName, uid: user.uid, problemId: problemId, result: "AC", score: 100, submittedAt: new Date()
                         });
 
-                        // 統計情報更新
                         if (problemId && !problemId.startsWith("prob_")) {
                             const problemRef = doc(db, "problems", problemId);
                             const updateData = { attemptCount: increment(1) };
@@ -416,6 +438,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         alert("正解！スコアを保存しました。");
                     } catch (e) { console.error(e); }
                 } else {
+                    // 不正解時の処理 (変更なし)
                     submitBtn.textContent = "WA (不正解)";
                     submitBtn.style.backgroundColor = "#f0ad4e";
                     if (problemId && !problemId.startsWith("prob_")) {
@@ -424,14 +447,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                             await updateDoc(problemRef, { attemptCount: increment(1) });
                         } catch(e){}
                     }
-                    alert("不正解です...");
+                    alert("不正解です...模範解答と一致しません。");
                 }
                 setTimeout(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = "提出する";
                     submitBtn.style.backgroundColor = "";
                 }, 3000);
-            }, 1500);
+            }, 1000); // 待ち時間を少し短縮しました
         });
     }
 
