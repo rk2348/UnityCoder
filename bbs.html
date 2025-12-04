@@ -181,6 +181,23 @@
       </div>
     </div>
   </div>
+<div id="viewThreadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+    <div class="modal-content" style="background:#fff; padding:25px; border-radius:8px; width:90%; max-width:600px; max-height:80vh; overflow-y:auto; position:relative;">
+      <span id="closeViewModal" style="position:absolute; top:15px; right:20px; font-size:24px; cursor:pointer; color:#999;">&times;</span>
+      
+      <div style="border-bottom:1px solid #eee; margin-bottom:15px; padding-bottom:10px;">
+        <span id="viewThreadCategory" style="font-size:0.8rem; padding:2px 6px; border-radius:4px; color:#fff; background:#888;">カテゴリ</span>
+        <h3 id="viewThreadTitle" style="margin:10px 0; color:#333;">タイトル</h3>
+        <div style="font-size:0.85rem; color:#666;">
+          投稿者: <strong id="viewThreadAuthor">User</strong> / <span id="viewThreadDate">Date</span>
+        </div>
+      </div>
+      
+      <div id="viewThreadBody" style="white-space: pre-wrap; line-height:1.6;">
+        </div>
+    </div>
+  </div>
+
 
   <script type="module" src="script.js"></script>
 </body>

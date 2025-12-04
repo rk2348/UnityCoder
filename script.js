@@ -179,10 +179,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             bbsTable.innerHTML = ''; 
             
+            /* --- 修正箇所: スレッド一覧のループ処理 --- */
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "-";
                 
+                // カテゴリごとの色設定
                 let catBadge = `<span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">その他</span>`;
                 if(data.category === "question") catBadge = `<span style="font-size:0.8rem; background:#e3f2fd; color:#0d47a1; padding:2px 6px; border-radius:4px;">質問</span>`;
                 if(data.category === "chat") catBadge = `<span style="font-size:0.8rem; background:#f3e5f5; color:#4a148c; padding:2px 6px; border-radius:4px;">雑談</span>`;
@@ -190,17 +192,67 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><a href="#" style="font-weight:bold;">${data.title}</a><div style="font-size:0.85rem; color:#666; margin-top:4px;">${data.content.substring(0, 30)}...</div></td>
+                    <td>
+                        <a href="#" class="thread-link" style="font-weight:bold; color:#007acc;">${data.title}</a>
+                        <div style="font-size:0.85rem; color:#666; margin-top:4px;">${data.content.substring(0, 30)}...</div>
+                    </td>
                     <td>${catBadge}</td>
                     <td>${data.authorName}</td>
                     <td><span style="font-size:0.85rem; color:#666;">${date}</span></td>
                 `;
+                
+                // ★追加: タイトルをクリックしたときの処理
+                tr.querySelector('.thread-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openViewThreadModal(data, date); // 詳細モーダルを開く関数を呼ぶ
+                });
+
                 bbsTable.appendChild(tr);
             });
 
             if (querySnapshot.empty) {
                 bbsTable.innerHTML = '<tr><td colspan="4">スレッドがありません。最初の投稿者になりましょう！</td></tr>';
             }
+
+            /* --- 追加箇所: 詳細表示モーダルの制御 --- */
+        const viewModal = document.getElementById('viewThreadModal');
+        const closeViewBtn = document.getElementById('closeViewModal');
+
+        // モーダルを開く関数
+        function openViewThreadModal(data, dateStr) {
+            if (!viewModal) return;
+            
+            // 内容を埋め込む
+            document.getElementById('viewThreadTitle').textContent = data.title;
+            document.getElementById('viewThreadAuthor').textContent = data.authorName;
+            document.getElementById('viewThreadDate').textContent = dateStr;
+            document.getElementById('viewThreadBody').textContent = data.content;
+            
+            // カテゴリラベルの色分け
+            const catLabel = document.getElementById('viewThreadCategory');
+            catLabel.textContent = data.category;
+            if (data.category === 'question') { catLabel.textContent = "質問"; catLabel.style.background = "#0d47a1"; }
+            else if (data.category === 'chat') { catLabel.textContent = "雑談"; catLabel.style.background = "#4a148c"; }
+            else if (data.category === 'bug') { catLabel.textContent = "バグ報告"; catLabel.style.background = "#b71c1c"; }
+            else { catLabel.textContent = "その他"; catLabel.style.background = "#888"; }
+
+            // 表示
+            viewModal.style.display = "flex";
+        }
+
+        // 閉じるボタンの処理
+        if (closeViewBtn) {
+            closeViewBtn.addEventListener('click', () => {
+                viewModal.style.display = "none";
+            });
+        }
+        // 背景クリックでも閉じる
+        window.addEventListener('click', (e) => {
+            if (e.target === viewModal) {
+                viewModal.style.display = "none";
+            }
+        });
+        
         } catch(e) {
             console.error(e);
             bbsTable.innerHTML = '<tr><td colspan="4">読み込みに失敗しました。</td></tr>';
