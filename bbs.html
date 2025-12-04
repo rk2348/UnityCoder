@@ -22,7 +22,17 @@
       border-radius: 8px;
       width: 90%;
       max-width: 500px;
+      position: relative; /* 閉じるボタン配置用 */
     }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+    .close-btn:hover { color: #333; }
   </style>
 </head>
 <body>
@@ -113,6 +123,7 @@
 
   <div id="threadModal">
     <div class="modal-content">
+      <span class="close-btn" id="closeCreateModalX">&times;</span>
       <h3 style="margin-top:0;">新規スレッド作成</h3>
       <div class="form-group" style="margin-bottom:15px;">
         <label style="font-weight:bold; display:block; margin-bottom:5px;">タイトル</label>
@@ -137,45 +148,28 @@
     </div>
   </div>
 
-<<<<<<< HEAD
-  <div id="viewThreadModal" class="modal-overlay">
-    <div class="modal-content">
+  <div id="viewThreadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
       <span class="close-btn" id="closeViewModalX">&times;</span>
+      
       <div style="border-bottom:1px solid #eee; margin-bottom:15px; padding-bottom:10px;">
-        <span id="viewThreadCategory" style="font-size:0.8rem; padding:2px 6px; border-radius:4px; margin-bottom:5px; display:inline-block; color:#fff;">カテゴリ</span>
+        <span id="viewThreadCategory" style="font-size:0.8rem; padding:2px 6px; border-radius:4px; margin-bottom:5px; display:inline-block; color:#fff; background:#888;">カテゴリ</span>
         <h3 id="viewThreadTitle" style="margin:5px 0; color:#333; font-size:1.4rem;">タイトル</h3>
         <div style="font-size:0.85rem; color:#666;">
           投稿者: <strong id="viewThreadAuthor">User</strong> / 
           <span id="viewThreadDate">Date</span>
         </div>
       </div>
-      <div id="viewThreadBody">
-        </div>
+      
+      <div id="viewThreadBody" style="white-space: pre-wrap; line-height:1.6;">
+      </div>
+      
       <div style="margin-top:20px; text-align:right;">
         <button id="closeViewBtnMain" class="btn-primary">閉じる</button>
       </div>
     </div>
   </div>
-<div id="viewThreadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
-    <div class="modal-content" style="background:#fff; padding:25px; border-radius:8px; width:90%; max-width:600px; max-height:80vh; overflow-y:auto; position:relative;">
-      <span id="closeViewModal" style="position:absolute; top:15px; right:20px; font-size:24px; cursor:pointer; color:#999;">&times;</span>
-      
-      <div style="border-bottom:1px solid #eee; margin-bottom:15px; padding-bottom:10px;">
-        <span id="viewThreadCategory" style="font-size:0.8rem; padding:2px 6px; border-radius:4px; color:#fff; background:#888;">カテゴリ</span>
-        <h3 id="viewThreadTitle" style="margin:10px 0; color:#333;">タイトル</h3>
-        <div style="font-size:0.85rem; color:#666;">
-          投稿者: <strong id="viewThreadAuthor">User</strong> / <span id="viewThreadDate">Date</span>
-        </div>
-      </div>
-      
-      <div id="viewThreadBody" style="white-space: pre-wrap; line-height:1.6;">
-        </div>
-    </div>
-  </div>
 
-
-=======
->>>>>>> parent of c564680 (掲示板の拡大化)
   <script type="module" src="script.js"></script>
 </body>
 </html>
