@@ -4,6 +4,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, limit, where, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// ★追加: 問題データを外部ファイルからインポート
+import { problemsData } from "./problems_data.js";
+
 // 1. Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyAmeB2GKyDCv177vgI1oe6z_R-wFyCD2Us",
@@ -22,46 +25,6 @@ const DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/144548837277145
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
-// 4. 問題データ (静的データ + フォールバック用)
-const staticProblems = [
-    {
-        id: "prob_001",
-        title: "Hello Unity World",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 100,
-        description: `<p>Unityのコンソールに「Hello World」と表示するスクリプトを作成してください。</p><p><code>Start</code> メソッド内で <code>Debug.Log</code> を使用してください。</p>`,
-        constraints: `<ul><li>表示する文字列は正確に "Hello World" であること。</li></ul>`,
-        inputExample: "なし",
-        outputExample: "Hello World",
-        initialCode: `using UnityEngine;\n\npublic class HelloWorld : MonoBehaviour\n{\n    void Start()\n    {\n        // ここにコードを書いてください\n        \n    }\n}`
-    },
-    {
-        id: "prob_002",
-        title: "Cubeの移動",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 100,
-        description: `<p><code>Update</code> メソッドを使用して、CubeをX軸方向に移動させてください。</p><p>毎フレーム <code>0.1f</code> ずつ移動させること。</p>`,
-        constraints: `<ul><li>Transform.Translate または position を直接操作すること。</li></ul>`,
-        inputExample: "なし",
-        outputExample: "Cubeのx座標が増加する",
-        initialCode: `using UnityEngine;\n\npublic class MoveCube : MonoBehaviour\n{\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
-    },
-    {
-        id: "prob_003",
-        title: "Rigidbody ジャンプ",
-        timeLimit: "2 sec",
-        memoryLimit: "1024 MB",
-        score: 200,
-        description: `<p>Rigidbodyを使ってオブジェクトをジャンプさせてください。</p><p>スペースキーが押された瞬間に上方向へ力を加えます。</p>`,
-        constraints: `<ul><li>ジャンプ力は 5.0f</li><li>ForceMode.Impulseを使用</li></ul>`,
-        inputExample: "Space Key",
-        outputExample: "Velocity Y > 0",
-        initialCode: `using UnityEngine;\n\npublic class PlayerJump : MonoBehaviour\n{\n    public float jumpForce = 5.0f;\n    private Rigidbody rb;\n\n    void Start()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Update()\n    {\n        // ここにコードを書いてください\n    }\n}`
-    }
-];
 
 // Discord通知機能
 async function sendDiscordNotification(username) {
@@ -252,8 +215,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* =================================================================
        C. 問題作成ページ
        ================================================================= */
-    /* --- script.js の「問題作成ページ」の部分 --- */
-
     const saveProblemBtn = document.getElementById('saveProblemBtn');
     if (saveProblemBtn) {
         saveProblemBtn.addEventListener('click', async () => {
@@ -274,8 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const editorCreate = ace.edit("editor_create");
             const initialCode = editorCreate.getValue();
             
-            // ★ここが重要！ 模範解答エディタの値を取得
-            // HTML側で id="editor_model" としているので、ここも合わせる必要があります
+            // 模範解答エディタの値を取得
             const editorModel = ace.edit("editor_model"); 
             const modelAnswer = editorModel.getValue();
 
@@ -296,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     category: category,
                     description: description,
                     initialCode: initialCode,
-                    modelAnswer: modelAnswer, // ★ここに追加
+                    modelAnswer: modelAnswer,
                     score: 100,
                     timeLimit: "2 sec",
                     memoryLimit: "1024 MB",
@@ -328,8 +288,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const problemId = urlParams.get('id');
         
         if (problemId) {
-            // 1. 静的データ検索
-            const problem = staticProblems.find(p => p.id === problemId);
+            // 1. 静的データ検索 (★変更: problemsData を使用)
+            const problem = problemsData.find(p => p.id === problemId);
             
             if (problem) {
                 document.title = `${problem.title} | Unity Learning`;
