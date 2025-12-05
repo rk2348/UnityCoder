@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シューティングゲーム作成 | Unity Learning</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* course_detail.html と共通のスタイル */
+    .course-header {
+      position: relative;
+      background-color: #333;
+      color: #fff;
+      padding: 40px 30px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    /* 背景画像を暗くするためのオーバーレイ */
+    .course-header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+    .course-header-content {
+      position: relative;
+      z-index: 2;
+    }
+    .course-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #007acc;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    
+    /* カリキュラムリスト */
+    .chapter-list {
+      list-style: none;
+      padding: 0;
+    }
+    .chapter-item {
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .chapter-item:hover {
+      background: #f9f9f9;
+    }
+    .chapter-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      color: #333;
+      text-decoration: none;
+    }
+    .chapter-link:hover {
+      color: #007acc;
+    }
+    .chapter-status {
+      font-size: 0.8rem;
+      color: #888;
+      border: 1px solid #ddd;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .chapter-status.completed {
+      background: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    /* プログレスバー */
+    .progress-container {
+      background: #eee;
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      margin: 10px 0 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: #28a745;
+      height: 100%;
+      width: 0%; 
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
+        <a href="ranking.html">ランキング</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      
+      <div class="course-header" style="background-image: url('https://placehold.co/800x300/003366/ffffff?text=Shooting+Game+Dev');">
+        <div class="course-header-content">
+          <span class="course-badge">中級</span>
+          <h1 style="font-size: 2rem; margin: 10px 0;">シューティングゲーム作成講座</h1>
+          <p style="font-size: 1rem; opacity: 0.9;">Unityの基本機能を使って、縦スクロールの2Dシューティングゲームを完成させます。Prefab、コルーチン、当たり判定の基礎を網羅します。</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">コースについて</div>
+        <div class="panel-body">
+          <p>このコースでは、2Dシューティングゲーム（STG）の実装を通して、ゲーム制作における重要なデザインパターンやUnityの機能を学びます。</p>
+          <h3 style="font-size: 1.1rem; margin-top:20px;">学べること</h3>
+          <ul style="list-style: disc; padding-left: 20px; margin-top: 10px; line-height: 1.8;">
+            <li>Prefab（プレハブ）を使った弾や敵の管理</li>
+            <li>コルーチン（Coroutine）による敵の出現タイミング制御</li>
+            <li>ColliderとTriggerを使った当たり判定</li>
+            <li>シングルトンパターンによるスコア管理</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">カリキュラム</div>
+        <div class="panel-body">
+          <ul class="chapter-list">
+            <li class="chapter-item">
+              <a href="lesson_stg_01.html" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第1回</span> プロジェクト作成とプレイヤーの移動</span>
+                <span class="chapter-status completed">完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="lesson_stg_02.html" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第2回</span> 弾（Bullet）の作成とプレハブ化</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="lesson_stg_03.html" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第3回</span> スクリプトによる弾の発射制御</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第4回</span> 敵キャラクターの自動生成 (Coroutine)</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第5回</span> ColliderとTriggerによる当たり判定</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第6回</span> 爆発エフェクトとサウンドの実装</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第7回</span> UI表示とスコア管理 (Singleton)</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第8回</span> ゲームオーバーとリトライ処理</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">このコースに関連する問題</div>
+        <div class="panel-body">
+          <p style="margin-bottom:15px; font-size:0.9rem;">コースで学んだ知識を定着させるための練習問題です。</p>
+          <ul style="list-style:none; padding:0; margin:0;">
+            <li style="padding:10px 0; border-bottom:1px solid #eee;">
+              <a href="problem_detail.html?id=prob_stg_001" style="color:#007acc; font-weight:bold;">[STG-001] 弾幕の角度計算 (三角関数基礎)</a>
+            </li>
+            <li style="padding:10px 0;">
+              <a href="problem_detail.html?id=prob_stg_002" style="color:#007acc; font-weight:bold;">[STG-002] 敵の追尾アルゴリズムの実装</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-body">
+          <div style="font-weight:bold; margin-bottom:5px;">学習状況</div>
+          <div style="font-size:0.9rem; color:#666; display:flex; justify-content:space-between;">
+            <span>進捗率</span>
+            <span>12%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 12%;"></div>
+          </div>
+          
+          <a href="lesson_stg_02.html" class="btn-primary" style="display:block; text-align:center; padding: 12px; font-size:1rem; font-weight:bold;">
+            続きから学習する
+          </a>
+          <div style="text-align:center; margin-top:10px;">
+            <a href="lesson_stg_01.html" style="font-size:0.85rem; color:#666; text-decoration:underline;">最初からやり直す</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">コース情報</div>
+        <table style="font-size:0.9rem; width:100%;">
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">講師</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">UnityMaster</td>
+          </tr>
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">レッスン数</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">全8回</td>
+          </tr>
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">想定時間</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">約5時間</td>
+          </tr>
+          <tr>
+            <td style="color:#666; padding:8px 0;">必須環境</td>
+            <td style="padding:8px 0;">Unity 2022.3+</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="panel">
+        <div class="panel-header">関連タグ</div>
+        <div class="panel-body" style="font-size:0.85rem;">
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#Shooting</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#2D</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#中級</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 Unity Learning Project.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

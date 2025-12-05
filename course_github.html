@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub講座 | Unity Learning</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* コース詳細共通スタイル (course_detail.htmlと統一) */
+    .course-header {
+      position: relative;
+      background-color: #333;
+      color: #fff;
+      padding: 40px 30px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .course-header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7); /* 暗めにして文字を見やすく */
+      z-index: 1;
+    }
+    .course-header-content {
+      position: relative;
+      z-index: 2;
+    }
+    .course-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #007acc;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    
+    /* カリキュラムリスト */
+    .chapter-list { list-style: none; padding: 0; }
+    .chapter-item {
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .chapter-item:hover { background: #f9f9f9; }
+    .chapter-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      color: #333;
+      text-decoration: none;
+    }
+    .chapter-link:hover { color: #007acc; }
+    .chapter-status {
+      font-size: 0.8rem;
+      color: #888;
+      border: 1px solid #ddd;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .chapter-status.completed {
+      background: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    /* プログレスバー */
+    .progress-container {
+      background: #eee;
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      margin: 10px 0 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: #28a745;
+      height: 100%;
+      width: 0%; 
+      transition: width 0.3s;
+    }
+    
+    /* タグスタイル */
+    .course-meta-tags { display: flex; gap: 10px; margin-top: 10px; font-size: 0.9rem; }
+    .tag { padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.2); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
+        <a href="ranking.html">ランキング</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      
+      <div style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
+        <a href="courses.html">コース一覧</a> &gt; Unity開発者のためのGitHub講座
+      </div>
+
+      <div class="course-header" style="background-image: url('https://placehold.co/800x300/181717/ffffff?text=GitHub+for+Unity');">
+        <div class="course-header-content">
+          <span class="course-badge" style="background:#555;">ツール</span>
+          <h1 style="font-size: 2rem; margin: 10px 0;">Unity開発者のためのGitHub講座</h1>
+          <p style="font-size: 1rem; opacity: 0.9;">
+            プロジェクトのバックアップやチーム開発に必須のバージョン管理システム「Git」と「GitHub」の使い方を、Unity特有の注意点（.gitignore等）を交えて解説します。
+          </p>
+          <div class="course-meta-tags">
+            <span class="tag">初級〜中級</span>
+            <span class="tag">バージョン管理</span>
+            <span class="tag">全6回</span>
+            <span class="tag">想定時間: 3時間</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">コースについて</div>
+        <div class="panel-body">
+          <p>「プロジェクトが壊れて元に戻せない…」「チームでどうやってファイルを共有すればいいの？」そんな悩みを解決します。黒い画面（コマンドライン）が苦手な方向けに、GitHub DesktopなどのGUIツールを使った操作も紹介します。</p>
+          <h3 style="font-size: 1.1rem; margin-top:20px;">学べること</h3>
+          <ul style="list-style: disc; padding-left: 20px; margin-top: 10px; line-height: 1.8;">
+            <li>GitとGitHubの基本概念とセットアップ</li>
+            <li>Unityプロジェクトに適した .gitignore の設定</li>
+            <li>コミット、プッシュ、プルの基本フロー</li>
+            <li>ブランチを使った安全な機能追加とマージ</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">カリキュラム</div>
+        <div class="panel-body">
+          <ul class="chapter-list">
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第1回</span> Gitの仕組みとインストール</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第2回</span> リポジトリ作成と.gitignore設定</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第3回</span> 変更を保存する (Commit & Push)</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第4回</span> GitHub Desktopで履歴を管理する</span>
+                <span class="chapter-status">🔒</span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第5回</span> ブランチの作成とマージ</span>
+                <span class="chapter-status">🔒</span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第6回</span> コンフリクト（競合）の解消方法</span>
+                <span class="chapter-status">🔒</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-body">
+          <div style="font-weight:bold; margin-bottom:5px;">学習状況</div>
+          <div style="font-size:0.9rem; color:#666; display:flex; justify-content:space-between;">
+            <span>進捗率</span>
+            <span>0%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 0%;"></div>
+          </div>
+          
+          <button class="btn-primary" style="width:100%; padding: 12px; font-size:1rem; font-weight:bold;">
+            学習を開始する
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">コース情報</div>
+        <table style="font-size:0.9rem; width:100%;">
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">講師</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">GitMaster</td>
+          </tr>
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">レッスン数</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">全6回</td>
+          </tr>
+          <tr>
+            <td style="color:#666; padding:8px 0; border-bottom:1px solid #eee;">想定時間</td>
+            <td style="padding:8px 0; border-bottom:1px solid #eee;">約3時間</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="panel">
+        <div class="panel-header">関連タグ</div>
+        <div class="panel-body" style="font-size:0.85rem;">
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#GitHub</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#TeamDev</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#Tools</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 Unity Learning Project.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
