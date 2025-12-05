@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第6回: コンフリクトの解消 | GitHub講座</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* レッスンページ専用スタイル (共通) */
+    .lesson-content h3 {
+      font-size: 1.3rem;
+      border-left: 5px solid #007acc;
+      padding-left: 10px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      background: #f9f9f9;
+      padding: 10px;
+    }
+    .lesson-content h4 {
+      font-size: 1.1rem;
+      margin-top: 25px;
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 1px dashed #ddd;
+      padding-bottom: 5px;
+    }
+    .lesson-content p {
+      line-height: 1.8;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .lesson-content ul, .lesson-content ol {
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .lesson-content li {
+      margin-bottom: 8px;
+    }
+    
+    /* 画像プレースホルダー */
+    .img-placeholder {
+      background-color: #eee;
+      color: #777;
+      padding: 40px;
+      text-align: center;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    /* 重要・警告ボックス */
+    .note-box {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      border-left: 4px solid #007acc;
+    }
+    .warning-box {
+      background: #ffebee;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      border-left: 4px solid #f44336;
+    }
+
+    /* ナビゲーションボタン */
+    .lesson-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid #ddd;
+    }
+    .nav-btn {
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .nav-prev { background: #f0f0f0; color: #555; border: 1px solid #ccc; }
+    .nav-prev:hover { background: #e0e0e0; }
+    
+    /* 完了ボタン用スタイル */
+    .nav-finish { background: #28a745; color: #fff; border: 1px solid #28a745; }
+    .nav-finish:hover { background: #218838; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
+        <a href="ranking.html">ランキング</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <div style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+        <a href="courses.html">コース一覧</a> &gt; 
+        <a href="course_github.html">GitHub講座</a> &gt; 第6回
+      </div>
+
+      <div class="panel">
+        <div class="panel-body lesson-content">
+          
+          <h1>第6回: コンフリクト（競合）の解消</h1>
+          <div style="font-size:0.9rem; color:#666; margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            公開日: 2025.12.06
+          </div>
+
+          <h3>1. コンフリクトとは？</h3>
+          <p>
+            チーム開発などで、AさんとBさんが<strong>「同じファイルの同じ行」</strong>を同時に変更してしまった場合、Gitはどちらの変更を採用すべきか自動的に判断できません。<br>
+            この状態を<strong>「コンフリクト（競合）」</strong>と呼びます。
+          </p>
+
+          <div class="warning-box">
+            <strong>Unityユーザーへの重要事項：</strong><br>
+            C#スクリプト（テキストファイル）のコンフリクトは比較的簡単に直せますが、<strong>シーンファイル (.unity)</strong> や <strong>プレハブ (.prefab)</strong> でコンフリクトが起きると、中身が複雑すぎて手動での修復はほぼ不可能です。<br>
+            チーム開発では「同じシーンを複数人で同時に触らない」「Prefabを活用して作業を分担する」といったルール作りが重要です。
+          </div>
+
+          <h3>2. コンフリクトの発生</h3>
+          <p>
+            GitHub Desktopで「Pull」や「Merge」を行った際、コンフリクトが発生すると以下のような警告画面が表示されます。
+          </p>
+
+          <div class="img-placeholder">
+            【画像: GitHub Desktopの「Conflicted files」という警告画面】
+          </div>
+
+          <h3>3. コンフリクトの解決手順 (スクリプトの場合)</h3>
+          <p>
+            警告画面が出ても慌てる必要はありません。以下の手順で解決します。
+          </p>
+
+          <h4>手順1: エディタで開く</h4>
+          <ol>
+            <li>GitHub Desktopの警告画面にある <strong>Open in Visual Studio Code</strong>（またはお使いのエディタ）ボタンをクリックします。</li>
+          </ol>
+
+          <h4>手順2: 記号を探して修正する</h4>
+          <p>
+            ファイルを開くと、Gitが自動的に以下のような記号を挿入しています。
+          </p>
+          <div style="background:#2d2d2d; color:#fff; padding:15px; border-radius:4px; font-family:monospace; margin-bottom:15px;">
+<<<<<<< HEAD<br>
+int hp = 100; // 自分の変更<br>
+=======<br>
+int hp = 200; // 相手の変更<br>
+>>>>>>> main
+          </div>
+          <p>
+            この <code>&lt;&lt;&lt;</code>、<code>===</code>、<code>&gt;&gt;&gt;</code> に囲まれた部分が競合箇所です。<br>
+            どちらのコードが正しいか（あるいは両方必要か）を判断し、正しいコードだけを残して、<strong>記号の行はすべて削除</strong>してください。
+          </p>
+
+          <h4>手順3: マージコミットを作成する</h4>
+          <ol>
+            <li>ファイルを保存して閉じます。</li>
+            <li>GitHub Desktopに戻ると、ボタンが「Commit merge」に変わっているはずです。</li>
+            <li><strong>Commit merge</strong> をクリックして完了です。</li>
+          </ol>
+
+          <h3>4. 講座のまとめ</h3>
+          <p>
+            全6回の講座、お疲れ様でした！<br>
+            これでGitを使った基本的な開発フロー（リポジトリ作成、コミット、プッシュ、ブランチ、マージ）は習得できました。
+          </p>
+          
+          <div class="note-box">
+            <strong>今後のアクション：</strong>
+            <ul>
+              <li>自分のUnityプロジェクトをすべてGitHubにバックアップする。</li>
+              <li>「一日一回は必ずコミット」を習慣にする。</li>
+              <li>大きな機能追加をする時は、怖がらずにブランチを切ってみる。</li>
+            </ul>
+          </div>
+          <p>
+            バージョン管理を味方につけて、安全で快適なUnity開発ライフを送ってください！
+          </p>
+
+          <div class="lesson-nav">
+            <a href="lesson_git_05.html" class="nav-btn nav-prev">« 前のレッスン</a>
+            <a href="courses.html" class="nav-btn nav-finish">コース一覧に戻る</a>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">コース目次</div>
+        <div class="panel-body">
+          <ul style="list-style:none; padding:0; margin:0;">
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_01.html">第1回: 仕組みとインストール</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_02.html">第2回: リポジトリ作成と設定</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_03.html">第3回: 変更の保存 (Commit)</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_04.html">第4回: 履歴の確認と取り消し</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_05.html">第5回: ブランチとマージ</a></li>
+            <li style="padding:10px 0;">
+              <strong>第6回: コンフリクトの解消</strong> <span style="font-size:0.8rem; color:#007acc;">(現在)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+  
+  <footer>
+    <div class="container"><p>© 2025 Unity Learning Project.</p></div>
+  </footer>
+</body>
+</html>

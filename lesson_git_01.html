@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第1回: Gitの仕組みとインストール | GitHub講座</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* レッスンページ専用スタイル */
+    .lesson-content h3 {
+      font-size: 1.3rem;
+      border-left: 5px solid #007acc;
+      padding-left: 10px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      background: #f9f9f9; /* 少し背景色をつけて見やすく */
+      padding: 10px;
+    }
+    .lesson-content h4 {
+      font-size: 1.1rem;
+      margin-top: 25px;
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 1px dashed #ddd;
+      padding-bottom: 5px;
+    }
+    .lesson-content p {
+      line-height: 1.8;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .lesson-content ul, .lesson-content ol {
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .lesson-content li {
+      margin-bottom: 8px;
+    }
+    
+    /* 画像配置用のプレースホルダー */
+    .img-placeholder {
+      background-color: #eee;
+      color: #777;
+      padding: 40px;
+      text-align: center;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    /* 重要なポイントの強調ボックス */
+    .note-box {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      border-left: 4px solid #007acc;
+    }
+    .warning-box {
+      background: #ffebee;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      border-left: 4px solid #f44336;
+    }
+
+    /* ナビゲーションボタン */
+    .lesson-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid #ddd;
+    }
+    .nav-btn {
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .nav-prev { background: #f0f0f0; color: #555; border: 1px solid #ccc; }
+    .nav-prev:hover { background: #e0e0e0; }
+    .nav-next { background: #007acc; color: #fff; border: 1px solid #007acc; }
+    .nav-next:hover { background: #005fa3; }
+    .nav-disabled { opacity: 0.4; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
+        <a href="ranking.html">ランキング</a>
+      </nav>
+      <div class="user-actions">
+        <a href="login.html" class="btn-login">ログイン</a>
+        <a href="signup.html" class="btn-signup">新規登録</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-wrapper">
+    <main class="main-col">
+      <div style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+        <a href="courses.html">コース一覧</a> &gt; 
+        <a href="course_github.html">GitHub講座</a> &gt; 第1回
+      </div>
+
+      <div class="panel">
+        <div class="panel-body lesson-content">
+          
+          <h1>第1回: Gitの仕組みとインストール</h1>
+          <div style="font-size:0.9rem; color:#666; margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            公開日: 2025.12.06
+          </div>
+
+          <h3>1. はじめに：なぜGitが必要なのか</h3>
+          <p>
+            Unityでゲームを作っていると、「間違えてコードを消してしまった」「昨日の状態に戻したい」「新しい機能を試したらエラーだらけになった」といったトラブルに必ず遭遇します。<br>
+            <strong>Git（ギット）</strong>を使えば、これらを解決できます。ゲームのセーブポイントを作るように、いつでも過去の状態に戻れるようになります。
+          </p>
+          
+          <div class="img-placeholder">
+            【画像: Gitの概念図（セーブポイントが並んでいるイメージ）】
+          </div>
+
+          <ul>
+            <li><strong>Git:</strong> 自分のパソコン内で履歴を管理するツール</li>
+            <li><strong>GitHub:</strong> Gitのデータをネット上に保存・共有するサービス（Google Driveのコード版のようなもの）</li>
+          </ul>
+
+          <h3>2. GitHub Desktopのインストール</h3>
+          <p>
+            Gitは通常、黒い画面（コマンドライン）で操作しますが、初心者は操作が直感的でわかりやすい公式ツール<strong>「GitHub Desktop」</strong>を使うのがおすすめです。
+          </p>
+
+          <h4>手順1: 公式サイトへアクセス</h4>
+          <p>以下のリンクからGitHub Desktopのダウンロードページへ移動します。</p>
+          <p><a href="https://desktop.github.com/" target="_blank" style="color:#007acc; text-decoration:underline;">GitHub Desktop 公式サイト (desktop.github.com)</a></p>
+          
+          <div class="img-placeholder">
+            【画像: 公式サイトの「Download for Windows」ボタン】
+          </div>
+
+          <h4>手順2: インストーラーの実行</h4>
+          <p>ダウンロードしたファイル（Setupファイル）をダブルクリックして実行します。インストールは自動的に進みます。</p>
+
+          <h3>3. GitHubアカウントの作成とログイン</h3>
+          <p>GitHub Desktopが起動すると、GitHubアカウントへのログインを求められます。</p>
+
+          <div class="img-placeholder">
+            【画像: 初回起動時の「Sign in to GitHub.com」画面】
+          </div>
+
+          <ol>
+            <li><strong>「Sign in to GitHub.com」</strong>をクリックします。</li>
+            <li>ブラウザが開き、GitHubのログイン画面が表示されます。
+              <ul>
+                <li>アカウントを持っていない場合は「Create an account」から作成してください（無料）。</li>
+              </ul>
+            </li>
+            <li>ログイン後、「GitHub Desktopを開きますか？」というポップアップが出るので<strong>「開く」</strong>を選択します。</li>
+            <li>Configure Git（名前とメールアドレスの設定）が表示されたら、そのまま<strong>「Finish」</strong>をクリックします。</li>
+          </ol>
+
+          <div class="note-box">
+            <strong>完了:</strong><br>
+            「Let's get started!」という画面が表示されれば準備完了です。次回は、実際にUnityプロジェクトを管理下に置く設定を行います。
+          </div>
+
+          <div class="lesson-nav">
+            <a href="#" class="nav-btn nav-prev nav-disabled">« 前のレッスン</a>
+            <a href="lesson_git_02.html" class="nav-btn nav-next">次のレッスン »</a>
+          </div>
+          </div>
+      </div>
+    </main>
+
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">コース目次</div>
+        <div class="panel-body">
+          <ul style="list-style:none; padding:0; margin:0;">
+            <li style="padding:10px 0; border-bottom:1px solid #eee;">
+              <strong>第1回: 仕組みとインストール</strong> <span style="font-size:0.8rem; color:#007acc;">(現在)</span>
+            </li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_02.html">第2回: リポジトリ作成と設定</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_03.html">第3回: 変更の保存 (Commit)</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_04.html">第4回: 履歴の確認と取り消し</a></li>
+            <li style="padding:10px 0; border-bottom:1px solid #eee;"><a href="lesson_git_05.html">第5回: ブランチとマージ</a></li>
+            <li style="padding:10px 0;"><a href="lesson_git_06.html">第6回: コンフリクトの解消</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+  
+  <footer>
+    <div class="container"><p>© 2025 Unity Learning Project.</p></div>
+  </footer>
+</body>
+</html>
