@@ -11,14 +11,22 @@ export function initAuth() {
         const userActions = document.querySelector('.user-actions');
         const userBox = document.querySelector('.user-box');
         
+        // ★ 管理者ユーザー名 (ここを変更すれば指定ユーザーのみ許可できます)
+        const adminUser = "rk2348"; 
+
         if (user) {
             const displayName = user.displayName || user.email.split('@')[0];
             
+            // ★ 管理者のみ表示するHTMLを作成
+            const createLinkHtml = (displayName === adminUser) 
+                ? `<a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>` 
+                : ``;
+
             // ヘッダー
             if(userActions) {
                 userActions.innerHTML = `
                     <span style="font-size:0.9rem; margin-right:10px;">User: <strong>${displayName}</strong></span>
-                    <a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>
+                    ${createLinkHtml}
                     <a href="#" id="logoutBtn" style="font-size:0.85rem; color:#888;">ログアウト</a>
                 `;
                 document.getElementById('logoutBtn').addEventListener('click', (e) => {
