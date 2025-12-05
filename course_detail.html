@@ -3,9 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>問題詳細 | Unity Learning</title>
+  <title>コース詳細 | Unity Learning</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <style>
+    /* コース詳細ページ専用スタイル */
+    .course-header {
+      position: relative;
+      background-color: #333;
+      color: #fff;
+      padding: 40px 30px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    /* 背景画像を暗くするためのオーバーレイ */
+    .course-header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+    .course-header-content {
+      position: relative;
+      z-index: 2;
+    }
+    .course-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #007acc;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    
+    /* カリキュラムリスト */
+    .chapter-list {
+      list-style: none;
+      padding: 0;
+    }
+    .chapter-item {
+      border: 1px solid #eee;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background: #fff;
+      transition: background 0.2s;
+    }
+    .chapter-item:hover {
+      background: #f9f9f9;
+    }
+    .chapter-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      color: #333;
+      text-decoration: none;
+    }
+    .chapter-link:hover {
+      color: #007acc;
+    }
+    .chapter-status {
+      font-size: 0.8rem;
+      color: #888;
+      border: 1px solid #ddd;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .chapter-status.completed {
+      background: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    /* プログレスバー */
+    .progress-container {
+      background: #eee;
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      margin: 10px 0 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: #28a745;
+      height: 100%;
+      width: 0%; /* 進捗に応じて変更 */
+      transition: width 0.3s;
+    }
+  </style>
 </head>
 <body>
 
@@ -14,8 +103,8 @@
       <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
       <nav>
         <a href="index.html">トップ</a>
-        <a href="problemlist.html" class="active">問題</a>
-        <a href="courses.html">コース</a>
+        <a href="problemlist.html">問題</a>
+        <a href="courses.html" class="active">コース</a>
         <a href="ranking.html">ランキング</a>
       </nav>
       <div class="user-actions">
@@ -28,64 +117,145 @@
   <div class="container main-wrapper">
     <main class="main-col">
       
-      <div class="panel">
-        <div class="panel-body">
-          <h1 id="p_title" style="margin-bottom: 5px;">読み込み中...</h1>
-          <div class="problem-meta">
-            実行時間制限: <span id="p_time"></span> / 
-            メモリ制限: <span id="p_memory"></span> / 
-            配点: <span id="p_score"></span>点
-          </div>
-          
-          <h3>問題文</h3>
-          <div id="p_description"></div>
-
-          <h3>制約</h3>
-          <div id="p_constraints"></div>
-
-          <h3>入力例 1</h3>
-          <pre class="code-block" id="p_input"></pre>
-
-          <h3>出力例 1</h3>
-          <pre class="code-block" id="p_output"></pre>
+      <div class="course-header" style="background-image: url('https://placehold.co/800x300/222/555?text=Course+Image');">
+        <div class="course-header-content">
+          <span class="course-badge">初級</span>
+          <h1 style="font-size: 2rem; margin: 10px 0;">RPG制作入門コース</h1>
+          <p style="font-size: 1rem; opacity: 0.9;">キャラクターの移動から戦闘システム、イベント作成まで、2D RPG制作の基礎を網羅的に学習します。</p>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-header">提出</div>
+        <div class="panel-header">コースについて</div>
         <div class="panel-body">
-          <p style="font-size:0.9rem; margin-bottom:10px;">解答コード（C#）を入力してください</p>
-          
-          <div id="editor" style="height: 500px;"></div>
-          
-          <button id="submitBtn" class="btn-primary" style="width:100%; margin-top: 15px;">提出する</button>
+          <p>このコースでは、Unityを使ってゼロからRPG（ロールプレイングゲーム）を作成します。C#の基礎知識があることを前提に、ゲームロジックの実装方法を中心に解説します。</p>
+          <h3 style="font-size: 1.1rem; margin-top:20px;">学べること</h3>
+          <ul style="list-style: disc; padding-left: 20px; margin-top: 10px; line-height: 1.8;">
+            <li>Tilemapを使ったマップ作成</li>
+            <li>キャラクターのアニメーション制御</li>
+            <li>ScriptableObjectによるアイテムデータ管理</li>
+            <li>ターン制バトルのロジック実装</li>
+          </ul>
         </div>
       </div>
 
-      <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-        <a href="problemlist.html" style="color: #666; text-decoration: underline; font-size: 0.9rem;">&laquo; 問題一覧へ戻る</a>
+      <div class="panel">
+        <div class="panel-header">カリキュラム</div>
+        <div class="panel-body">
+          <ul class="chapter-list">
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第1回</span> プロジェクトの作成と素材のインポート</span>
+                <span class="chapter-status completed">完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第2回</span> Tilemapでマップを描く</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第3回</span> プレイヤーキャラクターを動かす</span>
+                <span class="chapter-status">未完了</span>
+              </a>
+            </li>
+            <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第4回</span> 衝突判定とレイヤー設定</span>
+                <span class="chapter-status"><span style="font-size:0.8rem;">🔒</span></span>
+              </a>
+            </li>
+             <li class="chapter-item">
+              <a href="#" class="chapter-link">
+                <span><span style="font-weight:bold; margin-right:10px;">第5回</span> カメラの追従 (Cinemachine)</span>
+                <span class="chapter-status">🔒</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
 
     </main>
 
     <aside class="side-col">
       <div class="panel">
-        <div class="panel-header">問題情報</div>
-        <table style="font-size:0.85rem;">
-          <tr><td>ID</td><td id="p_display_id">-</td></tr>
-          <tr><td>正解者数</td><td id="p_solvers">- 人</td></tr>
-          <tr><td>正解率</td><td id="p_accuracy">- %</td></tr>
+        <div class="panel-body">
+          <div style="font-weight:bold; margin-bottom:5px;">学習状況</div>
+          <div style="font-size:0.9rem; color:#666; display:flex; justify-content:space-between;">
+            <span>進捗率</span>
+            <span>20%</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 20%;"></div>
+          </div>
+          
+          <button class="btn-primary" style="width:100%; padding: 12px; font-size:1rem; font-weight:bold;">続きから学習する</button>
+          <div style="text-align:center; margin-top:10px;">
+            <a href="#" style="font-size:0.85rem; color:#666; text-decoration:underline;">最初からやり直す</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">コース情報</div>
+        <table style="font-size:0.9rem;">
+          <tr>
+            <td style="color:#666;">講師</td>
+            <td>UnityMaster</td>
+          </tr>
+          <tr>
+            <td style="color:#666;">レッスン数</td>
+            <td>全12回</td>
+          </tr>
+          <tr>
+            <td style="color:#666;">受講者数</td>
+            <td>1,240人</td>
+          </tr>
+          <tr>
+            <td style="color:#666;">最終更新</td>
+            <td>2025/11/20</td>
+          </tr>
         </table>
       </div>
+      
+      <div class="panel">
+        <div class="panel-header">関連タグ</div>
+        <div class="panel-body" style="font-size:0.85rem;">
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#RPG</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#2D</a>
+          <a href="#" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:5px; margin-bottom:5px; display:inline-block;">#初心者向け</a>
+        </div>
+      </div>
+
     </aside>
   </div>
 
   <footer>
     <div class="container">
+      <div class="footer-links">
+        <a href="about.html">概要</a>
+        <a href="terms.html">利用規約</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
+      </div>
       <p>© 2025 Unity Learning Project.</p>
     </div>
   </footer>
 
   <script type="module" src="script.js"></script>
+  
+  <script>
+    // ※実際の開発では、URLパラメータ(id)に応じてコース内容を
+    // script.js 側で動的に書き換える処理が必要です。
+    // 今回は静的なHTMLとして表示例を作成しています。
+    
+    // 例: URLからidを取得してタイトルを変えるだけの簡易処理
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get('id'); // courses.htmlからのリンク (?id=xxx)
+    
+    // (必要に応じてここにコースごとの分岐処理を書くことができます)
+  </script>
 </body>
 </html>
