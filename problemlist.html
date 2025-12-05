@@ -36,6 +36,7 @@
           <option value="gray">入門 (Gray)</option>
           <option value="green">初級 (Green)</option>
           <option value="cyan">中級 (Cyan)</option>
+          <option value="blue">上級 (Blue)</option>
         </select>
 
         <select id="categoryFilter" class="form-control" style="flex: 1;">
@@ -43,6 +44,8 @@
           <option value="C#">C# スクリプト</option>
           <option value="Physics">Physics</option>
           <option value="uGUI">uGUI</option>
+          <option value="Animation">Animation</option>
+          <option value="Shader">Shader</option>
         </select>
         <button class="btn-primary">検索</button>
       </div>
@@ -76,20 +79,20 @@
 
     <aside class="side-col">
       <div class="panel">
-<div class="panel-header">ステータス</div>
-<div class="panel-body user-box">
-  <p>ログインしていません</p>
-</div>
+        <div class="panel-header">ステータス</div>
+        <div class="panel-body user-box">
+          <p>ログインしていません</p>
+        </div>
       </div>
       <div class="panel">
         <div class="panel-header">カテゴリタグ</div>
         <div class="panel-body">
           <ul style="line-height: 2;">
-            <li><a href="#">▶ C# (Scripting)</a></li>
-            <li><a href="#">▶ Physics (物理演算)</a></li>
-            <li><a href="#">▶ uGUI (UI)</a></li>
-            <li><a href="#">▶ Animation</a></li>
-            <li><a href="#">▶ Shader / VFX</a></li>
+            <li><a href="#" class="category-sidebar-link" data-category="C#">▶ C# (Scripting)</a></li>
+            <li><a href="#" class="category-sidebar-link" data-category="Physics">▶ Physics (物理演算)</a></li>
+            <li><a href="#" class="category-sidebar-link" data-category="uGUI">▶ uGUI (UI)</a></li>
+            <li><a href="#" class="category-sidebar-link" data-category="Animation">▶ Animation</a></li>
+            <li><a href="#" class="category-sidebar-link" data-category="Shader">▶ Shader / VFX</a></li>
           </ul>
         </div>
       </div>
