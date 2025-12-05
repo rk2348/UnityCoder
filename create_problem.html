@@ -7,14 +7,12 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
   <style>
-    /* 問題作成ページ専用スタイル (2カラムレイアウト) */
     .create-grid {
       display: grid;
-      grid-template-columns: 1fr 2fr; /* 左1 : 右2 の比率 */
+      grid-template-columns: 1fr 2fr;
       gap: 20px;
       align-items: start;
     }
-    
     .panel-section {
       background: #fff;
       border: 1px solid #ddd;
@@ -22,7 +20,6 @@
       padding: 20px;
       margin-bottom: 20px;
     }
-
     .form-group { margin-bottom: 20px; }
     .form-label {
       font-weight: bold;
@@ -31,7 +28,6 @@
       color: #333;
       font-size: 0.9rem;
     }
-    
     .editor-wrapper {
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -45,12 +41,8 @@
       border-bottom: 1px solid #ddd;
       font-weight: bold;
     }
-
-    /* レスポンシブ対応 */
     @media (max-width: 900px) {
-      .create-grid {
-        grid-template-columns: 1fr;
-      }
+      .create-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -105,12 +97,13 @@
           <div class="form-group">
             <label class="form-label">カテゴリ</label>
             <select id="new_category" class="form-control" style="width:100%;">
-              <option value="C# 基礎">C# 基礎</option>
-              <option value="Transform">Transform</option>
-              <option value="Physics">Physics</option>
-              <option value="uGUI">uGUI</option>
-              <option value="Animation">Animation</option>
-              <option value="Shader">Shader / VFX</option>
+              <option value="Scripting">Scripting (C# / ロジック)</option>
+              <option value="Transform">Transform (座標・移動)</option>
+              <option value="Physics">Physics (物理演算 / 当たり判定)</option>
+              <option value="UI">UI (ユーザーインターフェース)</option>
+              <option value="Graphics">Graphics (描画 / エフェクト)</option>
+              <option value="Audio">Audio (サウンド / 音響)</option>
+              <option value="Animation">Animation (アニメーション)</option>
             </select>
           </div>
         </div>
@@ -180,7 +173,6 @@ public class NewScript : MonoBehaviour
   </footer>
 
   <script>
-    // エディタ設定
     var editorCreate = ace.edit("editor_create");
     editorCreate.setTheme("ace/theme/monokai");
     editorCreate.session.setMode("ace/mode/csharp");

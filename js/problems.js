@@ -13,7 +13,7 @@ export function initProblems() {
                 const q = query(collection(db, "problems"), orderBy("createdAt", "desc"), limit(5));
                 const querySnapshot = await getDocs(q);
 
-                recentTableBody.innerHTML = ''; // 「読み込み中」をクリア
+                recentTableBody.innerHTML = ''; 
 
                 if (querySnapshot.empty) {
                     recentTableBody.innerHTML = '<tr><td colspan="5">まだ問題がありません</td></tr>';
@@ -158,7 +158,6 @@ export function initProblems() {
     const searchInput = document.getElementById('problemSearch');
     
     if (searchInput) {
-        // フィルタ処理本体
         function filterProblems() {
             const currentRows = document.querySelectorAll('#problemTable tbody tr');
             
@@ -179,22 +178,19 @@ export function initProblems() {
 
                 const matchKeyword = titleText.includes(keyword);
                 const matchDiff = (difficulty === "all") || (difficulty === rowDiff);
-                // "C#" を選択した場合は "C# 基礎" などを含むようにする
-                const matchCat = (category === "all") || (category === categoryText) || (category === "C#" && categoryText.includes("C#"));
+                const matchCat = (category === "all") || (category === categoryText);
 
                 if (matchKeyword && matchDiff && matchCat) row.style.display = ""; else row.style.display = "none";
             });
         }
 
-        // 入力・変更イベント
         searchInput.addEventListener('input', filterProblems);
         document.getElementById('difficultyFilter').addEventListener('change', filterProblems);
         document.getElementById('categoryFilter').addEventListener('change', filterProblems);
-        
         const filterBtn = document.querySelector('.filter-box button');
         if(filterBtn) filterBtn.addEventListener('click', filterProblems);
 
-        // ★追加: サイドバーのカテゴリリンクをクリックした時の動作
+        // サイドバーのリンクをクリックしたときの処理
         const sidebarLinks = document.querySelectorAll('.category-sidebar-link');
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -203,7 +199,7 @@ export function initProblems() {
                 const select = document.getElementById('categoryFilter');
                 if(select) {
                     select.value = cat;
-                    // セレクトボックスの値を変更した後、changeイベントを手動で起こしてフィルタを実行させる
+                    // セレクトボックスの値を変更後、強制的にchangeイベントを発火させてフィルタを実行
                     select.dispatchEvent(new Event('change'));
                 }
             });
