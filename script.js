@@ -620,4 +620,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         filterBtns[0].click();
     }
+
+    /* =================================================================
+       I. 問題一覧の読み込み (追加機能)
+       ================================================================= */
+    const problemListTable = document.querySelector('#problemTable tbody');
+    if (problemListTable) {
+        const loadProblems = async () => {
+            try {
+                // Firestoreから問題データを取得（作成日時の新しい順）
+                // ※ problemsコレクションから全件取得します
+                const q = query(collection(db, "problems"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    
+                    // 難易度に応じた色のクラスを設定
+                    let diffClass = "diff-gray"; // デフォルト（入門）
+                    if (data.difficulty === "green") diffClass = "diff-green";
+                    else if (data.difficulty === "cyan") diffClass = "diff-cyan";
+                    else if (data.difficulty === "blue") diffClass = "diff-blue";
+
+                    // テーブルに行を追加
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="diff-circle ${diffClass}" title="${data.difficulty}"></span></td>
+                        <td><a href="problem_detail.html?id=${doc.id}">${data.title}</a></td>
+                        <td>${data.category}</td>
+                        <td>${data.score}</td>
+                        <td>-</td> `;
+                    problemListTable.appendChild(tr);
+                });
+            } catch (e) {
+                console.error("問題一覧の読み込みに失敗しました:", e);
+            }
+        };
+        // 実行
+        loadProblems();
+    }
 });
