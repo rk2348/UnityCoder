@@ -3,7 +3,63 @@ import { db, auth } from "./config.js";
 
 export function initProblems() {
     /* =================================================================
-       I. 問題一覧の読み込み (追加機能)
+       Z. トップページ (index.html) の「最近の問題」更新処理
+       ================================================================= */
+    const recentTableBody = document.querySelector('#recentProblemsTable tbody');
+    if (recentTableBody) {
+        const loadRecentProblems = async () => {
+            try {
+                // 最新の5件だけを取得
+                const q = query(collection(db, "problems"), orderBy("createdAt", "desc"), limit(5));
+                const querySnapshot = await getDocs(q);
+
+                recentTableBody.innerHTML = ''; // 「読み込み中」をクリア
+
+                if (querySnapshot.empty) {
+                    recentTableBody.innerHTML = '<tr><td colspan="5">まだ問題がありません</td></tr>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+
+                    // 難易度の色設定
+                    let diffClass = "diff-gray";
+                    if (data.difficulty === "green") diffClass = "diff-green";
+                    else if (data.difficulty === "cyan") diffClass = "diff-cyan";
+                    else if (data.difficulty === "blue") diffClass = "diff-blue";
+
+                    // 正解率の計算
+                    const solved = data.solvedCount || 0;
+                    const attempts = data.attemptCount || 0;
+                    let accuracy = "-";
+                    if (attempts > 0) {
+                        accuracy = ((solved / attempts) * 100).toFixed(1) + "%";
+                    } else if (attempts === 0) {
+                         accuracy = "0.0%";
+                    }
+
+                    // 行を作成
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="diff-circle ${diffClass}" title="${data.difficulty}"></span></td>
+                        <td><a href="problem_detail.html?id=${doc.id}">${data.title}</a></td>
+                        <td>${data.category}</td>
+                        <td>${data.timeLimit || "2 sec"}</td>
+                        <td>${accuracy}</td>
+                    `;
+                    recentTableBody.appendChild(tr);
+                });
+            } catch (e) {
+                console.error("トップページの読み込みエラー:", e);
+                recentTableBody.innerHTML = '<tr><td colspan="5">読み込み失敗</td></tr>';
+            }
+        };
+        loadRecentProblems();
+    }
+
+    /* =================================================================
+       I. 問題一覧ページ (problemlist.html) の読み込み
        ================================================================= */
     const problemListTable = document.querySelector('#problemTable tbody');
     if (problemListTable) {
@@ -22,6 +78,14 @@ export function initProblems() {
                     else if (data.difficulty === "cyan") diffClass = "diff-cyan";
                     else if (data.difficulty === "blue") diffClass = "diff-blue";
 
+                    // 正解率の計算
+                    const solved = data.solvedCount || 0;
+                    const attempts = data.attemptCount || 0;
+                    let accuracy = "-";
+                    if (attempts > 0) {
+                        accuracy = ((solved / attempts) * 100).toFixed(1) + "%";
+                    }
+
                     // テーブルに行を追加
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -29,7 +93,7 @@ export function initProblems() {
                         <td><a href="problem_detail.html?id=${doc.id}">${data.title}</a></td>
                         <td>${data.category}</td>
                         <td>${data.score}</td>
-                        <td>-</td> `;
+                        <td>${accuracy}</td> `;
                     problemListTable.appendChild(tr);
                 });
             } catch (e) {
@@ -74,7 +138,8 @@ export function initProblems() {
                     title: title, difficulty: difficulty, category: category, description: description,
                     initialCode: initialCode, modelAnswer: modelAnswer, score: 100,
                     timeLimit: "2 sec", memoryLimit: "1024 MB", constraints: "<ul><li>ユーザー投稿問題</li></ul>",
-                    inputExample: "-", outputExample: "-", author: authorName, uid: user.uid, createdAt: new Date()
+                    inputExample: "-", outputExample: "-", author: authorName, uid: user.uid, createdAt: new Date(),
+                    solvedCount: 0, attemptCount: 0
                 });
                 alert("問題を公開しました！");
                 window.location.href = "problemlist.html";
@@ -93,10 +158,8 @@ export function initProblems() {
     const searchInput = document.getElementById('problemSearch');
     
     if (searchInput) {
-        const problemRows = document.querySelectorAll('#problemTable tbody tr'); // ※動的読み込みに対応するには工夫が必要ですが、現状の実装を移植します
-        
+        // ※Firestore読み込み完了後でないと行が取得できないため、簡易的な実装です
         function filterProblems() {
-            // Note: I.で読み込まれた要素も含めるため、イベント発火時に再取得します
             const currentRows = document.querySelectorAll('#problemTable tbody tr');
             
             const keyword = searchInput.value.toLowerCase().trim();
@@ -125,6 +188,7 @@ export function initProblems() {
         searchInput.addEventListener('input', filterProblems);
         document.getElementById('difficultyFilter').addEventListener('change', filterProblems);
         document.getElementById('categoryFilter').addEventListener('change', filterProblems);
-        document.querySelector('.filter-box button').addEventListener('click', filterProblems);
+        const filterBtn = document.querySelector('.filter-box button');
+        if(filterBtn) filterBtn.addEventListener('click', filterProblems);
     }
 }
