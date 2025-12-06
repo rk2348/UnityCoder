@@ -4,17 +4,28 @@ import { collection, query, where, getDocs } from "https://www.gstatic.com/fireb
 import { auth, db } from "./config.js";
 
 export function initAuth() {
-    // ★重要: ここにあなたの管理者UIDを設定してください
+    // あなたのUID
     const ADMIN_UID = "rOUZuT60UrRS94HgrlSNDyAViit2"; 
 
     onAuthStateChanged(auth, async (user) => {
+        // --- ★追加したセキュリティチェック（統合済み） ---
+        // 問題作成ページにいて、かつ管理者でない（または未ログイン）場合はトップへ戻す
+        if (window.location.pathname.includes("create_problem.html")) {
+            if (!user || user.uid !== ADMIN_UID) {
+                alert("権限がありません。");
+                window.location.href = "index.html";
+                return; // 処理をここで止める
+            }
+        }
+
+        // --- 既存のUI更新処理 ---
         const userActions = document.querySelector('.user-actions');
         const userBox = document.querySelector('.user-box');
         
         if (user) {
             const displayName = user.displayName || user.email.split('@')[0];
             
-            // UIDで判定するため安全です
+            // 管理者のみリンクを表示
             const createLinkHtml = (user.uid === ADMIN_UID) 
                 ? `<a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>` 
                 : ``;
@@ -43,7 +54,6 @@ export function initAuth() {
                 });
             }
 
-            // 問題一覧の回答済みマーク処理（変更なし）
             updateSolvedStatus(user);
 
         } else {
@@ -52,7 +62,7 @@ export function initAuth() {
         }
     });
 
-    // 登録・ログイン処理
+    // 登録・ログイン処理のイベントリスナー設定
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -63,13 +73,11 @@ export function initAuth() {
             try {
                 const credential = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(credential.user, { displayName: username });
-                // Discord通知は削除 (サーバーサイドで行うべき)
                 alert("登録完了！"); window.location.href = "index.html";
             } catch (err) { alert("登録エラー: " + err.message); }
         });
     }
     
-    // ログイン処理（変更なし）
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
