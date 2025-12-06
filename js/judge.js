@@ -1,6 +1,5 @@
 // js/judge.js
-import { doc, getDoc, collection, addDoc, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js";
+import { doc, getDoc, collection, addDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { db, auth } from "./config.js";
 
 export function initJudge() {
@@ -28,16 +27,24 @@ export function initJudge() {
         document.title = `${p.title} | Unity Learning`;
         document.getElementById('p_title').textContent = p.title;
         
-        // 重要修正: innerHTMLからtextContentに変更してXSSを防ぐ
-        // ※HTMLタグ(改行<br>など)を使いたい場合は、安全なサニタイズライブラリ(DOMPurify等)を通す必要があります。
-        document.getElementById('p_description').textContent = p.description; 
+        // --- 修正箇所: DOMPurifyを使ってHTMLを安全に表示 ---
+        const descElem = document.getElementById('p_description');
+        if (typeof DOMPurify !== 'undefined') {
+            // HTMLタグ(<b>, <br>, <pre>など)を許可しつつ、XSS(scriptタグ等)を除去
+            const cleanHTML = DOMPurify.sanitize(p.description);
+            descElem.innerHTML = cleanHTML; 
+        } else {
+            console.warn("DOMPurify not loaded. Fallback to textContent.");
+            // ライブラリがない場合は安全のためタグをそのまま表示
+            descElem.textContent = p.description; 
+        }
         
         if(document.getElementById('p_time')) document.getElementById('p_time').textContent = p.timeLimit || "2 sec";
         if(document.getElementById('p_memory')) document.getElementById('p_memory').textContent = p.memoryLimit || "1024 MB";
         if(document.getElementById('p_score')) document.getElementById('p_score').textContent = p.score || 100;
         if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = id;
         
-        // 制約や入力例もテキストとして扱うのが安全
+        // 制約や入出力例は通常テキストかPreタグ内なのでtextContentで処理
         if(document.getElementById('p_constraints')) document.getElementById('p_constraints').textContent = p.constraints || "-";
         if(document.getElementById('p_input')) document.getElementById('p_input').textContent = p.inputExample || "-";
         if(document.getElementById('p_output')) document.getElementById('p_output').textContent = p.outputExample || "-";
@@ -72,18 +79,19 @@ export function initJudge() {
             submitBtn.textContent = "ジャッジ中...";
 
             try {
-                // 仮の実装: 提出履歴には残すが判定はしない（WJ: Waiting for Judge）
+                // セキュリティルール (firestore.rules) に適合する形式で送信
+                // result: "WJ", score: 0 でないとサーバー側で拒否される
                 await addDoc(collection(db, "submissions"), {
                     username: user.displayName || "名無し",
                     uid: user.uid,
                     problemId: problemId,
                     result: "WJ", // 判定待ち
-                    score: 0,
-                    code: userCode, // コードを保存
+                    score: 0,     // 初期スコアは0
+                    code: userCode, 
                     submittedAt: new Date()
                 });
 
-                // 統計データの試行回数だけ増やす
+                // 統計データの試行回数を更新
                 const pRef = doc(db, "problems", problemId);
                 await updateDoc(pRef, { attemptCount: increment(1) });
 
@@ -91,7 +99,7 @@ export function initJudge() {
                 submitBtn.textContent = "提出完了";
             } catch(e) {
                 console.error(e);
-                alert("提出エラー");
+                alert("提出エラー: " + e.message);
             }
 
             setTimeout(() => {
