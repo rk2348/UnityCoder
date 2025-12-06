@@ -1,175 +1,152 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>掲示板 | Unity Learning</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* 簡易モーダルスタイル */
-    #threadModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
+// js/bbs.js
+import { collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { db, auth } from "./config.js";
+
+export function initBBS() {
+    const bbsTable = document.querySelector('#bbsTable tbody');
+    if (bbsTable) {
+        const loadThreads = async () => {
+            bbsTable.innerHTML = '<tr><td colspan="4">読み込み中...</td></tr>';
+            try {
+                const q = query(collection(db, "threads"), orderBy("createdAt", "desc"), limit(20));
+                const querySnapshot = await getDocs(q);
+                
+                bbsTable.innerHTML = ''; 
+                if(querySnapshot.empty) {
+                    bbsTable.innerHTML = '<tr><td colspan="4">まだ投稿がありません。</td></tr>';
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "-";
+                    
+                    const tr = document.createElement('tr');
+
+                    // タイトルセル (XSS対策: textContentを使用)
+                    const tdTitle = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = "#";
+                    link.className = "thread-link";
+                    link.style.fontWeight = "bold";
+                    link.style.color = "#007acc";
+                    link.textContent = data.title; // 安全
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openViewThreadModal(data, date);
+                    });
+                    
+                    const descDiv = document.createElement('div');
+                    descDiv.style.fontSize = "0.85rem";
+                    descDiv.style.color = "#666";
+                    descDiv.style.marginTop = "4px";
+                    descDiv.textContent = data.content.substring(0, 30) + "..."; // 安全
+
+                    tdTitle.appendChild(link);
+                    tdTitle.appendChild(descDiv);
+
+                    // カテゴリセル
+                    const tdCat = document.createElement('td');
+                    let catStyle = "font-size:0.8rem; padding:2px 6px; border-radius:4px;";
+                    let catText = "その他";
+                    let catBg = "#eee"; let catCol = "#333";
+
+                    if(data.category === "question") { catText = "質問"; catBg = "#e3f2fd"; catCol = "#0d47a1"; }
+                    if(data.category === "chat") { catText = "雑談"; catBg = "#f3e5f5"; catCol = "#4a148c"; }
+                    if(data.category === "bug") { catText = "バグ報告"; catBg = "#ffebee"; catCol = "#b71c1c"; }
+                    
+                    const catSpan = document.createElement('span');
+                    catSpan.style.cssText = catStyle;
+                    catSpan.style.background = catBg;
+                    catSpan.style.color = catCol;
+                    catSpan.textContent = catText;
+                    tdCat.appendChild(catSpan);
+
+                    // 投稿者セル
+                    const tdAuthor = document.createElement('td');
+                    tdAuthor.textContent = data.authorName; // 安全
+
+                    // 日時セル
+                    const tdDate = document.createElement('td');
+                    const spanDate = document.createElement('span');
+                    spanDate.style.fontSize = "0.85rem";
+                    spanDate.style.color = "#666";
+                    spanDate.textContent = date;
+                    tdDate.appendChild(spanDate);
+
+                    tr.appendChild(tdTitle);
+                    tr.appendChild(tdCat);
+                    tr.appendChild(tdAuthor);
+                    tr.appendChild(tdDate);
+
+                    bbsTable.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                bbsTable.innerHTML = '<tr><td colspan="4">読み込みエラー</td></tr>';
+            }
+        };
+        loadThreads();
+
+        // モーダル関連（変更なし、ただしtextContentを使うよう注意）
+        const createModal = document.getElementById('threadModal');
+        const viewModal = document.getElementById('viewThreadModal');
+        const newThreadBtn = document.getElementById('newThreadBtn');
+        const cancelBtn = document.getElementById('cancelThreadBtn');
+        const submitThreadBtn = document.getElementById('submitThreadBtn');
+        
+        function openViewThreadModal(data, dateStr) {
+            if(!viewModal) return;
+            // ここもtextContentを使う
+            document.getElementById('viewThreadTitle').textContent = data.title;
+            document.getElementById('viewThreadAuthor').textContent = data.authorName;
+            document.getElementById('viewThreadDate').textContent = dateStr;
+            document.getElementById('viewThreadBody').textContent = data.content; 
+            document.getElementById('viewThreadCategory').textContent = data.category;
+            viewModal.style.display = "flex";
+        }
+
+        // ... (イベントリスナー部分は元のコードと同様のため省略) ...
+        if (newThreadBtn && createModal) {
+             newThreadBtn.addEventListener('click', () => {
+                if(!auth.currentUser) { alert("投稿するにはログインしてください"); window.location.href="login.html"; return; }
+                createModal.style.display = "flex";
+            });
+            cancelBtn.addEventListener('click', () => createModal.style.display = "none");
+            document.getElementById('closeCreateModalX')?.addEventListener('click', () => createModal.style.display = "none");
+        }
+
+        if (viewModal) {
+            document.getElementById('closeViewBtnMain')?.addEventListener('click', () => viewModal.style.display = "none");
+            document.getElementById('closeViewModalX')?.addEventListener('click', () => viewModal.style.display = "none");
+        }
+        
+        if (submitThreadBtn) {
+            submitThreadBtn.addEventListener('click', async () => {
+                const user = auth.currentUser;
+                if(!user) return;
+                const title = document.getElementById('threadTitle').value;
+                const category = document.getElementById('threadCategory').value;
+                const content = document.getElementById('threadContent').value;
+
+                if (!title || !content) { alert("入力を確認してください"); return; }
+                submitThreadBtn.disabled = true;
+                submitThreadBtn.textContent = "投稿中...";
+
+                try {
+                    await addDoc(collection(db, "threads"), {
+                        title: title, category: category, content: content,
+                        authorName: user.displayName || user.email.split('@')[0],
+                        uid: user.uid, createdAt: new Date(), replyCount: 0
+                    });
+                    alert("作成しました！");
+                    location.reload(); 
+                } catch(e) {
+                    alert("投稿失敗: " + e.message);
+                    submitThreadBtn.disabled = false;
+                    submitThreadBtn.textContent = "投稿する";
+                }
+            });
+        }
     }
-    .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      position: relative; /* 閉じるボタン配置用 */
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      color: #999;
-    }
-    .close-btn:hover { color: #333; }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="container header-inner">
-      <div class="logo"><a href="index.html">Unity<span>Learning</span></a></div>
-      <nav>
-        <a href="index.html">トップ</a>
-        <a href="problemlist.html">問題</a>
-        <a href="courses.html">コース</a>
-        <a href="ranking.html">ランキング</a>
-        <a href="bbs.html" class="active">掲示板</a>
-      </nav>
-      <div class="user-actions">
-        <a href="login.html" class="btn-login">ログイン</a>
-        <a href="signup.html" class="btn-signup">新規登録</a>
-      </div>
-    </div>
-  </header>
-
-  <div class="container main-wrapper">
-    <main class="main-col">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2>ユーザー掲示板</h2>
-        <button id="newThreadBtn" class="btn-primary">新規スレッド作成</button>
-      </div>
-
-      <div class="filter-box">
-        <input type="text" id="bbsSearchInput" class="form-control" placeholder="キーワードで検索" style="flex:2;">
-        <select id="bbsCategoryFilter" class="form-control" style="flex:1;">
-          <option value="all">すべてのカテゴリ</option>
-          <option value="question">質問</option>
-          <option value="chat">雑談</option>
-          <option value="bug">バグ報告</option>
-        </select>
-        <button id="bbsSearchBtn" class="btn-primary">検索</button>
-      </div>
-
-      <div class="panel">
-        <div class="table-wrapper">
-          <table id="bbsTable"> <thead>
-              <tr>
-                <th width="400">タイトル</th>
-                <th width="100">カテゴリ</th>
-                <th width="120">投稿者</th>
-                <th width="150">投稿日時</th> </tr>
-            </thead>
-            <tbody>
-              <tr><td colspan="4">読み込み中...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <div class="pagination">
-        <span style="color:#888; font-size:0.9rem;">※最新20件を表示中</span>
-      </div>
-
-    </main>
-
-    <aside class="side-col">
-      <div class="panel">
-        <div class="panel-header">ステータス</div>
-        <div class="panel-body user-box">
-          <p>ログインしていません</p>
-        </div>
-      </div>
-      
-      <div class="panel">
-        <div class="panel-header">注意事項</div>
-        <div class="panel-body">
-          <ul style="font-size:0.85rem; padding-left:20px; list-style:disc;">
-            <li>誹謗中傷は禁止です。</li>
-            <li>コードを貼る際はコードブロックを使用してください。</li>
-            <li>質問する前に過去ログを検索しましょう。</li>
-          </ul>
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  <footer>
-    <div class="container">
-      <p>© 2025 Unity Learning Project.</p>
-    </div>
-  </footer>
-
-  <div id="threadModal">
-    <div class="modal-content">
-      <span class="close-btn" id="closeCreateModalX">&times;</span>
-      <h3 style="margin-top:0;">新規スレッド作成</h3>
-      <div class="form-group" style="margin-bottom:15px;">
-        <label style="font-weight:bold; display:block; margin-bottom:5px;">タイトル</label>
-        <input type="text" id="threadTitle" class="form-control" style="width:100%; box-sizing:border-box;" placeholder="例: Rigidbodyが動かない">
-      </div>
-      <div class="form-group" style="margin-bottom:15px;">
-        <label style="font-weight:bold; display:block; margin-bottom:5px;">カテゴリ</label>
-        <select id="threadCategory" class="form-control" style="width:100%;">
-          <option value="question">質問</option>
-          <option value="chat">雑談</option>
-          <option value="bug">バグ報告</option>
-        </select>
-      </div>
-      <div class="form-group" style="margin-bottom:20px;">
-        <label style="font-weight:bold; display:block; margin-bottom:5px;">内容</label>
-        <textarea id="threadContent" class="form-control" rows="5" style="width:100%; box-sizing:border-box;" placeholder="詳細を記入してください..."></textarea>
-      </div>
-      <div style="text-align:right;">
-        <button id="cancelThreadBtn" class="form-control" style="cursor:pointer; background:#eee; border:none; padding:8px 16px; border-radius:4px; margin-right:10px;">キャンセル</button>
-        <button id="submitThreadBtn" class="btn-primary">投稿する</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="viewThreadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
-    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-      <span class="close-btn" id="closeViewModalX">&times;</span>
-      
-      <div style="border-bottom:1px solid #eee; margin-bottom:15px; padding-bottom:10px;">
-        <span id="viewThreadCategory" style="font-size:0.8rem; padding:2px 6px; border-radius:4px; margin-bottom:5px; display:inline-block; color:#fff; background:#888;">カテゴリ</span>
-        <h3 id="viewThreadTitle" style="margin:5px 0; color:#333; font-size:1.4rem;">タイトル</h3>
-        <div style="font-size:0.85rem; color:#666;">
-          投稿者: <strong id="viewThreadAuthor">User</strong> / 
-          <span id="viewThreadDate">Date</span>
-        </div>
-      </div>
-      
-      <div id="viewThreadBody" style="white-space: pre-wrap; line-height:1.6;">
-      </div>
-      
-      <div style="margin-top:20px; text-align:right;">
-        <button id="closeViewBtnMain" class="btn-primary">閉じる</button>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="js/main.js"></script>
-</body>
-</html>
+}

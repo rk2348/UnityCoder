@@ -1,46 +1,45 @@
+// js/judge.js
 import { doc, getDoc, collection, addDoc, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { db, auth } from "./config.js";
-// import { problemsData } ... は削除しました
+import { httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js";
+import { db, auth, functions } from "./config.js";
 
 export function initJudge() {
-    /* =================================================================
-       D. 問題詳細表示 (Firebaseのみ使用)
-       ================================================================= */
     const problemTitleElement = document.getElementById('p_title');
     if (problemTitleElement) {
         const urlParams = new URLSearchParams(window.location.search);
         const problemId = urlParams.get('id');
         
         if (problemId) {
-            // Firebaseからデータを取得
             const problemRef = doc(db, "problems", problemId);
             getDoc(problemRef).then(docSnap => {
                 if (docSnap.exists()) {
                     renderProblem(docSnap.data(), docSnap.id);
                 } else {
                     problemTitleElement.textContent = "問題が見つかりません";
-                    const desc = document.getElementById('p_description');
-                    if(desc) desc.textContent = "指定されたIDの問題は存在しないか、削除されています。";
                 }
             }).catch(err => {
-                console.error("読み込みエラー:", err);
+                console.error(err);
                 problemTitleElement.textContent = "読み込みエラー";
             });
         }
     }
 
     function renderProblem(p, id) {
+        // ... (表示処理は変更なし) ...
         document.title = `${p.title} | Unity Learning`;
         document.getElementById('p_title').textContent = p.title;
+        // XSS対策のためtextContent推奨ですが、問題文にHTML許可する仕様ならinnerHTMLのままで
+        // ただし管理者が作成した問題に限るべきです
+        document.getElementById('p_description').innerHTML = p.description; 
+        
         if(document.getElementById('p_time')) document.getElementById('p_time').textContent = p.timeLimit || "2 sec";
         if(document.getElementById('p_memory')) document.getElementById('p_memory').textContent = p.memoryLimit || "1024 MB";
         if(document.getElementById('p_score')) document.getElementById('p_score').textContent = p.score || 100;
         if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = id;
-        document.getElementById('p_description').innerHTML = p.description;
         if(document.getElementById('p_constraints')) document.getElementById('p_constraints').innerHTML = p.constraints || "-";
         if(document.getElementById('p_input')) document.getElementById('p_input').textContent = p.inputExample || "-";
         if(document.getElementById('p_output')) document.getElementById('p_output').textContent = p.outputExample || "-";
-        
+
         if (document.getElementById('editor')) {
             const editor = ace.edit("editor");
             editor.setTheme("ace/theme/monokai");
@@ -56,7 +55,6 @@ export function initJudge() {
         if(document.getElementById('p_accuracy')) document.getElementById('p_accuracy').textContent = `${accuracy} %`;
     }
 
-    // 提出ボタン
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
@@ -65,75 +63,56 @@ export function initJudge() {
             
             const urlParams = new URLSearchParams(window.location.search);
             const problemId = urlParams.get('id');
+            const editor = ace.edit("editor");
+            const userCode = editor.getValue();
             
             submitBtn.disabled = true;
             submitBtn.textContent = "ジャッジ中...";
 
-            // 正解データ取得 (Firebaseから)
-            let modelAnswer = "";
+            // ★セキュリティ修正:
+            // 正解データをクライアントで取得・判定するのを廃止しました。
+            // 本来はここで Cloud Functions を呼び出します。
+            
+            /*
+            // Cloud Functionsが実装された場合の呼び出し例:
             try {
-                const docSnap = await getDoc(doc(db, "problems", problemId));
-                if(docSnap.exists()) {
-                    modelAnswer = docSnap.data().modelAnswer || "";
-                }
-            } catch (e) {
-                console.error("正解データ取得エラー", e);
-                alert("データの取得に失敗しました");
-                submitBtn.disabled = false;
-                submitBtn.textContent = "提出する";
-                return;
+                const judgeFunction = httpsCallable(functions, 'submitSolution');
+                const result = await judgeFunction({ problemId: problemId, code: userCode });
+                if (result.data.status === 'AC') { ... }
+            } catch (e) { ... }
+            */
+
+            // 現時点では、正解データが見えてしまう脆弱性を防ぐため、
+            // 「サーバー実装待ち」であることをユーザーに伝えて処理を終了します。
+            // (あるいは、ここでFirestoreに 'pending' 状態で保存だけ行うのも手です)
+            
+            try {
+                // 仮の実装: 提出履歴には残すが判定はしない（WJ: Waiting for Judge）
+                await addDoc(collection(db, "submissions"), {
+                    username: user.displayName || "名無し",
+                    uid: user.uid,
+                    problemId: problemId,
+                    result: "WJ", // 判定待ち
+                    score: 0,
+                    code: userCode, // コードを保存
+                    submittedAt: new Date()
+                });
+
+                // 統計データの試行回数だけ増やす
+                const pRef = doc(db, "problems", problemId);
+                await updateDoc(pRef, { attemptCount: increment(1) });
+
+                alert("提出を受け付けました。\n現在自動ジャッジシステムは停止中のため、正誤判定は行われません。");
+                submitBtn.textContent = "提出完了";
+            } catch(e) {
+                console.error(e);
+                alert("提出エラー");
             }
 
-            setTimeout(async () => {
-                const editor = ace.edit("editor");
-                const userCode = editor.getValue().replace(/\s/g, "");
-                const cleanModel = modelAnswer.replace(/\s/g, "");
-
-                // 判定 (模範解答があれば一致確認、なければ確率30%)
-                let isCorrect = false;
-                if (cleanModel) {
-                    isCorrect = (userCode === cleanModel);
-                } else {
-                    isCorrect = Math.random() > 0.3; 
-                }
-
-                // 重複チェック
-                let hasSolved = false;
-                try {
-                    const q = query(collection(db, "submissions"), where("uid", "==", user.uid), where("problemId", "==", problemId), where("result", "==", "AC"));
-                    const snap = await getDocs(q);
-                    if (!snap.empty) hasSolved = true;
-                } catch(e){}
-
-                if (isCorrect) {
-                    submitBtn.textContent = "AC (正解！)";
-                    submitBtn.style.backgroundColor = "#5cb85c";
-                    try {
-                        await addDoc(collection(db, "submissions"), {
-                            username: user.displayName || "名無し", uid: user.uid,
-                            problemId: problemId, result: "AC", score: 100, submittedAt: new Date()
-                        });
-                        // 統計データの更新
-                        const pRef = doc(db, "problems", problemId);
-                        const upData = { attemptCount: increment(1) };
-                        if(!hasSolved) upData.solvedCount = increment(1);
-                        await updateDoc(pRef, upData);
-
-                        alert("正解！記録を保存しました。");
-                    } catch(e) { console.error(e); }
-                } else {
-                    submitBtn.textContent = "WA (不正解)";
-                    submitBtn.style.backgroundColor = "#f0ad4e";
-                    try { await updateDoc(doc(db, "problems", problemId), { attemptCount: increment(1) }); } catch(e){}
-                    alert("不正解です...模範解答と一致しません。");
-                }
-                
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "提出する";
-                    submitBtn.style.backgroundColor = "";
-                }, 3000);
-            }, 1000);
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "提出する";
+            }, 2000);
         });
     }
 }

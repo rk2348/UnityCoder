@@ -1,18 +1,20 @@
+// js/main.js
 import { initAuth } from "./auth.js";
 import { initBBS } from "./bbs.js";
 import { initProblems } from "./problems.js";
 import { initJudge } from "./judge.js";
 import { initRanking } from "./ranking.js";
+import { initContact } from "./contact.js"; // 追加
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 各モジュールの初期化関数を実行
     initAuth();
     initBBS();
     initProblems();
     initJudge();
     initRanking();
+    initContact(); // 追加
 
-    // その他：コース一覧のフィルタなど（UI固有の小さな処理）
+    // UI固有の処理（変更なし）
     const filterBtns = document.querySelectorAll('.filter-btn-group button');
     const courseCards = document.querySelectorAll('.course-card');
     if (filterBtns.length > 0) {
