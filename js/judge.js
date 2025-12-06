@@ -1,7 +1,7 @@
 // js/judge.js
 import { doc, getDoc, collection, addDoc, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-functions.js";
-import { db, auth, functions } from "./config.js";
+import { db, auth } from "./config.js";
 
 export function initJudge() {
     const problemTitleElement = document.getElementById('p_title');
