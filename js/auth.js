@@ -4,28 +4,28 @@ import { collection, query, where, getDocs } from "https://www.gstatic.com/fireb
 import { auth, db } from "./config.js";
 
 export function initAuth() {
-    // あなたのUID
+    // あなたの管理者UID（Firebaseコンソールで確認したもの）
     const ADMIN_UID = "rOUZuT60UrRS94HgrlSNDyAViit2"; 
 
     onAuthStateChanged(auth, async (user) => {
-        // --- ★追加したセキュリティチェック（統合済み） ---
+        // --- セキュリティチェック ---
         // 問題作成ページにいて、かつ管理者でない（または未ログイン）場合はトップへ戻す
         if (window.location.pathname.includes("create_problem.html")) {
             if (!user || user.uid !== ADMIN_UID) {
                 alert("権限がありません。");
                 window.location.href = "index.html";
-                return; // 処理をここで止める
+                return; 
             }
         }
 
-        // --- 既存のUI更新処理 ---
+        // --- UI更新処理 ---
         const userActions = document.querySelector('.user-actions');
         const userBox = document.querySelector('.user-box');
         
         if (user) {
             const displayName = user.displayName || user.email.split('@')[0];
             
-            // 管理者のみリンクを表示
+            // 管理者のみ「問題作成」リンクを表示
             const createLinkHtml = (user.uid === ADMIN_UID) 
                 ? `<a href="create_problem.html" style="font-size:0.85rem; margin-right:10px; color:#007acc;">問題作成</a>` 
                 : ``;
@@ -57,12 +57,15 @@ export function initAuth() {
             updateSolvedStatus(user);
 
         } else {
+            // 未ログイン時
             if(userActions) userActions.innerHTML = `<a href="login.html" class="btn-login">ログイン</a> <a href="signup.html" class="btn-signup">新規登録</a>`;
             if(userBox) userBox.innerHTML = `<p>学習履歴を保存するには<br>ログインしてください</p><a href="login.html" class="btn-login" style="display:block; margin-bottom:10px;">ログイン</a><a href="signup.html" style="font-size:0.85rem; color:#007acc;">アカウント作成</a>`;
         }
     });
 
-    // 登録・ログイン処理のイベントリスナー設定
+    // --- イベントリスナーの設定 ---
+    
+    // 新規登録フォーム
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -78,6 +81,7 @@ export function initAuth() {
         });
     }
     
+    // ログインフォーム
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -86,7 +90,10 @@ export function initAuth() {
             const pass = document.getElementById('login-password').value;
             signInWithEmailAndPassword(auth, email, pass)
                 .then(() => { alert("ログイン成功！"); window.location.href = "index.html"; })
-                .catch(() => alert("ログイン失敗"));
+                .catch((e) => {
+                    console.error(e);
+                    alert("ログイン失敗: メールアドレスかパスワードを確認してください");
+                });
         });
     }
 }
