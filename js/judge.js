@@ -25,18 +25,20 @@ export function initJudge() {
     }
 
     function renderProblem(p, id) {
-        // ... (表示処理は変更なし) ...
         document.title = `${p.title} | Unity Learning`;
         document.getElementById('p_title').textContent = p.title;
-        // XSS対策のためtextContent推奨ですが、問題文にHTML許可する仕様ならinnerHTMLのままで
-        // ただし管理者が作成した問題に限るべきです
-        document.getElementById('p_description').innerHTML = p.description; 
+        
+        // 重要修正: innerHTMLからtextContentに変更してXSSを防ぐ
+        // ※HTMLタグ(改行<br>など)を使いたい場合は、安全なサニタイズライブラリ(DOMPurify等)を通す必要があります。
+        document.getElementById('p_description').textContent = p.description; 
         
         if(document.getElementById('p_time')) document.getElementById('p_time').textContent = p.timeLimit || "2 sec";
         if(document.getElementById('p_memory')) document.getElementById('p_memory').textContent = p.memoryLimit || "1024 MB";
         if(document.getElementById('p_score')) document.getElementById('p_score').textContent = p.score || 100;
         if(document.getElementById('p_display_id')) document.getElementById('p_display_id').textContent = id;
-        if(document.getElementById('p_constraints')) document.getElementById('p_constraints').innerHTML = p.constraints || "-";
+        
+        // 制約や入力例もテキストとして扱うのが安全
+        if(document.getElementById('p_constraints')) document.getElementById('p_constraints').textContent = p.constraints || "-";
         if(document.getElementById('p_input')) document.getElementById('p_input').textContent = p.inputExample || "-";
         if(document.getElementById('p_output')) document.getElementById('p_output').textContent = p.outputExample || "-";
 
@@ -69,23 +71,6 @@ export function initJudge() {
             submitBtn.disabled = true;
             submitBtn.textContent = "ジャッジ中...";
 
-            // ★セキュリティ修正:
-            // 正解データをクライアントで取得・判定するのを廃止しました。
-            // 本来はここで Cloud Functions を呼び出します。
-            
-            /*
-            // Cloud Functionsが実装された場合の呼び出し例:
-            try {
-                const judgeFunction = httpsCallable(functions, 'submitSolution');
-                const result = await judgeFunction({ problemId: problemId, code: userCode });
-                if (result.data.status === 'AC') { ... }
-            } catch (e) { ... }
-            */
-
-            // 現時点では、正解データが見えてしまう脆弱性を防ぐため、
-            // 「サーバー実装待ち」であることをユーザーに伝えて処理を終了します。
-            // (あるいは、ここでFirestoreに 'pending' 状態で保存だけ行うのも手です)
-            
             try {
                 // 仮の実装: 提出履歴には残すが判定はしない（WJ: Waiting for Judge）
                 await addDoc(collection(db, "submissions"), {

@@ -3,13 +3,12 @@ import { db, auth } from "./config.js";
 
 export function initProblems() {
     /* =================================================================
-       Z. トップページ (index.html) の「最近の問題」更新処理
+       Z. トップページ (index.html) の「最近の問題」更新処理 (XSS対策済み)
        ================================================================= */
     const recentTableBody = document.querySelector('#recentProblemsTable tbody');
     if (recentTableBody) {
         const loadRecentProblems = async () => {
             try {
-                // 最新の5件だけを取得
                 const q = query(collection(db, "problems"), orderBy("createdAt", "desc"), limit(5));
                 const querySnapshot = await getDocs(q);
 
@@ -22,33 +21,7 @@ export function initProblems() {
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-
-                    // 難易度の色設定
-                    let diffClass = "diff-gray";
-                    if (data.difficulty === "green") diffClass = "diff-green";
-                    else if (data.difficulty === "cyan") diffClass = "diff-cyan";
-                    else if (data.difficulty === "blue") diffClass = "diff-blue";
-
-                    // 正解率の計算
-                    const solved = data.solvedCount || 0;
-                    const attempts = data.attemptCount || 0;
-                    let accuracy = "-";
-                    if (attempts > 0) {
-                        accuracy = ((solved / attempts) * 100).toFixed(1) + "%";
-                    } else if (attempts === 0) {
-                         accuracy = "0.0%";
-                    }
-
-                    // 行を作成
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><span class="diff-circle ${diffClass}" title="${data.difficulty}"></span></td>
-                        <td><a href="problem_detail.html?id=${doc.id}">${data.title}</a></td>
-                        <td>${data.category}</td>
-                        <td>${data.timeLimit || "2 sec"}</td>
-                        <td>${accuracy}</td>
-                    `;
-                    recentTableBody.appendChild(tr);
+                    createProblemRow(recentTableBody, doc.id, data);
                 });
             } catch (e) {
                 console.error("トップページの読み込みエラー:", e);
@@ -59,48 +32,81 @@ export function initProblems() {
     }
 
     /* =================================================================
-       I. 問題一覧ページ (problemlist.html) の読み込み
+       I. 問題一覧ページ (problemlist.html) の読み込み (XSS対策済み)
        ================================================================= */
     const problemListTable = document.querySelector('#problemTable tbody');
     if (problemListTable) {
         const loadProblems = async () => {
             try {
-                // Firestoreから問題データを取得（作成日時の新しい順）
                 const q = query(collection(db, "problems"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
+                problemListTable.innerHTML = ''; // クリア
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    
-                    // 難易度に応じた色のクラスを設定
-                    let diffClass = "diff-gray";
-                    if (data.difficulty === "green") diffClass = "diff-green";
-                    else if (data.difficulty === "cyan") diffClass = "diff-cyan";
-                    else if (data.difficulty === "blue") diffClass = "diff-blue";
-
-                    // 正解率の計算
-                    const solved = data.solvedCount || 0;
-                    const attempts = data.attemptCount || 0;
-                    let accuracy = "-";
-                    if (attempts > 0) {
-                        accuracy = ((solved / attempts) * 100).toFixed(1) + "%";
-                    }
-
-                    // テーブルに行を追加
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><span class="diff-circle ${diffClass}" title="${data.difficulty}"></span></td>
-                        <td><a href="problem_detail.html?id=${doc.id}">${data.title}</a></td>
-                        <td>${data.category}</td>
-                        <td>${data.score}</td>
-                        <td>${accuracy}</td> `;
-                    problemListTable.appendChild(tr);
+                    createProblemRow(problemListTable, doc.id, data);
                 });
             } catch (e) {
                 console.error("問題一覧の読み込みに失敗しました:", e);
             }
         };
         loadProblems();
+    }
+
+    // 安全な行生成関数
+    function createProblemRow(tbody, id, data) {
+        const tr = document.createElement('tr');
+
+        // 難易度
+        let diffClass = "diff-gray";
+        if (data.difficulty === "green") diffClass = "diff-green";
+        else if (data.difficulty === "cyan") diffClass = "diff-cyan";
+        else if (data.difficulty === "blue") diffClass = "diff-blue";
+
+        const tdDiff = document.createElement('td');
+        const spanDiff = document.createElement('span');
+        spanDiff.className = `diff-circle ${diffClass}`;
+        spanDiff.title = data.difficulty;
+        tdDiff.appendChild(spanDiff);
+        tr.appendChild(tdDiff);
+
+        // 問題名 (XSS対策: textContent)
+        const tdTitle = document.createElement('td');
+        const aTitle = document.createElement('a');
+        aTitle.href = `problem_detail.html?id=${id}`;
+        aTitle.textContent = data.title; 
+        tdTitle.appendChild(aTitle);
+        tr.appendChild(tdTitle);
+
+        // カテゴリ (XSS対策)
+        const tdCat = document.createElement('td');
+        tdCat.textContent = data.category;
+        tr.appendChild(tdCat);
+
+        // 得点/時間
+        const tdMeta = document.createElement('td');
+        // 問題一覧と最近の問題で表示項目が違う場合の処理
+        if(tbody.id === 'recentProblemsTable tbody' || tbody.parentNode.id === 'recentProblemsTable') {
+             tdMeta.textContent = data.timeLimit || "2 sec";
+        } else {
+             tdMeta.textContent = data.score;
+        }
+        tr.appendChild(tdMeta);
+
+        // 正解率
+        const solved = data.solvedCount || 0;
+        const attempts = data.attemptCount || 0;
+        let accuracy = "-";
+        if (attempts > 0) {
+            accuracy = ((solved / attempts) * 100).toFixed(1) + "%";
+        } else if (attempts === 0) {
+             accuracy = "0.0%";
+        }
+        const tdAcc = document.createElement('td');
+        tdAcc.textContent = accuracy;
+        tr.appendChild(tdAcc);
+
+        tbody.appendChild(tr);
     }
 
     /* =================================================================
@@ -113,10 +119,11 @@ export function initProblems() {
             if (!user) { alert("問題を投稿するにはログインが必要です"); window.location.href = "login.html"; return; }
 
             try {
+                // 入力値の取得
                 const title = document.getElementById('new_title').value;
                 const difficulty = document.getElementById('new_difficulty').value;
                 const category = document.getElementById('new_category').value;
-                const description = document.getElementById('new_description').value;
+                const description = document.getElementById('new_description').value; // ここはユーザーがHTMLを書く想定
 
                 // エディタの値取得
                 let initialCode = "";
@@ -135,11 +142,23 @@ export function initProblems() {
                 const authorName = user.displayName || user.email.split('@')[0];
 
                 await addDoc(collection(db, "problems"), {
-                    title: title, difficulty: difficulty, category: category, description: description,
-                    initialCode: initialCode, modelAnswer: modelAnswer, score: 100,
-                    timeLimit: "2 sec", memoryLimit: "1024 MB", constraints: "<ul><li>ユーザー投稿問題</li></ul>",
-                    inputExample: "-", outputExample: "-", author: authorName, uid: user.uid, createdAt: new Date(),
-                    solvedCount: 0, attemptCount: 0
+                    title: title, 
+                    difficulty: difficulty, 
+                    category: category, 
+                    description: description, // 意図的にHTMLを許可している場合でも、表示側でサニタイズ推奨
+                    initialCode: initialCode, 
+                    modelAnswer: modelAnswer, 
+                    score: 100,
+                    timeLimit: "2 sec", 
+                    memoryLimit: "1024 MB", 
+                    constraints: "<ul><li>ユーザー投稿問題</li></ul>",
+                    inputExample: "-", 
+                    outputExample: "-", 
+                    author: authorName, 
+                    uid: user.uid, 
+                    createdAt: new Date(),
+                    solvedCount: 0, 
+                    attemptCount: 0
                 });
                 alert("問題を公開しました！");
                 window.location.href = "problemlist.html";
@@ -190,7 +209,7 @@ export function initProblems() {
         const filterBtn = document.querySelector('.filter-box button');
         if(filterBtn) filterBtn.addEventListener('click', filterProblems);
 
-        // サイドバーのリンクをクリックしたときの処理
+        // サイドバーのリンク
         const sidebarLinks = document.querySelectorAll('.category-sidebar-link');
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -199,7 +218,6 @@ export function initProblems() {
                 const select = document.getElementById('categoryFilter');
                 if(select) {
                     select.value = cat;
-                    // セレクトボックスの値を変更後、強制的にchangeイベントを発火させてフィルタを実行
                     select.dispatchEvent(new Event('change'));
                 }
             });

@@ -3,7 +3,7 @@ import { db, auth } from "./config.js";
 
 export function initBBS() {
     /* =================================================================
-       B. 掲示板 (BBS) 機能
+       B. 掲示板 (BBS) 機能 (XSS対策済み)
        ================================================================= */
     const bbsTable = document.querySelector('#bbsTable tbody');
     if (bbsTable) {
@@ -24,25 +24,65 @@ export function initBBS() {
                     const data = doc.data();
                     const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "-";
                     
-                    let catBadge = `<span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">その他</span>`;
-                    if(data.category === "question") catBadge = `<span style="font-size:0.8rem; background:#e3f2fd; color:#0d47a1; padding:2px 6px; border-radius:4px;">質問</span>`;
-                    if(data.category === "chat") catBadge = `<span style="font-size:0.8rem; background:#f3e5f5; color:#4a148c; padding:2px 6px; border-radius:4px;">雑談</span>`;
-                    if(data.category === "bug") catBadge = `<span style="font-size:0.8rem; background:#ffebee; color:#b71c1c; padding:2px 6px; border-radius:4px;">バグ報告</span>`;
-
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><a href="#" class="thread-link" style="font-weight:bold; color:#007acc;">${data.title}</a><div style="font-size:0.85rem; color:#666; margin-top:4px;">${data.content.substring(0, 30)}...</div></td>
-                        <td>${catBadge}</td>
-                        <td>${data.authorName}</td>
-                        <td><span style="font-size:0.85rem; color:#666;">${date}</span></td>
-                    `;
-                    
-                    // 詳細表示クリック
-                    const link = tr.querySelector('.thread-link');
+
+                    // タイトルセル
+                    const tdTitle = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = "#";
+                    link.className = "thread-link";
+                    link.style.fontWeight = "bold";
+                    link.style.color = "#007acc";
+                    link.textContent = data.title; // 安全
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
                         openViewThreadModal(data, date);
                     });
+                    
+                    const descDiv = document.createElement('div');
+                    descDiv.style.fontSize = "0.85rem";
+                    descDiv.style.color = "#666";
+                    descDiv.style.marginTop = "4px";
+                    // 本文の抜粋も安全に表示
+                    descDiv.textContent = data.content ? data.content.substring(0, 30) + "..." : "";
+
+                    tdTitle.appendChild(link);
+                    tdTitle.appendChild(descDiv);
+                    tr.appendChild(tdTitle);
+
+                    // カテゴリセル
+                    const tdCat = document.createElement('td');
+                    let catText = "その他";
+                    let catBg = "#eee"; let catCol = "#333";
+
+                    if(data.category === "question") { catText = "質問"; catBg = "#e3f2fd"; catCol = "#0d47a1"; }
+                    if(data.category === "chat") { catText = "雑談"; catBg = "#f3e5f5"; catCol = "#4a148c"; }
+                    if(data.category === "bug") { catText = "バグ報告"; catBg = "#ffebee"; catCol = "#b71c1c"; }
+                    
+                    const catSpan = document.createElement('span');
+                    catSpan.style.fontSize = "0.8rem";
+                    catSpan.style.padding = "2px 6px";
+                    catSpan.style.borderRadius = "4px";
+                    catSpan.style.background = catBg;
+                    catSpan.style.color = catCol;
+                    catSpan.textContent = catText;
+                    
+                    tdCat.appendChild(catSpan);
+                    tr.appendChild(tdCat);
+
+                    // 投稿者セル
+                    const tdAuthor = document.createElement('td');
+                    tdAuthor.textContent = data.authorName;
+                    tr.appendChild(tdAuthor);
+
+                    // 日時セル
+                    const tdDate = document.createElement('td');
+                    const spanDate = document.createElement('span');
+                    spanDate.style.fontSize = "0.85rem";
+                    spanDate.style.color = "#666";
+                    spanDate.textContent = date;
+                    tdDate.appendChild(spanDate);
+                    tr.appendChild(tdDate);
 
                     bbsTable.appendChild(tr);
                 });
@@ -63,12 +103,12 @@ export function initBBS() {
         // 詳細モーダル関数
         function openViewThreadModal(data, dateStr) {
             if(!viewModal) return;
+            // 全てtextContentでセット
             document.getElementById('viewThreadTitle').textContent = data.title;
             document.getElementById('viewThreadAuthor').textContent = data.authorName;
             document.getElementById('viewThreadDate').textContent = dateStr;
             document.getElementById('viewThreadBody').textContent = data.content;
-            const catLabel = document.getElementById('viewThreadCategory');
-            catLabel.textContent = data.category;
+            document.getElementById('viewThreadCategory').textContent = data.category;
             viewModal.style.display = "flex";
         }
 

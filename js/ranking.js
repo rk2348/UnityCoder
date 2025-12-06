@@ -4,7 +4,7 @@ import { db, auth } from "./config.js";
 
 export function initRanking() {
     /* =================================================================
-       F. ランキング表示
+       F. ランキング表示 (XSS対策済み)
        ================================================================= */
     const rankingTableBody = document.querySelector('.ranking-table tbody');
     if (rankingTableBody) {
@@ -60,18 +60,38 @@ export function initRanking() {
                     const date = d.lastActive.toLocaleDateString();
                     const tr = document.createElement('tr');
                     
-                    let rankDisplay = `<strong>${rank}</strong>`;
-                    if (rank === 1) rankDisplay = `<strong style="color:#DAA520; font-size:1.2em;">🥇 1</strong>`;
-                    else if (rank === 2) rankDisplay = `<strong style="color:#C0C0C0; font-size:1.1em;">🥈 2</strong>`;
-                    else if (rank === 3) rankDisplay = `<strong style="color:#B87333; font-size:1.1em;">🥉 3</strong>`;
+                    // 順位表示（HTMLを含むが、rank変数は整数なので安全）
+                    const tdRank = document.createElement('td');
+                    tdRank.align = "center";
+                    let rankHtml = `<strong>${rank}</strong>`;
+                    if (rank === 1) rankHtml = `<strong style="color:#DAA520; font-size:1.2em;">🥇 1</strong>`;
+                    else if (rank === 2) rankHtml = `<strong style="color:#C0C0C0; font-size:1.1em;">🥈 2</strong>`;
+                    else if (rank === 3) rankHtml = `<strong style="color:#B87333; font-size:1.1em;">🥉 3</strong>`;
+                    tdRank.innerHTML = rankHtml;
+                    tr.appendChild(tdRank);
 
-                    tr.innerHTML = `
-                        <td align="center">${rankDisplay}</td>
-                        <td>${d.username}</td>
-                        <td style="font-weight:bold; color:#007acc;">${d.totalScore}</td>
-                        <td>${d.solvedProblems.size}</td>
-                        <td>${date}</td>
-                    `;
+                    // ユーザー名 (XSS対策: textContentを使用)
+                    const tdUser = document.createElement('td');
+                    tdUser.textContent = d.username; 
+                    tr.appendChild(tdUser);
+
+                    // スコア
+                    const tdScore = document.createElement('td');
+                    tdScore.style.fontWeight = "bold";
+                    tdScore.style.color = "#007acc";
+                    tdScore.textContent = d.totalScore;
+                    tr.appendChild(tdScore);
+
+                    // 解いた数
+                    const tdSolved = document.createElement('td');
+                    tdSolved.textContent = d.solvedProblems.size;
+                    tr.appendChild(tdSolved);
+
+                    // 日付
+                    const tdDate = document.createElement('td');
+                    tdDate.textContent = date;
+                    tr.appendChild(tdDate);
+
                     rankingTableBody.appendChild(tr);
                     rank++;
                 });
@@ -87,20 +107,27 @@ export function initRanking() {
                 }
 
                 if (rankingData.length === 0) {
-                    rankingTableBody.innerHTML = '<tr><td colspan="5">データなし</td></tr>';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="5">データなし</td>';
+                    rankingTableBody.appendChild(tr);
                 }
 
                 const myRankArea = document.getElementById('my-rank-area');
                 if (myRankArea && user) {
                     if (myRankInfo) {
-                        myRankArea.innerHTML = `
-                            <div style="text-align:center; padding:10px;">
-                                <div style="font-size:0.9rem; color:#666;">あなたの順位</div>
-                                <div style="font-size:2rem; font-weight:bold; color:#007acc;">${myRankInfo.rank} <span style="font-size:1rem;">位</span></div>
-                                <div style="font-size:0.9rem; margin-top:5px;">
-                                    Total: <strong>${myRankInfo.score}pt</strong> / ${myRankInfo.count}問
-                                </div>
+                        // textContentとinnerHTMLを適切に使い分け
+                        myRankArea.innerHTML = '';
+                        const div = document.createElement('div');
+                        div.style.textAlign = 'center';
+                        div.style.padding = '10px';
+                        
+                        div.innerHTML = `
+                            <div style="font-size:0.9rem; color:#666;">あなたの順位</div>
+                            <div style="font-size:2rem; font-weight:bold; color:#007acc;">${myRankInfo.rank} <span style="font-size:1rem;">位</span></div>
+                            <div style="font-size:0.9rem; margin-top:5px;">
+                                Total: <strong>${myRankInfo.score}pt</strong> / ${myRankInfo.count}問
                             </div>`;
+                        myRankArea.appendChild(div);
                     } else {
                         myRankArea.innerHTML = `<p>まだ正解データがありません。<br>問題を解いてランキングに参加しましょう！</p>`;
                     }
